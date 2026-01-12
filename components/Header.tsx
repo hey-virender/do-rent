@@ -2,26 +2,23 @@
 import { useUIStore } from "@/store/ui.store";
 import Link from "next/link";
 import { House } from "lucide-react";
+import { Button } from "./ui/button";
 
 const navItems = [
   { name: "Home", href: "/" },
   { name: "Rent Properties", href: "/properties" },
   { name: "List Property", href: "/list-property" },
-  { name: "About", href: "/about" },
-  { name: "Contact", href: "/contact" },
 ];
 
 const Header = () => {
-  const {isMenuOpen,toggleMenu} = useUIStore();
+  const { isMenuOpen, toggleMenu } = useUIStore();
   return (
     <header className="flex justify-between items-center px-4 py-6 border-b-2 mb-5 border-primary ">
       <div className="flex items-center gap-2 text-primary">
-<House className="inline mb-1 mr-2 size-10"/>
-      <h1 className="text-4xl font-grotesk font-bold ">
-        
-        Do Rent</h1>
+        <House className="inline mb-1 mr-2 size-10" />
+        <h1 className="text-4xl font-grotesk font-bold ">Do Rent</h1>
       </div>
-      
+
       <nav>
         <ul className="hidden lg:text-lg lg:visible md:flex gap-20 font-medium">
           {navItems.map((item) => (
@@ -30,10 +27,7 @@ const Header = () => {
             </li>
           ))}
         </ul>
-        <button
-          className="md:hidden"
-          onClick={toggleMenu}
-        >
+        <button className="md:hidden" onClick={toggleMenu}>
           ☰
         </button>
         {isMenuOpen && (
@@ -45,9 +39,13 @@ const Header = () => {
                 </Link>
               </li>
             ))}
+    
           </ul>
         )}
       </nav>
+      <Button variant={"default"} className="px-4 py-2 text-lg">
+        Login
+      </Button>
     </header>
   );
 };
