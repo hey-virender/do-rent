@@ -8,6 +8,7 @@ const page = () => {
       <section className="grid grid-cols-2">
         {houseListings.map((house) => (
           <PropertyBanner
+          key={house.id}
             id={house.id}
             name={house.name}
             location={house.location}
