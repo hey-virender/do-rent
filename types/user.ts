@@ -12,9 +12,10 @@ export interface User {
   isVerified: boolean,
   adhaarNumber?: string | null,
   panNumber?: string | null,
-  address?: Address | null,
+  address?: Address[] | null,
   createdAt: string,
   updatedAt: string,
+  dob: string | null,
 }
 
 export interface Address {

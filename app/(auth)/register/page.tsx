@@ -18,6 +18,8 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select";
+import { useAuthStore } from "@/store/auth.store";
+import { regiterSchema } from "@/validations/auth.validation";
 import { SelectValue } from "@radix-ui/react-select";
 import { Eye, EyeClosed } from "lucide-react";
 import Image from "next/image";
@@ -30,9 +32,34 @@ const Page = () => {
   const [dob, setDob] = useState<Date | undefined>(undefined);
 
   function handleDateChange(date: Date | undefined) {
-    setDob(date);
-    console.log("Selected date:", date);
+    if (date) {
+      setRegisterData({ dob: date.toISOString() });
+    } else {
+      setRegisterData({ dob: "" });
+    }
   }
+
+  const { registerData, setRegisterData, errors, setErrors, clearErrors } =
+    useAuthStore();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const result = regiterSchema.safeParse(registerData);
+    if (!result.success) {
+      const fieldErrors: Record<string, string> = {};
+      result.error.issues.forEach((err) => {
+        const field = err.path[0];
+
+        if (typeof field === "string" || typeof field === "number") {
+          fieldErrors[field.toString()] = err.message;
+        }
+      });
+      setErrors(fieldErrors);
+      return;
+    }
+    clearErrors();
+    console.log("Registration data is valid:", registerData);
+  };
 
   return (
     <main className="grid grid-cols-2 text-neutral-100 px-20 pb-10">
@@ -56,7 +83,7 @@ const Page = () => {
         </h1>
         <p className="mt-2 text-sm text-neutral-300">Create your account</p>
 
-        <form className="mt-8">
+        <form className="mt-8" onSubmit={handleSubmit}>
           <FieldGroup>
             <FieldSet>
               <FieldGroup className="grid grid-cols-2 gap-4">
@@ -68,10 +95,18 @@ const Page = () => {
                     placeholder="Your Name"
                     required
                     className="bg-black/20 border-white/80 focus:border-purple-500 focus:ring-purple-500/20 text-white text-lg placeholder:text-white"
+                    value={registerData.name}
+                    onChange={(e) => setRegisterData({ name: e.target.value })}
                   />
-                  <FieldDescription className="text-gray-300 select-none">
-                    Enter your name
-                  </FieldDescription>
+                  {errors?.name ? (
+                    <FieldDescription className="text-red-400">
+                      {errors.name}
+                    </FieldDescription>
+                  ) : (
+                    <FieldDescription className="text-gray-300">
+                      Enter your name
+                    </FieldDescription>
+                  )}
                 </Field>
                 {/* Adhaar Number */}
                 <Field>
@@ -81,10 +116,21 @@ const Page = () => {
                     placeholder="Your Adhaar Number"
                     required
                     className="bg-black/20 border-white/80 focus:border-purple-500 focus:ring-purple-500/20 text-white text-lg placeholder:text-white"
+                    value={registerData.adhaarNumber}
+                    onChange={(e) =>
+                      setRegisterData({ adhaarNumber: e.target.value })
+                    }
                   />
-                  <FieldDescription className="text-gray-300 select-none">
-                    Enter your Adhaar Number
-                  </FieldDescription>
+
+                  {errors?.adhaarNumber ? (
+                    <FieldDescription className="text-red-400">
+                      {errors.adhaarNumber}
+                    </FieldDescription>
+                  ) : (
+                    <FieldDescription className="text-gray-300">
+                      Enter your Adhaar Number
+                    </FieldDescription>
+                  )}
                 </Field>
                 {/* Email */}
                 <Field>
@@ -94,10 +140,18 @@ const Page = () => {
                     placeholder="you@example.com"
                     required
                     className="bg-black/20 border-white/80 focus:border-purple-500 focus:ring-purple-500/20 text-white text-lg placeholder:text-white"
+                    value={registerData.email}
+                    onChange={(e) => setRegisterData({ email: e.target.value })}
                   />
-                  <FieldDescription className="text-gray-300 select-none">
-                    Enter your email address
-                  </FieldDescription>
+                  {errors?.email ? (
+                    <FieldDescription className="text-red-400">
+                      {errors.email}
+                    </FieldDescription>
+                  ) : (
+                    <FieldDescription className="text-gray-300 select-none">
+                      Enter your email address
+                    </FieldDescription>
+                  )}
                 </Field>
                 {/* Phone */}
                 <Field>
@@ -107,15 +161,28 @@ const Page = () => {
                     placeholder="Your phone number"
                     required
                     className="bg-black/20 border-white/80 focus:border-purple-500 focus:ring-purple-500/20 text-white text-lg placeholder:text-white"
+                    value={registerData.phone}
+                    onChange={(e) => setRegisterData({ phone: e.target.value })}
                   />
-                  <FieldDescription className="text-gray-300 select-none">
-                    Enter your phone number
-                  </FieldDescription>
+                  {errors?.phone ? (
+                    <FieldDescription className="text-red-400">
+                      {errors.phone}
+                    </FieldDescription>
+                  ) : (
+                    <FieldDescription className="text-gray-300 select-none">
+                      Enter your phone number
+                    </FieldDescription>
+                  )}
                 </Field>
                 {/* Gender */}
                 <Field>
                   <FieldLabel htmlFor="gender">Gender</FieldLabel>
-                  <Select>
+                  <Select
+                    value={registerData.gender}
+                    onValueChange={(value) =>
+                      setRegisterData({ gender: value })
+                    }
+                  >
                     <SelectTrigger
                       id="gender"
                       className="text-white bg-black/20 [&>span]:text-white
@@ -137,18 +204,26 @@ const Page = () => {
                       </SelectGroup>
                     </SelectContent>
                   </Select>
-                  <FieldDescription className="text-gray-300 select-none">
-                    Select your gender
-                  </FieldDescription>
+                  {errors?.gender ? (
+                    <FieldDescription className="text-red-400">
+                      {errors.gender}
+                    </FieldDescription>
+                  ) : (
+                    <FieldDescription className="text-gray-300 select-none">
+                      Select your gender
+                    </FieldDescription>
+                  )}
                 </Field>
                 {/* Role */}
                 <Field>
                   <FieldLabel htmlFor="role">Role</FieldLabel>
-                  <Select>
+                  <Select
+                    value={registerData.role}
+                    onValueChange={(value) => setRegisterData({ role: value })}
+                  >
                     <SelectTrigger
                       id="role"
-                      className="text-white bg-black/20 [&>span]:text-white
-      [&>span]:opacity-100"
+                      className="text-white bg-black/20 [&>span]:text-white [&>span]:opacity-100"
                     >
                       <SelectValue placeholder="Select your role" />
                     </SelectTrigger>
@@ -163,19 +238,36 @@ const Page = () => {
                       </SelectGroup>
                     </SelectContent>
                   </Select>
-                  <FieldDescription className="text-gray-300 select-none">
-                    Enter your email address
-                  </FieldDescription>
+                  {errors?.role ? (
+                    <FieldDescription className="text-red-400">
+                      {errors.role}
+                    </FieldDescription>
+                  ) : (
+                    <FieldDescription className="text-gray-300 select-none">
+                      Enter your email address
+                    </FieldDescription>
+                  )}
                 </Field>
                 <Field>
                   <FieldLabel htmlFor="dob">Date of Birth</FieldLabel>
                   <DatePicker
-                    date={dob}
+                    date={
+                      registerData.dob ? new Date(registerData.dob) : undefined
+                    }
                     className="text-white bg-black/20"
                     calendarClassName="bg-white"
                     setDate={handleDateChange}
                   />
                 </Field>
+                {errors?.dob ? (
+                  <FieldDescription className="text-red-400">
+                    {errors.dob}
+                  </FieldDescription>
+                ) : (
+                  <FieldDescription className="text-gray-300 select-none">
+                    Enter your date of birth
+                  </FieldDescription>
+                )}
               </FieldGroup>
             </FieldSet>
             <FieldSet>
@@ -185,10 +277,13 @@ const Page = () => {
                   <div className="relative">
                     <Input
                       id="password"
-                      placeholder="••••••••"
                       type={showPassword ? "text" : "password"}
-                      required
+                   
                       className="bg-black/20 border-white/80 pr-10 focus:border-purple-500 focus:ring-purple-500/20 text-white text-lg placeholder:text-white"
+                      value={registerData.password}
+                      onChange={(e) =>
+                        setRegisterData({ password: e.target.value })
+                      }
                     />
 
                     {showPassword ? (
@@ -203,10 +298,15 @@ const Page = () => {
                       />
                     )}
                   </div>
-
-                  <FieldDescription className="text-gray-300 select-none">
-                    Enter your password
-                  </FieldDescription>
+                  {errors?.password ? (
+                    <FieldDescription className="text-red-400">
+                      {errors.password}
+                    </FieldDescription>
+                  ) : (
+                    <FieldDescription className="text-gray-300 select-none">
+                      Enter your password
+                    </FieldDescription>
+                  )}
                 </Field>
                 <Field>
                   <FieldLabel htmlFor="confirm-password">
@@ -215,10 +315,13 @@ const Page = () => {
                   <div className="relative">
                     <Input
                       id="confirm-password"
-                      placeholder="••••••••"
                       type={showConfirmPassword ? "text" : "password"}
-                      required
+                     
                       className="bg-black/20 border-white/80 pr-10 focus:border-purple-500 focus:ring-purple-500/20 text-white text-lg placeholder:text-white"
+                      value={registerData.confirmPassword}
+                      onChange={(e) =>
+                        setRegisterData({ confirmPassword: e.target.value })
+                      }
                     />
 
                     {showConfirmPassword ? (
@@ -233,16 +336,27 @@ const Page = () => {
                       />
                     )}
                   </div>
-
-                  <FieldDescription className="text-gray-300 select-none">
-                    Confirm your password
-                  </FieldDescription>
+                  {errors?.confirmPassword ? (
+                    <FieldDescription className="text-red-400">
+                      {errors.confirmPassword}
+                    </FieldDescription>
+                  ) : (
+                    <FieldDescription className="text-gray-300 select-none">
+                      Confirm your password
+                    </FieldDescription>
+                  )}
                 </Field>
               </FieldGroup>
             </FieldSet>
             <FieldSet>
               <div className="flex items-center gap-2 mt-4">
-                <Checkbox id="terms" required />
+                <Checkbox
+                  id="terms"
+                  checked={registerData.termsAccepted}
+                  onCheckedChange={(checked) =>
+                    setRegisterData({ termsAccepted: checked === true })
+                  }
+                />
 
                 <label
                   htmlFor="terms"
@@ -254,6 +368,11 @@ const Page = () => {
                   </Link>
                 </label>
               </div>
+              {errors?.termsAccepted ? (
+                <FieldDescription className="text-red-400">
+                  {errors.termsAccepted}
+                </FieldDescription>
+              ) : null}
             </FieldSet>
 
             <Button
