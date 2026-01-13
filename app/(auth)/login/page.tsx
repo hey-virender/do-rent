@@ -41,7 +41,7 @@ const Page = () => {
                     id="email"
                     placeholder="you@example.com"
                     required
-                    className="bg-neutral-300 border-white/80 focus:border-purple-500 focus:ring-purple-500/20 text-black text-lg"
+                    className="bg-black/20 border-white/80 focus:border-purple-500 focus:ring-purple-500/20 text-white text-lg placeholder:text-white"
                   />
                   <FieldDescription className="text-gray-300 select-none">
                     Enter your email address
@@ -57,17 +57,17 @@ const Page = () => {
                       placeholder="••••••••"
                       type={showPassword ? "text" : "password"}
                       required
-                      className="bg-neutral-300 border-white/80 pr-10 focus:border-purple-500 focus:ring-purple-500/20 text-black text-lg"
+                      className="bg-black/20 border-white/80 pr-10 focus:border-purple-500 focus:ring-purple-500/20 text-white text-lg placeholder:text-white"
                     />
 
                     {showPassword ? (
                       <Eye
-                        className="absolute right-3 top-1/2 -translate-y-1/2 size-9 cursor-pointer text-neutral-900 hover:text-black p-2"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 size-9 cursor-pointer text-white hover:text-gray-300 p-2"
                         onClick={() => setShowPassword(false)}
                       />
                     ) : (
                       <EyeClosed
-                        className="absolute right-3 top-1/2 -translate-y-1/2 size-9 cursor-pointer text-neutral-900 hover:text-black p-2"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 size-9 cursor-pointer text-white hover:text-gray-300 p-2"
                         onClick={() => setShowPassword(true)}
                       />
                     )}
@@ -82,7 +82,7 @@ const Page = () => {
 
             <Button
               type="submit"
-              className="mt-6 w-full bg-gradient-to-r from-primary/40 via-primary/70 to-primary/80 text-lg border border-neutral-300 hover:scale-[1.01]"
+             className="mt-6 w-fit px-20 py-6 mx-auto bg-gradient-to-r from-primary/40 via-primary/70 to-primary/80 text-lg border border-neutral-300  hover:scale-[1.01]"
             >
               Login
             </Button>

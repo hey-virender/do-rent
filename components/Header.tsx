@@ -39,13 +39,15 @@ const Header = () => {
                 </Link>
               </li>
             ))}
-    
           </ul>
         )}
       </nav>
-      <Button variant={"default"} className="px-4 py-2 text-lg">
-        Login
-      </Button>
+      <Link href="/login">
+        {" "}
+        <Button variant={"default"} className="px-4 py-2 text-lg cursor-pointer">
+          Login
+        </Button>
+      </Link>
     </header>
   );
 };

@@ -9,8 +9,18 @@ export interface User {
   gender: "male" | "female" | "other" | null,
   phone?: string | null,
   provider: "google" | "local"| "facebook",
-  isActive: boolean,
   isVerified: boolean,
+  adhaarNumber?: string | null,
+  panNumber?: string | null,
+  address?: Address | null,
   createdAt: string,
   updatedAt: string,
+}
+
+export interface Address {
+  street: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
 }
