@@ -1,5 +1,5 @@
 "use client";
-
+import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DatePicker } from "@/components/ui/datepicker";
@@ -19,14 +19,18 @@ import {
   SelectTrigger,
 } from "@/components/ui/select";
 import { useAuthStore } from "@/store/auth.store";
-import { regiterSchema } from "@/validations/auth.validation";
+import { registerSchema } from "@/validations/auth.validation";
 import { SelectValue } from "@radix-ui/react-select";
 import { Eye, EyeClosed } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { registerUser } from "@/actions/auth.actions";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [dob, setDob] = useState<Date | undefined>(undefined);
@@ -42,9 +46,9 @@ const Page = () => {
   const { registerData, setRegisterData, errors, setErrors, clearErrors } =
     useAuthStore();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const result = regiterSchema.safeParse(registerData);
+    const result = registerSchema.safeParse(registerData);
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
       result.error.issues.forEach((err) => {
@@ -58,7 +62,16 @@ const Page = () => {
       return;
     }
     clearErrors();
-    console.log("Registration data is valid:", registerData);
+    const response = await registerUser(registerData);
+    if (!response.success) {
+      toast.error(response.errors || "Registration failed");
+    } else {
+      toast.success(
+        "Registration successful! Please check your email to verify your account.",
+      );
+      // Optionally, you can redirect the user to the login page or another page
+      router.push("/login");
+    }
   };
 
   return (
@@ -94,7 +107,7 @@ const Page = () => {
                     id="name"
                     placeholder="Your Name"
                     required
-                    className="bg-black/20 border-white/80 focus:border-purple-500 focus:ring-purple-500/20 text-white text-lg placeholder:text-white"
+                    className="bg-black/20 border-white/80 focus:border-purple-500 focus:ring-purple-500/20 text-white text-lg placeholder:text-white/60"
                     value={registerData.name}
                     onChange={(e) => setRegisterData({ name: e.target.value })}
                   />
@@ -115,7 +128,7 @@ const Page = () => {
                     id="adhaarNumber"
                     placeholder="Your Adhaar Number"
                     required
-                    className="bg-black/20 border-white/80 focus:border-purple-500 focus:ring-purple-500/20 text-white text-lg placeholder:text-white"
+                    className="bg-black/20 border-white/80 focus:border-purple-500 focus:ring-purple-500/20 text-white text-lg placeholder:text-white/60"
                     value={registerData.adhaarNumber}
                     onChange={(e) =>
                       setRegisterData({ adhaarNumber: e.target.value })
@@ -139,7 +152,7 @@ const Page = () => {
                     id="email"
                     placeholder="you@example.com"
                     required
-                    className="bg-black/20 border-white/80 focus:border-purple-500 focus:ring-purple-500/20 text-white text-lg placeholder:text-white"
+                    className="bg-black/20 border-white/80 focus:border-purple-500 focus:ring-purple-500/20 text-white text-lg placeholder:text-white/60"
                     value={registerData.email}
                     onChange={(e) => setRegisterData({ email: e.target.value })}
                   />
@@ -160,7 +173,7 @@ const Page = () => {
                     id="phone"
                     placeholder="Your phone number"
                     required
-                    className="bg-black/20 border-white/80 focus:border-purple-500 focus:ring-purple-500/20 text-white text-lg placeholder:text-white"
+                    className="bg-black/20 border-white/80 focus:border-purple-500 focus:ring-purple-500/20 text-white text-lg placeholder:text-white/60"
                     value={registerData.phone}
                     onChange={(e) => setRegisterData({ phone: e.target.value })}
                   />
@@ -185,7 +198,7 @@ const Page = () => {
                   >
                     <SelectTrigger
                       id="gender"
-                      className="text-white bg-black/20 [&>span]:text-white
+                      className="text-white bg-black/20 [&>span]:text-white/60
       [&>span]:opacity-100"
                     >
                       <SelectValue
@@ -223,7 +236,7 @@ const Page = () => {
                   >
                     <SelectTrigger
                       id="role"
-                      className="text-white bg-black/20 [&>span]:text-white [&>span]:opacity-100"
+                      className="text-white bg-black/20 [&>span]:text-white/60 [&>span]:opacity-100"
                     >
                       <SelectValue placeholder="Select your role" />
                     </SelectTrigger>
@@ -248,13 +261,15 @@ const Page = () => {
                     </FieldDescription>
                   )}
                 </Field>
+
+                {/* Date of Birth */}
                 <Field>
                   <FieldLabel htmlFor="dob">Date of Birth</FieldLabel>
                   <DatePicker
                     date={
                       registerData.dob ? new Date(registerData.dob) : undefined
                     }
-                    className="text-white bg-black/20"
+                    className="text-white bg-black/20 [&>span]:text-white/60 [&>span]:opacity-100"
                     calendarClassName="bg-white"
                     setDate={handleDateChange}
                   />
@@ -277,9 +292,9 @@ const Page = () => {
                   <div className="relative">
                     <Input
                       id="password"
+                      placeholder="Choose your password"
                       type={showPassword ? "text" : "password"}
-                   
-                      className="bg-black/20 border-white/80 pr-10 focus:border-purple-500 focus:ring-purple-500/20 text-white text-lg placeholder:text-white"
+                      className="bg-black/20 border-white/80 pr-10 focus:border-purple-500 focus:ring-purple-500/20 text-white text-lg placeholder:text-white/60"
                       value={registerData.password}
                       onChange={(e) =>
                         setRegisterData({ password: e.target.value })
@@ -315,9 +330,9 @@ const Page = () => {
                   <div className="relative">
                     <Input
                       id="confirm-password"
+                      placeholder="Confirm your password"
                       type={showConfirmPassword ? "text" : "password"}
-                     
-                      className="bg-black/20 border-white/80 pr-10 focus:border-purple-500 focus:ring-purple-500/20 text-white text-lg placeholder:text-white"
+                      className="bg-black/20 border-white/80 pr-10 focus:border-purple-500 focus:ring-purple-500/20 text-white text-lg placeholder:text-white/60"
                       value={registerData.confirmPassword}
                       onChange={(e) =>
                         setRegisterData({ confirmPassword: e.target.value })
@@ -352,6 +367,7 @@ const Page = () => {
               <div className="flex items-center gap-2 mt-4">
                 <Checkbox
                   id="terms"
+                  className="size-5"
                   checked={registerData.termsAccepted}
                   onCheckedChange={(checked) =>
                     setRegisterData({ termsAccepted: checked === true })
@@ -360,7 +376,7 @@ const Page = () => {
 
                 <label
                   htmlFor="terms"
-                  className="text-sm text-neutral-200 leading-tight"
+                  className=" text-neutral-200 leading-tight"
                 >
                   I agree to the{" "}
                   <Link href="/terms" className="underline hover:text-white">
