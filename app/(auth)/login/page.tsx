@@ -1,5 +1,6 @@
 "use client";
 
+import {signIn} from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -9,13 +10,47 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { useAuthStore } from "@/store/auth.store";
+import { loginSchema } from "@/validations/auth.validation";
 import { Eye, EyeClosed } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { toast } from "sonner";
+
 
 const Page = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const { loginData, setLoginData, errors, setErrors, clearErrors } =
+    useAuthStore();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+   try {
+     e.preventDefault();
+    const parsed = loginSchema.safeParse(loginData);
+    if (!parsed.success) {
+      const fieldErrors: Record<string, string> = {};
+      parsed.error.issues.forEach((err) => {
+        const field = err.path[0];
+        if (typeof field === "string" || typeof field === "number") {
+          fieldErrors[field.toString()] = err.message;
+        }
+      });
+      setErrors(fieldErrors);
+      return;
+    }
+    clearErrors();
+    const response = await signIn("credentials", {
+      redirect: false,
+      email: loginData.email,
+      password: loginData.password,
+    });
+    console.log(response);
+   } catch (error) 
+   {
+    toast.error(error?.message as string || "An unexpected error occurred");
+   }
+  };
 
   return (
     <main className="grid grid-cols-2 text-neutral-100 px-20">
@@ -30,7 +65,7 @@ const Page = () => {
         </h1>
         <p className="mt-2 text-sm text-neutral-300">Sign in to your account</p>
 
-        <form className="mt-8">
+        <form className="mt-8" onSubmit={handleSubmit}>
           <FieldGroup>
             <FieldSet>
               <FieldGroup>
@@ -40,12 +75,19 @@ const Page = () => {
                   <Input
                     id="email"
                     placeholder="you@example.com"
-                    required
-                    className="bg-black/20 border-white/80 focus:border-purple-500 focus:ring-purple-500/20 text-white text-lg placeholder:text-white"
+                    type="email"
+                    onChange={(e) => setLoginData({ email: e.target.value })}
+                    className="bg-black/20 border-white/80 focus:border-purple-500 focus:ring-purple-500/20 text-white text-lg placeholder:text-white/60"
                   />
-                  <FieldDescription className="text-gray-300 select-none">
-                    Enter your email address
-                  </FieldDescription>
+                  {errors?.email ? (
+                    <FieldDescription className="text-gray-300 select-none">
+                      {errors.email}
+                    </FieldDescription>
+                  ) : (
+                    <FieldDescription className="text-gray-300 select-none">
+                      Enter your email address
+                    </FieldDescription>
+                  )}
                 </Field>
 
                 {/* Password */}
@@ -56,8 +98,10 @@ const Page = () => {
                       id="password"
                       placeholder="••••••••"
                       type={showPassword ? "text" : "password"}
-                      required
-                      className="bg-black/20 border-white/80 pr-10 focus:border-purple-500 focus:ring-purple-500/20 text-white text-lg placeholder:text-white"
+                      onChange={(e) =>
+                        setLoginData({ password: e.target.value })
+                      }
+                      className="bg-black/20 border-white/80 pr-10 focus:border-purple-500 focus:ring-purple-500/20 text-white text-lg placeholder:text-white/60"
                     />
 
                     {showPassword ? (
@@ -73,16 +117,22 @@ const Page = () => {
                     )}
                   </div>
 
-                  <FieldDescription className="text-gray-300 select-none">
-                    Enter your password
-                  </FieldDescription>
+                  {errors?.password ? (
+                    <FieldDescription className="text-gray-300 select-none">
+                      {errors.password}
+                    </FieldDescription>
+                  ) : (
+                    <FieldDescription className="text-gray-300 select-none">
+                      Enter your password
+                    </FieldDescription>
+                  )}
                 </Field>
               </FieldGroup>
             </FieldSet>
 
             <Button
               type="submit"
-             className="mt-6 w-fit px-20 py-6 mx-auto bg-gradient-to-r from-primary/40 via-primary/70 to-primary/80 text-lg border border-neutral-300  hover:scale-[1.01]"
+              className="mt-6 w-fit px-20 py-6 mx-auto bg-gradient-to-r from-primary/40 via-primary/70 to-primary/80 text-lg border border-neutral-300  hover:scale-[1.01]"
             >
               Login
             </Button>

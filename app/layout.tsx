@@ -3,7 +3,8 @@ import "./globals.css";
 import Header from "@/components/Header";
 import { Wix_Madefor_Text } from "next/font/google";
 import "leaflet/dist/leaflet.css";
-import { Toaster } from "@/components/ui/sonner"
+import { Toaster } from "@/components/ui/sonner";
+import { Providers } from "./providers";
 
 const wixFont = Wix_Madefor_Text({ subsets: ["latin"] });
 
@@ -20,9 +21,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={wixFont.className}>
-        <Header />
-        <Toaster position="top-right" />
-        {children}
+        <Providers>
+          <Header />
+          <Toaster position="top-right" />
+          {children}
+        </Providers>
       </body>
     </html>
   );

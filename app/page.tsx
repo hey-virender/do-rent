@@ -2,7 +2,13 @@ import React from "react";
 import { houseListings } from "@/constants";
 import PropertyBanner from "@/components/house/details-panel/PropertyBanner";
 import Map from "@/components/Map";
-const page = () => {
+
+import { prisma } from "@/lib/prisma";
+const page = async () => {
+
+  const count = await prisma.user.count();
+  console.log("USER COUNT:", count);
+
   return (
     <div className="flex">
       <section className="grid grid-cols-2">

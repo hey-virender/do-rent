@@ -3,7 +3,7 @@ import { useUIStore } from "@/store/ui.store";
 import Link from "next/link";
 import { House } from "lucide-react";
 import { Button } from "./ui/button";
-
+import { useSession } from "next-auth/react";
 const navItems = [
   { name: "Home", href: "/" },
   { name: "Rent Properties", href: "/properties" },
@@ -11,6 +11,8 @@ const navItems = [
 ];
 
 const Header = () => {
+  const { data: session } = useSession();
+  console.log("Session Data:", session);
   const { isMenuOpen, toggleMenu } = useUIStore();
   return (
     <header className="flex justify-between items-center px-4 py-6 border-b-2 mb-5 border-primary ">
