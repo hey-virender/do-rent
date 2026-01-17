@@ -1,5 +1,4 @@
 "use client";
-import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DatePicker } from "@/components/ui/datepicker";
@@ -28,9 +27,16 @@ import { useState } from "react";
 import { registerUser } from "@/actions/auth.actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 const Page = () => {
+  const {data:session} = useSession()
   const router = useRouter();
+  if(session && session.user){
+    toast.error("You are already logged in");
+    router.push("/");
+  }
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [dob, setDob] = useState<Date | undefined>(undefined);
@@ -47,30 +53,46 @@ const Page = () => {
     useAuthStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const result = registerSchema.safeParse(registerData);
-    if (!result.success) {
-      const fieldErrors: Record<string, string> = {};
-      result.error.issues.forEach((err) => {
-        const field = err.path[0];
+    try {
+      e.preventDefault();
+      const result = registerSchema.safeParse(registerData);
+      if (!result.success) {
+        const fieldErrors: Record<string, string> = {};
+        result.error.issues.forEach((err) => {
+          const field = err.path[0];
 
-        if (typeof field === "string" || typeof field === "number") {
-          fieldErrors[field.toString()] = err.message;
-        }
-      });
-      setErrors(fieldErrors);
-      return;
-    }
-    clearErrors();
-    const response = await registerUser(registerData);
-    if (!response.success) {
-      toast.error(response.errors || "Registration failed");
-    } else {
+          if (typeof field === "string" || typeof field === "number") {
+            fieldErrors[field.toString()] = err.message;
+          }
+        });
+        setErrors(fieldErrors);
+        return;
+      }
+      clearErrors();
+      const response = await registerUser(registerData);
+      if (!response.success) {
+        toast.error((response.errors as string) || "Registration failed");
+        return;
+      }
       toast.success(
         "Registration successful! Please check your email to verify your account.",
       );
-      // Optionally, you can redirect the user to the login page or another page
+
       router.push("/login");
+      setRegisterData({
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        phone: "",
+        adhaarNumber: "",
+        role: "",
+        gender: "",
+        dob: "",
+        termsAccepted: false,
+      });
+    } catch (error) {
+      toast.error((error as string) || "An unexpected error occurred");
     }
   };
 
@@ -213,6 +235,9 @@ const Page = () => {
                         </SelectItem>
                         <SelectItem className="bg-white" value="female">
                           Female
+                        </SelectItem>
+                        <SelectItem className="bg-white" value="other">
+                          Other
                         </SelectItem>
                       </SelectGroup>
                     </SelectContent>

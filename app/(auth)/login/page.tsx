@@ -1,6 +1,6 @@
 "use client";
 
-import {signIn} from "next-auth/react";
+import {signIn, useSession} from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -17,9 +17,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 
 const Page = () => {
+  const {data:session} = useSession()
+    const router = useRouter();
+    if(session && session.user){
+      toast.error("You are already logged in");
+      router.push("/");
+    }
   const [showPassword, setShowPassword] = useState(false);
   const { loginData, setLoginData, errors, setErrors, clearErrors } =
     useAuthStore();
@@ -45,10 +52,10 @@ const Page = () => {
       email: loginData.email,
       password: loginData.password,
     });
-    console.log(response);
+    setLoginData({ email: "", password: "" });
    } catch (error) 
    {
-    toast.error(error?.message as string || "An unexpected error occurred");
+    toast.error(error as string || "An unexpected error occurred");
    }
   };
 

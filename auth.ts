@@ -42,21 +42,23 @@ export const {handlers,signIn,signOut,auth}  = NextAuth({
     strategy:"jwt"
   },
   callbacks:{
-    async jwt({token,user}){
-      console.log("JWT callback - user:", user);
-      console.log("JWT callback - token before modification:", token);
+    async jwt({token,user,trigger,session}){
+    
       if(user){
         token.id = user.id ;
         token.role = user.role as "tenant" | "landlord" | "admin";
         token.name = user.name;
         token.email = user.email;
       }
-      console.log("JWT callback - token after modification:", token);
+      if(trigger === "update" && session?.user){
+        token.name = session.user.name;
+        token.image = session.user.image;
+      }
+      
       return token;
     },
-    async session({session,token,user}){
-      console.log("Session callback - user:", user);
-      console.log("Session callback - session before modification:", session);
+    async session({session,token}){
+      
       if (!session.user) return session
     if (!token?.id) return session
 
@@ -64,8 +66,6 @@ export const {handlers,signIn,signOut,auth}  = NextAuth({
         session.user.name = token.name;
         session.user.email = token.email as string;
         session.user.role = token.role as "tenant" | "landlord" | "admin";
-      
-      console.log("Session callback - session after modification:", session);
       return session;
     },
     

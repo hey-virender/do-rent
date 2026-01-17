@@ -12,10 +12,10 @@ const navItems = [
 
 const Header = () => {
   const { data: session } = useSession();
-  console.log("Session Data:", session);
+  const { name } = (session?.user as { name: string }) || {};
   const { isMenuOpen, toggleMenu } = useUIStore();
   return (
-    <header className="flex justify-between items-center px-4 py-6 border-b-2 mb-5 border-primary ">
+    <header className="flex justify-between items-center px-4 py-6 border-b-2 border-primary ">
       <div className="flex items-center gap-2 text-primary">
         <House className="inline mb-1 mr-2 size-10" />
         <h1 className="text-4xl font-grotesk font-bold ">Do Rent</h1>
@@ -44,12 +44,19 @@ const Header = () => {
           </ul>
         )}
       </nav>
-      <Link href="/login">
-        {" "}
-        <Button variant={"default"} className="px-4 py-2 text-lg cursor-pointer">
+      {name ?(<Link href="/profile">
+      <p className="mr-4 text-lg capitalize">Hello, {name}</p>
+      </Link>
+      ) :<Link href="/login">
+        
+        <Button
+          variant={"default"}
+          className="px-4 py-2 text-lg cursor-pointer"
+        >
           Login
         </Button>
-      </Link>
+      </Link>}
+      
     </header>
   );
 };
