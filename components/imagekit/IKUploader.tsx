@@ -3,9 +3,11 @@ import { Upload } from "lucide-react";
 import {
   ImageKitAbortError,
   ImageKitInvalidRequestError,
+  ImageKitProvider,
   ImageKitServerError,
   ImageKitUploadNetworkError,
   upload,
+  Image,
 } from "@imagekit/next";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
@@ -20,7 +22,6 @@ import {
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Progress } from "../ui/progress";
-import Image from "next/image";
 
 type ImageKitUploadResult = {
   url: string;
@@ -52,7 +53,6 @@ const IKUploader = ({
   const [progress, setProgress] = useState(0);
   const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
- 
 
   const authenticator = async () => {
     try {
@@ -71,7 +71,7 @@ const IKUploader = ({
   };
 
   const handleUpload = async () => {
-     const abortController = new AbortController();
+    const abortController = new AbortController();
     const fileInput = fileInputRef.current;
     if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
       alert("Please select a file to upload");
@@ -96,7 +96,7 @@ const IKUploader = ({
         token,
         signature,
         publicKey,
-        folder: `/do-rent/uploads/${folder}`, // Optional: specify a folder in ImageKit
+        folder: `/uploads/${folder}`, // Optional: specify a folder in ImageKit
         file,
         fileName: file.name,
         customMetadata: {
@@ -106,8 +106,6 @@ const IKUploader = ({
         onProgress: (event) => {
           setProgress((event.loaded / event.total) * 100);
         },
-        // Abort signal to allow cancellation of the upload if needed.
-        abortSignal: abortController.signal,
       });
       console.log("File uploaded successfully:", uploadResponse);
       setUploadedUrl(uploadResponse.url!);
@@ -137,35 +135,41 @@ const IKUploader = ({
     }
   };
   return (
-    <Dialog onOpenChange={() => setUploadedUrl("")}>
-      <DialogTrigger className="w-30 cursor-pointer border-2 border-primary rounded-full p-2 flex items-center justify-center gap-3 text-primary font-semibold ">
-        <Upload /> Upload
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Upload Image</DialogTitle>
-        </DialogHeader>
-        {uploadedUrl && (
-          <Image
-            className="size-20 rounded-full border-primary border-2"
-            src={uploadedUrl}
-            alt="Preview"
-            width={1000}
-            height={1000}
-            unoptimized
-          />
-        )}
-        <Input type="file" ref={fileInputRef} accept={accept} />
-        {/* Button to trigger the upload process */}
-        <Button type="button" onClick={handleUpload}>
-          <Upload />
-          Upload file
-        </Button>
-        <br />
-        {/* Display the current upload progress */}
-        {progress > 0 && <Progress value={progress} className="w-full mt-2" />}
-      </DialogContent>
-    </Dialog>
+    <ImageKitProvider
+      urlEndpoint={process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT!}
+    >
+      <Dialog onOpenChange={() => setUploadedUrl("")}>
+        <DialogTrigger className="w-30 cursor-pointer border-2 border-primary rounded-full p-2 flex items-center justify-center gap-3 text-primary font-semibold ">
+          <Upload /> Upload
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Upload Image</DialogTitle>
+          </DialogHeader>
+          {uploadedUrl && (
+            <Image
+              className="size-20 rounded-full border-primary border-2"
+              src={uploadedUrl}
+              alt="Preview"
+              width={1000}
+              height={1000}
+              unoptimized
+            />
+          )}
+          <Input type="file" ref={fileInputRef} accept={accept} />
+          {/* Button to trigger the upload process */}
+          <Button type="button" onClick={handleUpload}>
+            <Upload />
+            Upload file
+          </Button>
+          <br />
+          {/* Display the current upload progress */}
+          {progress > 0 && (
+            <Progress value={progress} className="w-full mt-2" />
+          )}
+        </DialogContent>
+      </Dialog>
+    </ImageKitProvider>
   );
 };
 

@@ -46,9 +46,10 @@ export interface HouseListing {
   nearby: Nearby[];
 
   rules:{
-    minimumStayDays: number;
+    minimumStayMonths: number;
     petsAllowed: boolean;
     smokingAllowed: boolean;
+    partiesAllowed: boolean;
     
     
   }

@@ -186,6 +186,10 @@ const Profile = ({
     }
   };
 
+  const handleAvatarUploadSuccess = (result: any) => ({
+    
+  })
+
   return (
     <main>
       {/* 🔒 UPPER SECTION — UNCHANGED */}
@@ -281,10 +285,10 @@ const Profile = ({
               />
               <ImageKitProvider urlEndpoint={process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT!}>
                 <Image2
-                  src="https://ik.imagekit.io/virenderchauhan/do-rent/uploads/profile/library_YojwGgSKcP.png?updatedAt=1768658290025"
-                  width={300}
-                  className="w-24 h-12"
-                  height={300}
+                  src="https://ik.imagekit.io/virenderchauhan/uploads/profile/house2-2_w2UObiqrz.jpg"
+                  width={1000}
+                  className="aspect-auto rounded-md"
+                  height={1000}
                   alt="Sample Image"
                 />
               </ImageKitProvider>

@@ -4,8 +4,9 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider      = "prisma-client"
+  output        = "../generated/prisma"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
 enum Role {
@@ -26,6 +27,7 @@ model User {
   email         String?         @unique
   emailVerified DateTime?
   image         String?
+  imageFileId   String?
   accounts      Account[]
   sessions      Session[]
   role          Role            @default(tenant)
@@ -34,6 +36,7 @@ model User {
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
   profile       Profile?
+  properties    Property[]
 }
 
 model Account {
@@ -92,17 +95,20 @@ model Authenticator {
 
   @@unique([userId, credentialID])
 }
+
 enum Provider {
   google
   local
   facebook
 }
+
 model Profile {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId       String   @unique @db.ObjectId
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId       String    @unique @db.ObjectId
   bio          String?
   avatarUrl    String?
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  avatarFileId String?
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   gender       Gender?
   provider     Provider?
   adhaarNumber String?
@@ -110,6 +116,71 @@ model Profile {
   panNumber    String?
   phone        String?
   address      String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+enum PropertyMetaStatus {
+  active
+  inactive
+}
+
+type PropertyMeta {
+  status PropertyMetaStatus
+}
+
+type Pricing {
+  monthly  Float
+  currency String
+  deposit  Float
+}
+
+type Media {
+  cover   String
+  gallery String[]
+}
+
+type Specs {
+  bedrooms  Int
+  bathrooms Int
+  areaSqFt  Float
+}
+
+type Nearby {
+  type       String
+  name       String
+  distanceKm Float
+}
+
+type Rules {
+  petsAllowed       Boolean
+  smokingAllowed    Boolean
+  minimumStayMonths Int
+  partiesAllowed    Boolean
+}
+
+type Availability {
+  availableFrom DateTime
+  leaseTerms    String
+  conditions    String
+  isAvailable   Boolean
+}
+
+model Property {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  name         String
+  meta         PropertyMeta
+  media        Media
+  amenities    String[]
+  overview     String
+  specs        Specs
+  pricing      Pricing
+  landlordId   String       @db.ObjectId
+  nearby       Nearby[]
+  rules        Rules
+  availability Availability
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  landlord     User         @relation(fields: [landlordId], references: [id], onDelete: Cascade)
 }
