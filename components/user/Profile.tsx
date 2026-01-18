@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 
-import { Pencil, Save, X } from "lucide-react";
+import { LogOut, Pencil, Save, X } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -25,9 +25,10 @@ import { updateMyProfile } from "@/actions/user.action";
 import { updateProfileSchema } from "@/validations/profile.validations";
 import { toast } from "sonner";
 import { useProfileStore } from "@/store/profile.store";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import IKUploader from "../imagekit/IKUploader";
 import { ImageKitProvider, Image as Image2 } from "@imagekit/next";
+import { useRouter } from "next/navigation";
 
 /* ---------- Reusable field components ---------- */
 
@@ -123,6 +124,9 @@ const EditableTextarea = ({
 
 /* ------------------------- Profile ------------------------- */
 
+
+
+
 const Profile = ({
   user,
   isOwnProfile = false,
@@ -130,6 +134,7 @@ const Profile = ({
   user: Partial<User>;
   isOwnProfile?: boolean;
 }) => {
+  const router = useRouter();
   const { update } = useSession();
   const { name, email, avatarUrl, role, gender, phone, address, bio } = user;
   const {
@@ -186,6 +191,12 @@ const Profile = ({
     }
   };
 
+  const handleLogout = async()=>{
+    await signOut();
+    router.push("/login");
+  }
+
+
   const handleAvatarUploadSuccess = (result: any) => ({
     
   })
@@ -207,6 +218,10 @@ const Profile = ({
           <h1 className="text-2xl font-semibold capitalize">{name}</h1>
           <p className="text-lg text-black/60">{email}</p>
         </div>
+        <Button onClick={handleLogout} className="absolute top-4 right-4 bg-red-500 w-24 py-1" >
+          <LogOut className="size-5"/>
+          Logout
+        </Button>
       </section>
 
       {/* LOWER SECTION */}

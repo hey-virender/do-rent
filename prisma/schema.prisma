@@ -166,6 +166,19 @@ type Availability {
   isAvailable   Boolean
 }
 
+type Coordinates {
+  lat  Float
+  lng Float
+}
+
+type Location {
+  city String
+  state String
+  country String
+  zipCode String
+  coordinates  Coordinates
+}
+
 model Property {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
@@ -174,6 +187,7 @@ model Property {
   media        Media
   amenities    String[]
   overview     String
+  location     Location
   specs        Specs
   pricing      Pricing
   landlordId   String       @db.ObjectId
