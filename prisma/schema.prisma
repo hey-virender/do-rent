@@ -26,8 +26,6 @@ model User {
   name          String?
   email         String?         @unique
   emailVerified DateTime?
-  image         String?
-  imageFileId   String?
   accounts      Account[]
   sessions      Session[]
   role          Role            @default(tenant)

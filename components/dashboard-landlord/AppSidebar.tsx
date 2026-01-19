@@ -34,11 +34,23 @@ const sidebarItems = [
 
 export function AppSidebar() {
   return (
-    <Sidebar>
+    <Sidebar collapsible="icon">
       <SidebarHeader>
         <Label className="text-2xl font-bold">Landlord Dashboard</Label>
       </SidebarHeader>
-      <SidebarContent></SidebarContent>
+      <SidebarContent>
+        <SidebarGroup>
+          {sidebarItems.map((item) => (
+            <div
+              key={item.label}
+              className="flex items-center gap-4 px-4 py-3 hover:bg-neutral-100/10 rounded-md cursor-pointer"
+            >
+              {item.icon}
+              <span className="text-lg">{item.label}</span>
+            </div>
+          ))}
+        </SidebarGroup>
+      </SidebarContent>
       <SidebarFooter />
     </Sidebar>
   );

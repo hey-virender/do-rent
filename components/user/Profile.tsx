@@ -21,39 +21,37 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { updateMyProfile } from "@/actions/user.action";
+import { changeAvatar, updateMyProfile } from "@/actions/user.action";
 import { updateProfileSchema } from "@/validations/profile.validations";
 import { toast } from "sonner";
 import { useProfileStore } from "@/store/profile.store";
 import { signOut, useSession } from "next-auth/react";
-import IKUploader from "../imagekit/IKUploader";
-import { ImageKitProvider, Image as Image2 } from "@imagekit/next";
 import { useRouter } from "next/navigation";
+import UserAvatar from "./UserAvatar";
+import { cn } from "@/lib/utils";
+import { set } from "zod";
 
 /* ---------- Reusable field components ---------- */
 
-const ReadOnly = ({ label, value }: { label: string; value?: string }) => (
-  <div>
-    <Label className="text-muted-foreground">{label}</Label>
-    <p className="mt-1">{value || "N/A"}</p>
-  </div>
-);
+
 
 const Editable = ({
   label,
   value,
   isEditing,
   error,
+  className,
   onChange,
 }: {
-  label: string;
+  label?: string;
   value: string;
   isEditing: boolean;
+  className?: string;
   error?: string;
   onChange: (v: string) => void;
 }) => (
   <div>
-    <Label>{label}</Label>
+    {label && <Label>{label}</Label>}
     {isEditing ? (
       label === "Gender" ? (
         <>
@@ -87,7 +85,7 @@ const Editable = ({
         </>
       )
     ) : (
-      <p className="mt-1 capitalize">{value || "N/A"}</p>
+      <p className={cn(className, "mt-1 capitalize")}>{value || "N/A"}</p>
     )}
   </div>
 );
@@ -99,14 +97,14 @@ const EditableTextarea = ({
   error,
   onChange,
 }: {
-  label: string;
+  label?: string;
   value: string;
   isEditing: boolean;
   error?: string;
   onChange: (v: string) => void;
 }) => (
   <div>
-    <Label>{label}</Label>
+    {label && <Label>{label}</Label>}
     {isEditing ? (
       <>
         <Textarea
@@ -124,9 +122,6 @@ const EditableTextarea = ({
 
 /* ------------------------- Profile ------------------------- */
 
-
-
-
 const Profile = ({
   user,
   isOwnProfile = false,
@@ -137,14 +132,8 @@ const Profile = ({
   const router = useRouter();
   const { update } = useSession();
   const { name, email, avatarUrl, role, gender, phone, address, bio } = user;
-  const {
-    profileData,
-    setProfileData,
-    errors,
-    setErrors,
-    clearErrors,
-    resetProfileData,
-  } = useProfileStore();
+  const { profileData, setProfileData, errors, setErrors, clearErrors } =
+    useProfileStore();
 
   useEffect(() => {
     setProfileData({
@@ -158,7 +147,13 @@ const Profile = ({
   const [isEditing, setIsEditing] = useState(false);
 
   const handleCancel = () => {
-    resetProfileData();
+    setProfileData({
+      name: name || "",
+      phone: phone || "",
+      address: address?.[0]?.toString() || "",
+      bio: bio || "",
+      gender: gender as "male" | "female" | "other" | undefined,
+    });
     setIsEditing(false);
   };
 
@@ -191,37 +186,86 @@ const Profile = ({
     }
   };
 
-  const handleLogout = async()=>{
+  const handleLogout = async () => {
     await signOut();
     router.push("/login");
-  }
+  };
 
-
-  const handleAvatarUploadSuccess = (result: any) => ({
-    
-  })
+  const handleAvatarUploadSuccess = async (result: any) => {
+    console.log("Avatar uploaded:", result);
+    const { url, fileId } = result;
+    const response = await changeAvatar(url, fileId);
+    if (response.success) {
+      toast.success("Avatar updated successfully");
+    } else {
+      toast.error("Failed to update avatar");
+    }
+  };
 
   return (
     <main>
       {/* 🔒 UPPER SECTION — UNCHANGED */}
       <section className="relative h-56">
         <div className="bg-gray-300 h-1/2" />
-        <div className="absolute top-1/2 -translate-y-1/2 left-8 size-36 border-primary border-2 rounded-full overflow-hidden p-2 bg-white">
-          <Image
-            src={avatarUrl || "/assets/icons/avatar.png"}
-            alt="User Avatar"
-            width={500}
-            height={500}
+        <div
+          className="absolute top-1/2 -translate-y-1/2 left-8
+             size-36 border-primary border-2
+             rounded-full p-2 bg-white"
+        >
+          <UserAvatar
+            src={avatarUrl}
+            isOwnProfile={isOwnProfile}
+            handleAvatarUploadSuccess={handleAvatarUploadSuccess}
           />
         </div>
+
         <div className="h-1/2 bg-gray-100 pl-48 py-2">
-          <h1 className="text-2xl font-semibold capitalize">{name}</h1>
-          <p className="text-lg text-black/60">{email}</p>
+          <div className="w-fit">
+            <Editable
+              value={profileData.name!}
+              isEditing={isEditing}
+              className="text-2xl font-semibold capitalize"
+              error={errors?.name}
+              onChange={(v) => setProfileData({ name: v })}
+            />
+            <p className="text-lg text-black/60 pl-2">{email}</p>
+          </div>
         </div>
-        <Button onClick={handleLogout} className="absolute top-4 right-4 bg-red-500 w-24 py-1" >
-          <LogOut className="size-5"/>
-          Logout
-        </Button>
+        {isOwnProfile && (
+          <div className="absolute top-4 right-4 flex gap-2">
+            {!isEditing ? (
+              <>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setIsEditing(true)}
+                >
+                  <Pencil className="mr-2 h-4 w-4" />
+                  Edit
+                </Button>
+                <Button
+                  onClick={handleLogout}
+                  size="sm"
+                  className="bg-red-500 hover:bg-white/70 hover:text-red-500 hover:scale-105 transition-all text-white cursor-pointer"
+                >
+                  <LogOut className="size-5" />
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button size="sm" onClick={handleSave}>
+                  <Save className="mr-2 h-4 w-4" />
+                  Save
+                </Button>
+                <Button size="sm" variant="outline" onClick={handleCancel}>
+                  <X className="mr-2 h-4 w-4" />
+                  Cancel
+                </Button>
+              </>
+            )}
+          </div>
+        )}
       </section>
 
       {/* LOWER SECTION */}
@@ -229,48 +273,16 @@ const Profile = ({
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Profile Details</CardTitle>
-
-            {isOwnProfile && (
-              <div className="flex gap-2">
-                {!isEditing ? (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setIsEditing(true)}
-                  >
-                    <Pencil className="mr-2 h-4 w-4" />
-                    Edit
-                  </Button>
-                ) : (
-                  <>
-                    <Button size="sm" onClick={handleSave}>
-                      <Save className="mr-2 h-4 w-4" />
-                      Save
-                    </Button>
-                    <Button size="sm" variant="outline" onClick={handleCancel}>
-                      <X className="mr-2 h-4 w-4" />
-                      Cancel
-                    </Button>
-                  </>
-                )}
-              </div>
-            )}
           </CardHeader>
 
           <Separator />
 
           <CardContent className="pt-6">
             <div className="grid grid-cols-2 gap-6">
-              <ReadOnly label="Role" value={role} />
-              <ReadOnly label="Email" value={email} />
-
-              <Editable
-                label="Name"
-                value={profileData.name!}
-                isEditing={isEditing}
-                error={errors?.name}
-                onChange={(v) => setProfileData({ name: v })}
-              />
+              <div>
+                <Label>Role</Label>
+                <p className="mt-1 capitalize">{role || "N/A"}</p>
+              </div>
 
               <Editable
                 label="Phone"
@@ -298,15 +310,7 @@ const Profile = ({
                   })
                 }
               />
-              <ImageKitProvider urlEndpoint={process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT!}>
-                <Image2
-                  src="https://ik.imagekit.io/virenderchauhan/uploads/profile/house2-2_w2UObiqrz.jpg"
-                  width={1000}
-                  className="aspect-auto rounded-md"
-                  height={1000}
-                  alt="Sample Image"
-                />
-              </ImageKitProvider>
+
               <div className="col-span-2">
                 <EditableTextarea
                   label="Bio"
@@ -316,13 +320,6 @@ const Profile = ({
                   onChange={(v) => setProfileData({ bio: v })}
                 />
               </div>
-              <IKUploader
-                folder="profile"
-                purpose="profile"
-                status="temp"
-                accept="image/jpeg,image/png,image/webp"
-                onSuccess={(e) => console.log(e)}
-              />
             </div>
           </CardContent>
         </Card>

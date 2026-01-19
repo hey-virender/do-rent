@@ -9,7 +9,10 @@ export async function getMyProfile() {
 
   const session = await auth();
   if(!session?.user){
-    throw new Error("Not authenticated");
+    return {
+      success: false,
+      error: "Not authenticated",
+    }
   }
 
   const userProfile = await prisma.user.findUnique({
@@ -19,8 +22,6 @@ export async function getMyProfile() {
       name: true,
       email: true,
       role: true,
-      image: true,
-      
     },
   })
 
@@ -47,7 +48,10 @@ export async function updateMyProfile(data: Partial<User>){
 
   
   if(!session?.user){
-    throw new Error("Not authenticated");
+    return {
+      success: false,
+      error: "Not authenticated",
+    }
   }
 
   const parsed = updateProfileSchema.safeParse(data);
@@ -81,5 +85,23 @@ export async function updateMyProfile(data: Partial<User>){
   return {
     success: true,
     message: "Profile updated successfully",
+  }
+}
+
+export async function changeAvatar(avatarUrl: string,fileId: string){
+  const session = await auth();
+  if(!session?.user){
+    return {
+      success: false,
+      error: "Not authenticated",
+    }
+  }
+  await prisma.profile.update({
+    where: { userId: session.user.id! },
+    data: { avatarUrl,avatarFileId: fileId },
+  })
+  return {
+    success: true,
+    message: "Avatar updated successfully",
   }
 }

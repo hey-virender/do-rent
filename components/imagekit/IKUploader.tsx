@@ -33,6 +33,7 @@ type ImageKitUploadResult = {
 
 type Props = {
   folder: string;
+  customUI?: React.ReactNode;
   purpose: "profile" | "property" | "cover" | "other";
   status?: "temp" | "confirmed";
   accept?: string;
@@ -42,6 +43,7 @@ type Props = {
 };
 
 const IKUploader = ({
+  customUI,
   folder,
   purpose,
   status = "temp",
@@ -139,9 +141,13 @@ const IKUploader = ({
       urlEndpoint={process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT!}
     >
       <Dialog onOpenChange={() => setUploadedUrl("")}>
-        <DialogTrigger className="w-30 cursor-pointer border-2 border-primary rounded-full p-2 flex items-center justify-center gap-3 text-primary font-semibold ">
-          <Upload /> Upload
-        </DialogTrigger>
+        {customUI ? (
+          <DialogTrigger>{customUI}</DialogTrigger>
+        ) : (
+          <DialogTrigger className="w-30 cursor-pointer border-2 border-primary rounded-full p-2 flex items-center justify-center gap-3 text-primary font-semibold ">
+            <Upload /> Upload
+          </DialogTrigger>
+        )}
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Upload Image</DialogTitle>
