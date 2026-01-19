@@ -1,20 +1,17 @@
-import { AppSidebar } from "@/components/dashboard-landlord/AppSidebar";
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
+import AppSidebar from "@/components/dashboard-landlord/AppSidebar";
+
 
 const page = () => {
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <main>
-          <SidebarTrigger />
-        </main>
-      </SidebarInset>
-    </SidebarProvider>
+    <main className="flex">
+      <section className="max-w-[30%] h-screen overflow-clip">
+        <AppSidebar />
+      </section>
+      <section>
+        Dashboard Content
+      </section>
+      
+    </main>
   );
 };
 

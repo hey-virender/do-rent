@@ -2,6 +2,7 @@ import {create} from 'zustand';
 
 interface UIStore {
   isSidebarOpen: boolean;
+  landordDashboardItemIndex: number;
   isMenuOpen: boolean;
   toggleMenu: () => void;
   toggleSidebar: () => void;
@@ -12,10 +13,12 @@ interface UIStore {
   imageUrl: string | null;
   };
   setLeafletMapData: (data: {lat: number; lng: number; address: string; imageUrl: string}) => void;
+  setLandordDashboardItemIndex?: (index: number) => void;
 
   }
 export const useUIStore = create<UIStore>((set) => ({
   isSidebarOpen: false,
+  landordDashboardItemIndex: 0,
   isMenuOpen: false,
   toggleMenu: () => set((state) => ({isMenuOpen: !state.isMenuOpen})),
   toggleSidebar: () => set((state) => ({isSidebarOpen: !state.isSidebarOpen})),
@@ -26,4 +29,5 @@ export const useUIStore = create<UIStore>((set) => ({
     imageUrl: null,
   },
   setLeafletMapData: (data) => set(() => ({leafletMapData: data})),
+  setLandordDashboardItemIndex: (index) => set(() => ({landordDashboardItemIndex: index}))
 }));  

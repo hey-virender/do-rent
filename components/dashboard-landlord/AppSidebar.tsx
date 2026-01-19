@@ -1,57 +1,55 @@
+"use client";
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarHeader,
-} from "@/components/ui/sidebar";
-import { Label } from "../ui/label";
-import {
+  Menu,
   LayoutDashboard,
   ChartBarStacked,
   Wallet,
   MessageCircleMore,
 } from "lucide-react";
+import { useUIStore } from "@/store/ui.store";
+import { Button } from "../ui/button";
 
 const sidebarItems = [
   {
     label: "Overview",
-    icon: <LayoutDashboard className="size-5" />,
+    href: "/dashboard",
+    icon: LayoutDashboard,
   },
   {
-    label: "{Properties",
-    icon: <ChartBarStacked className="size-5" />,
+    label: "Properties",
+    href: "/properties",
+    icon: ChartBarStacked,
   },
   {
     label: "Income",
-    icon: <Wallet className="size-5" />,
+    href: "/income",
+    icon: Wallet,
   },
   {
     label: "Chat",
-    icon: <MessageCircleMore className="size-5" />,
+    href: "/chat",
+    icon: MessageCircleMore,
   },
 ];
-
-export function AppSidebar() {
+const AppSidebar = () => {
+  const { landordDashboardItemIndex, setLandordDashboardItemIndex } =
+    useUIStore();
   return (
-    <Sidebar collapsible="icon">
-      <SidebarHeader>
-        <Label className="text-2xl font-bold">Landlord Dashboard</Label>
-      </SidebarHeader>
-      <SidebarContent>
-        <SidebarGroup>
-          {sidebarItems.map((item) => (
-            <div
-              key={item.label}
-              className="flex items-center gap-4 px-4 py-3 hover:bg-neutral-100/10 rounded-md cursor-pointer"
-            >
-              {item.icon}
-              <span className="text-lg">{item.label}</span>
-            </div>
-          ))}
-        </SidebarGroup>
-      </SidebarContent>
-      <SidebarFooter />
-    </Sidebar>
+    <div className="bg-green-500 w-full h-full flex items-center px-4 py-8">
+      <nav className="w-full h-full flex flex-col gap-32 overflow-hidden">
+        {sidebarItems.map((item, index) => (
+          <div
+            key={index}
+            className="w-full flex flex-col items-center gap-3 justify-center text-lg  bg-primary text-white justify-start mb-2 p-6 rounded-lg cursor-pointer hover:bg-accent hover:text-accent-foreground"
+            onClick={() => setLandordDashboardItemIndex?.(index)}
+          >
+            <item.icon className="size-32 " />
+            {item.label}
+          </div>
+        ))}
+      </nav>
+    </div>
   );
-}
+};
+
+export default AppSidebar;
