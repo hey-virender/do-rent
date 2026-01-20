@@ -1,15 +1,13 @@
-import AppSidebar from "@/components/dashboard-landlord/AppSidebar";
+import LandlordDashboardContent from "@/components/dashboard-landlord/LandlordDashboardContent";
+import Topbar from "@/components/dashboard-landlord/Topbar";
+
 
 
 const page = () => {
   return (
-    <main className="flex">
-      <section className="max-w-[30%] h-screen overflow-clip">
-        <AppSidebar />
-      </section>
-      <section>
-        Dashboard Content
-      </section>
+    <main>
+      <Topbar/>
+       <LandlordDashboardContent />
       
     </main>
   );
