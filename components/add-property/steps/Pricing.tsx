@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import { currencyOptions } from "@/constants";
 import { usePropertyDraftStore } from "@/store/propertyDraft.store";
 import { pricingSchema } from "@/validations/house.validation";
-import { clear } from "console";
+
 const Pricing = ({ onNext, onBack, isLast }: StepProps) => {
   const { draft, setDraft, errors, setErrors, clearErrors } =
     usePropertyDraftStore();
@@ -27,8 +27,8 @@ const Pricing = ({ onNext, onBack, isLast }: StepProps) => {
     clearErrors();
     const parsed = pricingSchema.safeParse({
       currency: draft.pricing?.currency,
-      monthlyPrice: draft.pricing?.monthly,
-      securityDeposit: draft.pricing?.deposit,
+      monthly: draft.pricing?.monthly,
+      deposit: draft.pricing?.deposit,
     });
     if (!parsed.success) {
       const fieldError: Record<string, string> = {};
@@ -86,14 +86,15 @@ const Pricing = ({ onNext, onBack, isLast }: StepProps) => {
               autoComplete="on"
               autoCapitalize="words"
               value={draft.pricing?.monthly}
-              onChange={(e) =>
+              onChange={(e) => {
+                console.log("monthly price changed", e.target.value);
                 setDraft({
                   pricing: {
                     ...draft.pricing,
                     monthly: Number(e.target.value),
                   },
-                })
-              }
+                });
+              }}
             />
             {errors?.monthly ? (
               <p className="text-red-500">{errors.monthly}</p>
@@ -106,8 +107,6 @@ const Pricing = ({ onNext, onBack, isLast }: StepProps) => {
             <Input
               id="securityDeposit"
               type="number"
-              autoComplete="on"
-              autoCapitalize="words"
               value={draft.pricing?.deposit}
               onChange={(e) =>
                 setDraft({

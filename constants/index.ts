@@ -39,7 +39,7 @@ export const houseListings : HouseListing[] = [
   },
 
   specs: {
-    hall: 1,
+    halls: 1,
     bedrooms: 2,
     bathrooms: 1,
     areaSqft: 850,
@@ -124,7 +124,7 @@ export const houseListings : HouseListing[] = [
   },
 
   specs: {
-    hall: 1,
+    halls: 1,
     bedrooms: 2,
     bathrooms: 1,
     areaSqft: 850,
@@ -222,3 +222,5 @@ export function zodIssuesToFlatErrors(
 
 
 export const currencyOptions = ["USD", "INR", "EUR", "GBP", "JPY", "AUD", "CAD", "CHF", "CNY", "SEK", "NZD"];
+
+export const amenitiesList = ["wifi", "ac", "gym", "pool","parking","bus facility"]

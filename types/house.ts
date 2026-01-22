@@ -1,3 +1,5 @@
+import { amenitiesList } from "@/constants";
+
 export interface HouseListing {
   id: string;
   name: string;
@@ -31,13 +33,13 @@ export interface HouseListing {
   };
 
   specs: {
-    hall: number;
+    halls: number;
     bedrooms: number;
     bathrooms: number;
     areaSqft: number;
   };
 
-  amenities: ("wifi" | "ac" | "gym" | "pool"|"parking"|"bus facility")[];
+  amenities: string[];
 
   overview: string;
 
@@ -69,5 +71,6 @@ export interface Nearby{
   name: string;
   distanceKm: number;
 }
+
 
 

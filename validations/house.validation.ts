@@ -19,15 +19,15 @@ export const houseSchama = z.object({
   }),
 
   pricing: z.object({
-    monthly: z.number().nonnegative("Monthly rent must be a positive number"),
+    monthly: z.number().min(100).nonnegative("Monthly rent must be a positive number"),
     currency: z.string().nonempty("Currency is required").length(3, "Currency must be a 3-letter code"),
-    deposit: z.number().nonnegative("Deposit must be a positive number"),
+    deposit: z.number().min(200).nonnegative("Deposit must be a positive number"),
   }),
   specs: z.object({
-    hall: z.number().min(0, "Hall must be a non-negative number"),
-    bedrooms: z.number().min(0, "Bedrooms must be a non-negative number"),
-    bathrooms: z.number().min(0, "Bathrooms must be a non-negative number"),
-    areaSqft: z.number().min(0, "Area must be a positive number"),
+    halls: z.number().min(0, "Hall must be a non-negative number"),
+    bedrooms: z.number().min(1, "Bedrooms must be a non-negative number"),
+    bathrooms: z.number().min(1, "Bathrooms must be a non-negative number"),
+    areaSqft: z.number().min(180, "Area must be at least 180 sqft"),
   }),
 
   amenities: z.array(z.enum(["wifi", "ac", "gym", "pool", "parking", "bus facility"])).optional(),
@@ -70,9 +70,7 @@ export const basicInfoSchema = houseSchama.pick({
 export const locationSchema = houseSchama.shape.location
 export const pricingSchema = houseSchama.shape.pricing;
 
-export const specsSchema = houseSchama.pick({
-  specs: true,
-});
+export const specsSchema = houseSchama.shape.specs;
 
 export const amenitiesRulesSchema = houseSchama.pick({
   amenities: true,

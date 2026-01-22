@@ -41,7 +41,7 @@ export const usePropertyDraftStore = create<PropertyDraft>()(persist((set) => ({
     
     },
     specs: {
-      hall: 0,
+      halls: 0,
       bedrooms: 0,
       bathrooms: 0,
       areaSqft: 0,
