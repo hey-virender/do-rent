@@ -1,11 +1,12 @@
-import React from 'react'
+import AddPropertyWizard from "@/components/add-property/AddPropertyWizard";
+import React from "react";
 
 const page = () => {
   return (
-   <main>
-    
-   </main>
-  )
-}
+    <main>
+      <AddPropertyWizard />
+    </main>
+  );
+};
 
-export default page
+export default page;

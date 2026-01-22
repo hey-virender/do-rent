@@ -165,16 +165,18 @@ type Availability {
 }
 
 type Coordinates {
-  lat  Float
+  lat Float
   lng Float
 }
 
 type Location {
-  city String
-  state String
-  country String
-  zipCode String
-  coordinates  Coordinates
+  line1       String
+  line2       String?
+  city        String
+  state       String
+  country     String
+  zipCode     String
+  coordinates Coordinates
 }
 
 model Property {

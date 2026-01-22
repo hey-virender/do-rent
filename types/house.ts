@@ -4,10 +4,12 @@ export interface HouseListing {
 
   meta: {
     status: "active" | "inactive";
-    createdAt: string;
+    
   };
 
   location: {
+    line1: string;
+    line2?: string;
     city: string;
     state: string;
     country: string;
@@ -29,6 +31,7 @@ export interface HouseListing {
   };
 
   specs: {
+    hall: number;
     bedrooms: number;
     bathrooms: number;
     areaSqft: number;

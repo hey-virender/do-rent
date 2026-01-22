@@ -1,4 +1,5 @@
 import { HouseListing } from "@/types/house";
+import { ZodError, ZodIssue } from "zod";
 
 export const houseListings : HouseListing[] = [
   {
@@ -7,10 +8,11 @@ export const houseListings : HouseListing[] = [
 
   meta: {
     status: "active",
-    createdAt: "2026-01-10",
+
   },
 
   location: {
+    line1: "123 Main St",
     city: "New York",
     state: "NY",
     country: "US",
@@ -37,6 +39,7 @@ export const houseListings : HouseListing[] = [
   },
 
   specs: {
+    hall: 1,
     bedrooms: 2,
     bathrooms: 1,
     areaSqft: 850,
@@ -77,10 +80,10 @@ export const houseListings : HouseListing[] = [
   ],
 
   rules:{
-    minimumStayDays: 30,
+    minimumStayMonths: 30,
     petsAllowed: true,
     smokingAllowed: false,
-    
+    partiesAllowed: false,
   },
 
   availability:{
@@ -95,10 +98,11 @@ export const houseListings : HouseListing[] = [
 
   meta: {
     status: "active",
-    createdAt: "2026-01-10",
+    
   },
 
   location: {
+    line1: "123 Main St",
     city: "New York",
     state: "NY",
     country: "US",
@@ -120,6 +124,7 @@ export const houseListings : HouseListing[] = [
   },
 
   specs: {
+    hall: 1,
     bedrooms: 2,
     bathrooms: 1,
     areaSqft: 850,
@@ -158,9 +163,10 @@ export const houseListings : HouseListing[] = [
     },
   ],
   rules:{
-    minimumStayDays: 30,
+    minimumStayMonths: 30,
     petsAllowed: true,
     smokingAllowed: false,
+    partiesAllowed: false,
   
   },
 
@@ -174,7 +180,9 @@ export const houseListings : HouseListing[] = [
 ]
 
 export async function getCoordinates(address: string) {
-  const res = await fetch(
+  console.log("Fetching coordinates for address:", address);
+  try {
+    const res = await fetch(
     `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
       address
     )}`
@@ -187,6 +195,30 @@ export async function getCoordinates(address: string) {
     lat: parseFloat(data[0].lat),
     lng: parseFloat(data[0].lon),
   };
+  } catch (error) {
+    console.error("Error fetching coordinates:", error);
+    return null;
+    
+  }
 }
 
 
+export function zodIssuesToFlatErrors(
+  issues: ZodError["issues"]
+): Record<string, string> {
+  const errors: Record<string, string> = {};
+
+  for (const issue of issues) {
+    const key = issue.path.map(String).join(".");
+
+    // keep first error per field
+    if (!errors[key]) {
+      errors[key] = issue.message;
+    }
+  }
+
+  return errors;
+}
+
+
+export const currencyOptions = ["USD", "INR", "EUR", "GBP", "JPY", "AUD", "CAD", "CHF", "CNY", "SEK", "NZD"];
