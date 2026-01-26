@@ -45,6 +45,14 @@ const Specs = ({ onNext, onBack, isLast }: StepProps) => {
     console.log("Specs validated successfully");
     onNext();
   }
+  const clearData = () => {
+    setDraft({specs:{
+      halls: 0,
+      bedrooms: 0,
+      bathrooms: 0,
+      areaSqft: 0,
+    }});
+  }
   return (
     <section>
       <FieldSet>
@@ -119,6 +127,7 @@ const Specs = ({ onNext, onBack, isLast }: StepProps) => {
 
       <Button onClick={onBack}>Back</Button>
       <Button onClick={validateAndProceed}>{isLast ? "Finish" : "Next"}</Button>
+      <Button variant="outline" onClick={clearData}>Clear</Button>
     </section>
   );
 };

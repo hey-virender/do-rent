@@ -45,6 +45,15 @@ const Pricing = ({ onNext, onBack, isLast }: StepProps) => {
     clearErrors();
     onNext();
   };
+  const clearData = () => {
+    setDraft({
+      pricing: {
+        currency: "",
+        monthly: 0,
+        deposit: 0,
+      },
+    });
+  };
   return (
     <section>
       <FieldSet>
@@ -130,6 +139,7 @@ const Pricing = ({ onNext, onBack, isLast }: StepProps) => {
 
       <Button onClick={onBack}>Back</Button>
       <Button onClick={validateAndProceed}>{isLast ? "Finish" : "Next"}</Button>
+      <Button variant="outline" onClick={clearData}>Clear</Button>
     </section>
   );
 };

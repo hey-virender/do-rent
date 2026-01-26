@@ -12,6 +12,7 @@ import {
 import { amenitiesList } from "@/constants";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { amenitiesRulesSchema } from "@/validations/house.validation";
 
 const rulesConfig = [
   {
@@ -45,7 +46,7 @@ const AmenitiesRules = ({ onNext, onBack, isLast }: StepProps) => {
     usePropertyDraftStore();
 
   const handleAmenityChange = (amenity: string, isChecked: boolean) => {
-    console.log("Amenity change:", amenity, isChecked);
+    
     let updatedAmenities = draft.amenities || [];
     if (isChecked) {
       updatedAmenities = [...updatedAmenities, amenity];
@@ -56,7 +57,7 @@ const AmenitiesRules = ({ onNext, onBack, isLast }: StepProps) => {
   };
 
   const handleRuleChange = (key: string, value: boolean | number) => {
-    console.log("Rule change:", key, value);
+   
     setDraft({
       rules: {
         ...draft.rules,
@@ -64,6 +65,37 @@ const AmenitiesRules = ({ onNext, onBack, isLast }: StepProps) => {
       },
     });
   };
+
+  const validateAndProceed = () => {
+    const parsed = amenitiesRulesSchema.safeParse({
+      amenities: draft.amenities,
+      rules: draft.rules,
+    });
+    console.log("Validating amenities and rules", parsed);
+   
+    if(!parsed.success){
+        const fieldErrors: Record<string, string> = {};
+        parsed.error.issues.forEach((err) => {
+          const field = err.path[0];
+          if (typeof field === "string" || typeof field === "number") {
+            fieldErrors[field.toString()] = err.message;
+          }
+        })
+        setErrors(fieldErrors);
+        
+        return;
+    }
+    clearErrors();
+    onNext();
+  }
+  const clearData = () => {
+    setDraft({ amenities: [], rules: {
+      minimumStayMonths: 0,
+      petsAllowed: false,
+      smokingAllowed: false,
+      partiesAllowed: false,
+    } });
+  }
 
   return (
     <section className="">
@@ -122,8 +154,8 @@ const AmenitiesRules = ({ onNext, onBack, isLast }: StepProps) => {
                     />
                   </>
                 )}
-                {errors?.[`rules.${rule.key}`] ? (
-                  <p className="text-red-500">{errors[`rules.${rule.key}`]}</p>
+                {errors?.rules ? (
+                  <p className="text-red-500">{errors.rules}</p>
                 ) : (
                   <FieldDescription>{rule.description}</FieldDescription>
                 )}
@@ -133,7 +165,8 @@ const AmenitiesRules = ({ onNext, onBack, isLast }: StepProps) => {
         </FieldGroup>
       </FieldSet>
       <Button onClick={onBack}>Back</Button>
-      <Button onClick={onNext}>{isLast ? "Finish" : "Next"}</Button>
+      <Button onClick={validateAndProceed}>{isLast ? "Finish" : "Next"}</Button>
+      <Button variant="outline" onClick={clearData}>Clear</Button>
     </section>
   );
 };

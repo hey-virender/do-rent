@@ -34,11 +34,11 @@ type ImageKitUploadResult = {
 type Props = {
   folder: string;
   customUI?: React.ReactNode;
-  purpose: "profile" | "property" | "cover" | "other";
+  purpose: "profile" | "gallery" | "cover" | "other";
   status?: "temp" | "confirmed";
   accept?: string;
-  lable?: string;
-  onSuccess?: (result: ImageKitUploadResult) => void;
+  single: boolean;
+  onSuccess?: (result: ImageKitUploadResult | ImageKitUploadResult[]) => void;
   onError?: (error: Error) => void;
 };
 
@@ -48,7 +48,7 @@ const IKUploader = ({
   purpose,
   status = "temp",
   accept,
-  lable,
+  single = true,
   onSuccess,
   onError,
 }: Props) => {
@@ -73,69 +73,91 @@ const IKUploader = ({
   };
 
   const handleUpload = async () => {
-    const abortController = new AbortController();
     const fileInput = fileInputRef.current;
-    if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
-      alert("Please select a file to upload");
+    if (!fileInput?.files?.length) {
+      toast.error("Please select at least one file");
       return;
     }
 
-    // Extract the first file from the file input
-    const file = fileInput.files[0];
-
-    let authParams;
-    try {
-      authParams = await authenticator();
-    } catch (error) {
-      return;
-    }
-
-    const { signature, token, expire, publicKey } = authParams;
+    const files = Array.from(fileInput.files);
 
     try {
+      setProgress(0);
+
+      // ================= MULTIPLE FILES =================
+      if (!single) {
+        let uploadedBytes = 0;
+        const totalBytes = files.reduce((acc, f) => acc + f.size, 0);
+
+        const results = await Promise.all(
+          files.map(async (file) => {
+            const { token, expire, signature, publicKey } =
+              await authenticator();
+
+            return upload({
+              expire,
+              token,
+              signature,
+              publicKey,
+              folder: `/uploads/${folder}`,
+              file,
+              fileName: file.name,
+              customMetadata: { status, purpose },
+              onProgress: (e) => {
+                uploadedBytes += e.loaded;
+                setProgress(Math.min((uploadedBytes / totalBytes) * 100, 100));
+              },
+            });
+          }),
+        );
+
+        const formatted: ImageKitUploadResult[] = results.map((res) => ({
+          url: res.url!,
+          fileId: res.fileId!,
+          width: res.width,
+          height: res.height,
+          size: res.size,
+        }));
+
+        onSuccess?.(formatted);
+        return;
+      }
+
+      // ================= SINGLE FILE =================
+      const { token, expire, signature, publicKey } = await authenticator();
+
+      const file = files[0];
+
       const uploadResponse = await upload({
         expire,
         token,
         signature,
         publicKey,
-        folder: `/uploads/${folder}`, // Optional: specify a folder in ImageKit
+        folder: `/uploads/${folder}`,
         file,
         fileName: file.name,
-        customMetadata: {
-          status,
-          purpose,
-        },
-        onProgress: (event) => {
-          setProgress((event.loaded / event.total) * 100);
+        customMetadata: { status, purpose },
+        onProgress: (e) => {
+          setProgress((e.loaded / e.total) * 100);
         },
       });
-      console.log("File uploaded successfully:", uploadResponse);
+
       setUploadedUrl(uploadResponse.url!);
-      if (onSuccess) {
-        onSuccess({
-          url: uploadResponse.url!,
-          fileId: uploadResponse.fileId!,
-          width: uploadResponse.width,
-          height: uploadResponse.height,
-          size: uploadResponse.size,
-        });
-      }
+
+      onSuccess?.({
+        url: uploadResponse.url!,
+        fileId: uploadResponse.fileId!,
+        width: uploadResponse.width,
+        height: uploadResponse.height,
+        size: uploadResponse.size,
+      });
     } catch (error) {
-      if (error instanceof ImageKitAbortError) {
-        console.error("Upload aborted:", error.reason);
-      } else if (error instanceof ImageKitInvalidRequestError) {
-        console.error("Invalid request:", error.message);
-      } else if (error instanceof ImageKitUploadNetworkError) {
-        console.error("Network error:", error.message);
-      } else if (error instanceof ImageKitServerError) {
-        console.error("Server error:", error.message);
-      } else {
-        // Handle any other errors that may occur.
-        console.error("Upload error:", error);
-      }
-      toast.error("Failed to upload the file");
+      console.error("Upload error:", error);
+      toast.error("Failed to upload file(s)");
+      onError?.(error as Error);
     }
   };
+
   return (
     <ImageKitProvider
       urlEndpoint={process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT!}
@@ -162,7 +184,12 @@ const IKUploader = ({
               unoptimized
             />
           )}
-          <Input type="file" ref={fileInputRef} accept={accept} />
+          <Input
+            type="file"
+            ref={fileInputRef}
+            accept={accept}
+            multiple={!single}
+          />
           {/* Button to trigger the upload process */}
           <Button type="button" onClick={handleUpload}>
             <Upload />

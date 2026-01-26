@@ -46,15 +46,26 @@ export const houseSchama = z.object({
   }),
 
   rules: z.object({
-    minimumStayMonths: z.number().min(0, "Minimum stay must be a non-negative number"),
+    minimumStayMonths: z.number().min(2, "Minimum stay must be at least 2 months"),
     petsAllowed: z.boolean(),
     smokingAllowed: z.boolean(),
     partiesAllowed: z.boolean(),
   }),
   availability: z.object({
-    availableFrom: z.string().refine((date) => !isNaN(Date.parse(date)), {
-      message: "Invalid date format", 
-    }),
+    availableFrom:  z
+    .string().default(() => {
+      const today = new Date();
+      return today.toISOString().split("T")[0];
+    })
+    .refine((value) => {
+      const input = new Date(value);
+      input.setHours(0, 0, 0, 0);
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      return input >= today;
+    }, "Date cannot be earlier than today"),
     leaseTerms: z.string().min(5, "Lease terms must be at least 5 characters long"),
     conditions: z.string().min(5, "Conditions must be at least 5 characters long"),
   }),
@@ -79,6 +90,4 @@ export const amenitiesRulesSchema = houseSchama.pick({
 export const mediaSchema = houseSchama.pick({
   media: true,
 });
-export const availabilitySchema = houseSchama.pick({
-  availability: true,
-}); 
+export const availabilitySchema = houseSchama.shape.availability; 

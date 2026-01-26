@@ -79,6 +79,21 @@ const LocationDetails = ({ onNext, onBack, isLast }: StepProps) => {
     clearErrors();
     onNext();
   };
+  const clearData = () => {
+    setDraft({
+      location: {
+        line1: "",
+        line2: "",
+        city: "",
+        state: "",
+        country: "",
+        coordinates: {
+          lat: 0,
+          lng: 0,
+        },
+      },
+    });
+  }
   return (
     <section>
       <FieldSet>
@@ -276,6 +291,7 @@ const LocationDetails = ({ onNext, onBack, isLast }: StepProps) => {
 
       <Button onClick={onBack}>Back</Button>
       <Button onClick={validateAndProceed}>{isLast ? "Finish" : "Next"}</Button>
+      <Button variant="outline" onClick={clearData}>Clear</Button>
     </section>
   );
 };

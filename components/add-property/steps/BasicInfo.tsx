@@ -36,6 +36,9 @@ const BasicInfo = ({ onNext, onBack, isLast }: StepProps) => {
     clearErrors();
     onNext();
   };
+  const clearData = () => {
+    setDraft({ name: "", overview: "" });
+  };
   return (
     <section>
       <FieldSet>
@@ -81,6 +84,7 @@ const BasicInfo = ({ onNext, onBack, isLast }: StepProps) => {
         <Button onClick={validateAndProceed}>
           {isLast ? "Finish" : "Next"}
         </Button>
+        <Button variant="outline" onClick={clearData}>Clear</Button>
       </div>
     </section>
   );

@@ -56,7 +56,7 @@ export const usePropertyDraftStore = create<PropertyDraft>()(persist((set) => ({
       smokingAllowed: false,
     },
     availability: {
-      availableFrom: '',
+      availableFrom: new Date().toISOString().split("T")[0],
       leaseTerms: '',
       conditions: '',
     },
