@@ -1,6 +1,12 @@
 import { ru } from 'date-fns/locale';
 import {z} from 'zod';
 
+export const nearbySchema = z.object({
+  name: z.string().min(2, "Nearby place name must be at least 2 characters long"),
+  type: z.string().min(2, "Type must be at least 2 characters long"),
+  distanceKm: z.number().min(0, "Distance must be a non-negative number"),
+});
+
 export const houseSchama = z.object({
   name: z.string().min(3, "Name must be at least 3 characters long"),
   meta: z.object({
@@ -34,11 +40,7 @@ export const houseSchama = z.object({
 
   overview: z.string().nonempty("Overview is required").min(10, "Overview must be at least 10 characters long"),
 
-  nearby: z.array(z.object({
-    name: z.string().min(2, "Nearby place name must be at least 2 characters long"),
-    type: z.string().min(2, "Type must be at least 2 characters long"),
-    distanceKm: z.number().min(0, "Distance must be a non-negative number"),
-  })).optional(),
+  nearby: z.array(nearbySchema).optional(),
 
   media: z.object({
     cover: z.string().url("Cover must be a valid URL"),
@@ -71,6 +73,8 @@ export const houseSchama = z.object({
   }),
 });
 
+
+
 export type HouseSchema = z.infer<typeof houseSchama>;
 
 export const basicInfoSchema = houseSchama.pick({
@@ -82,6 +86,7 @@ export const locationSchema = houseSchama.shape.location
 export const pricingSchema = houseSchama.shape.pricing;
 
 export const specsSchema = houseSchama.shape.specs;
+
 
 export const amenitiesRulesSchema = houseSchama.pick({
   amenities: true,

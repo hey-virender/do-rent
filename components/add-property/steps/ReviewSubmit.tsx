@@ -77,13 +77,23 @@ const ReviewSubmit = ({ onNext, onBack, isLast }: StepProps) => {
               <CarouselContent>
                 {draft.media.gallery.map((img, index) => (
                   <CarouselItem key={index}>
-                    <Image src={img || ""} alt={img} height={200} width={300}/>
+                    <Image src={img || ""} alt={img} height={200} width={300} />
                   </CarouselItem>
                 ))}
               </CarouselContent>
             </Carousel>
           )}
         </div>
+      </div>
+      <div>
+        <h3>Rules</h3>
+        {}
+      </div>
+      <div>
+        <h3>Availability</h3>
+        <p>Available From: {draft.availability?.availableFrom}</p>
+        <p>Lease Terms: {draft.availability?.leaseTerms}</p>
+        <p>Conditions: {draft.availability?.conditions}</p>
       </div>
       <Button onClick={onBack}>Back</Button>
       <Button onClick={onNext}>{isLast ? "Finish" : "Next"}</Button>

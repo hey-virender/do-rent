@@ -3,6 +3,7 @@ import AvailabilityOwner from "./AvailabilityOwner";
 import BasicInfo from "./BasicInfo";
 import LocationDetails from "./LocationDetails";
 import Media from "./Media";
+import NearbyInfo from "./NearbyInfo";
 import Pricing from "./Pricing";
 import ReviewSubmit from "./ReviewSubmit";
 import Specs from "./Specs";
@@ -43,6 +44,11 @@ export const ADD_PROPERTY_STEPS = [
     title:"Availability",
     component: AvailabilityOwner
   },
+ {
+    id:"nearby",
+    title:"Nearby Info",
+    component: NearbyInfo
+ },
   {
     id:"review",
     title:"Review & Submit",
