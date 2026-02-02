@@ -11,27 +11,27 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { getCoordinates, zodIssuesToFlatErrors } from "@/constants";
+import { getCoordinates } from "@/constants";
 import { locationSchema } from "@/validations/house.validation";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
 
 const LocationDetails = ({ onNext, onBack, isLast }: StepProps) => {
+  const [address, setAddress] = useState("");
   const { draft, errors, setDraft, setErrors, clearErrors } =
     usePropertyDraftStore();
   const fetchCoordinates = async () => {
     if (
-      !draft.location?.line1 &&
-      !draft.location?.city &&
-      !draft.location?.state &&
-      !draft.location?.country
+     !address
     ) {
-      toast.error("Please fill address fields to get coordinates");
+      toast.error("Please fill address field to get coordinates");
       return;
     }
-    const address = `${draft.location?.line1}, ${draft.location?.city}, ${draft.location?.state}, ${draft.location?.country}`;
+    
     try {
       const coordinates = await getCoordinates(address);
       console.log("fetched coordinates", coordinates);
-      if (coordinates) {
+      if (coordinates && coordinates.lat && coordinates.lng) {
         console.log(coordinates);
         setDraft({
           location: {
@@ -43,6 +43,8 @@ const LocationDetails = ({ onNext, onBack, isLast }: StepProps) => {
           },
         });
         toast.success("Coordinates fetched successfully");
+      }else{
+        toast.error("Failed to fetch coordinates");
       }
     } catch (error) {
       toast.error("Failed to fetch coordinates");
@@ -58,6 +60,7 @@ const LocationDetails = ({ onNext, onBack, isLast }: StepProps) => {
       city: draft.location?.city,
       state: draft.location?.state,
       country: draft.location?.country,
+      pinCode: draft.location?.pinCode,
       coordinates: {
         lat: draft.location?.coordinates?.lat,
         lng: draft.location?.coordinates?.lng,
@@ -87,13 +90,14 @@ const LocationDetails = ({ onNext, onBack, isLast }: StepProps) => {
         city: "",
         state: "",
         country: "",
+        pinCode: "",
         coordinates: {
           lat: 0,
           lng: 0,
         },
       },
     });
-  }
+  };
   return (
     <section>
       <FieldSet>
@@ -115,7 +119,7 @@ const LocationDetails = ({ onNext, onBack, isLast }: StepProps) => {
                 })
               }
             />
-            {errors?.line1? (
+            {errors?.line1 ? (
               <p className="text-red-500">{errors.line1}</p>
             ) : (
               <FieldDescription>
@@ -219,7 +223,34 @@ const LocationDetails = ({ onNext, onBack, isLast }: StepProps) => {
               <p className="text-red-500">{errors.country}</p>
             ) : (
               <FieldDescription>
-                Enter the address line 1 of the property
+                Enter the country of the property
+              </FieldDescription>
+            )}
+          </Field>
+          <Field>
+            <FieldLabel htmlFor="pinCode">Pin Code</FieldLabel>
+            <Input
+              id="pinCode"
+              type="text"
+              inputMode="numeric"
+              pattern="[1-9][0-9]{5}"
+              maxLength={6}
+              autoComplete="postal-code"
+              value={draft.location?.pinCode}
+              onChange={(e) =>
+                setDraft({
+                  location: {
+                    ...draft.location,
+                    pinCode: e.target.value,
+                  },
+                })
+              }
+            />
+            {errors?.pinCode ? (
+              <p className="text-red-500">{errors.pinCode}</p>
+            ) : (
+              <FieldDescription>
+                Enter the pin code of the property
               </FieldDescription>
             )}
           </Field>
@@ -244,10 +275,8 @@ const LocationDetails = ({ onNext, onBack, isLast }: StepProps) => {
                   })
                 }
               />
-              {errors?.coordinates? (
-                <p className="text-red-500">
-                  {errors.coordinates}
-                </p>
+              {errors?.coordinates ? (
+                <p className="text-red-500">{errors.coordinates}</p>
               ) : (
                 <FieldDescription>
                   Enter the latitude of the property
@@ -274,24 +303,29 @@ const LocationDetails = ({ onNext, onBack, isLast }: StepProps) => {
                   })
                 }
               />
-              {errors?.coordinates? (
-                <p className="text-red-500">
-                  {errors.coordinates}
-                </p>
+              {errors?.coordinates ? (
+                <p className="text-red-500">{errors.coordinates}</p>
               ) : (
                 <FieldDescription>
                   Enter the longitude of the property
                 </FieldDescription>
               )}
             </Field>
-            <Button onClick={fetchCoordinates}> Get Coordinates</Button>
+           <FieldGroup>
+            <FieldLabel>Address to get coordinates</FieldLabel>
+            <Input type="text" placeholder="Enter Address to get coordinates" value={address} onChange={(e) => setAddress(e.target.value)} />
+             <Button onClick={fetchCoordinates}> Get Coordinates</Button>
+            <Label>Address must be valid to get coordinates</Label>
+            </FieldGroup>
           </FieldGroup>
         </FieldGroup>
       </FieldSet>
 
       <Button onClick={onBack}>Back</Button>
       <Button onClick={validateAndProceed}>{isLast ? "Finish" : "Next"}</Button>
-      <Button variant="outline" onClick={clearData}>Clear</Button>
+      <Button variant="outline" onClick={clearData}>
+        Clear
+      </Button>
     </section>
   );
 };

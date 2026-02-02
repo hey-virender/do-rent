@@ -27,18 +27,25 @@ export const usePropertyDraftStore = create<PropertyDraft>()(persist((set) => ({
   draft: {
     name: '',
     overview: '',
+    meta: {
+      status: 'inactive',
+    },
     location: {
       line1: '',
       line2: '',
       city: '',
       state: '',
+      pinCode: '',
       country: '',
-      
     },
     pricing: {
-      
+      monthly: 0,
       currency: '',
-    
+      deposit: 0,
+    },
+    media: {
+      cover: { url: '', fileId: '' },
+      gallery: [],
     },
     specs: {
       halls: 0,

@@ -1,15 +1,16 @@
-import React from "react";
-import { houseListings } from "@/constants";
+
 import PropertyBanner from "@/components/house/details-panel/PropertyBanner";
 import Map from "@/components/Map";
+import { getProperties } from "@/actions/property.actions";
 
 const page = async () => {
+  const properties = await getProperties();
 
 
   return (
     <div className="flex">
       <section className="grid grid-cols-2 py-6">
-        {houseListings.map((house) => (
+        {properties && properties.map((house) => (
           <PropertyBanner
           key={house.id}
             id={house.id}
@@ -17,7 +18,7 @@ const page = async () => {
             location={house.location}
             price={house.pricing.monthly}
             currency={house.pricing.currency}
-            cover={house.media.cover}
+            cover={house.media.cover.url}
           />
         ))}
       </section>

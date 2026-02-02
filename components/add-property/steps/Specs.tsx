@@ -21,8 +21,8 @@ import { log } from "console";
 import { Input } from "@/components/ui/input";
 const Specs = ({ onNext, onBack, isLast }: StepProps) => {
   const {draft,setDraft,errors,setErrors,clearErrors} = usePropertyDraftStore();  
+  console.log("Current draft:", draft);
   const validateAndProceed = () => {
-    console.log("Validating specs", draft.specs);
     clearErrors();
     const parsed = specsSchema.safeParse({
       halls: draft.specs?.halls,

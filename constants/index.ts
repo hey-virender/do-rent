@@ -29,12 +29,12 @@ export const houseListings : HouseListing[] = [
   },
 
   media: {
-    cover: "/assets/images/house1.jpg",
+    cover: {fileId: 'cover1', url: "/assets/images/house1.jpg"},
     gallery: [
-      "/assets/images/house1-1.jpg",
-      "/assets/images/house1-2.jpg",
-      "/assets/images/house1-3.jpg",
-      "/assets/images/house1-4.jpg",
+      {fileId: 'img1', url: "/assets/images/house1-1.jpg"},
+      {fileId: 'img2', url: "/assets/images/house1-2.jpg"},
+      {fileId: 'img3', url: "/assets/images/house1-3.jpg"},
+      {fileId: 'img4', url: "/assets/images/house1-4.jpg"},
     ],
   },
 
@@ -55,11 +55,12 @@ export const houseListings : HouseListing[] = [
   overview:
     "A beautiful and cozy apartment located in the heart of downtown with easy access to all amenities.",
 
-  ownerSnapshot: {
+ landlordId: "user_123",
+ landlord:{
+    id: "user_123",
     name: "John Doe",
-    phone: "123-456-7890",
-    email: "example@example.com",
-  },
+    email: "test@test.com"
+ },
 
    nearby:[
     {
@@ -119,8 +120,13 @@ export const houseListings : HouseListing[] = [
   },
 
   media: {
-    cover: "/assets/images/house2.jpg",
-    gallery: [],
+    cover: {fileId: 'cover2', url: "/assets/images/house2.jpg"},
+    gallery: [
+      {fileId: 'img1', url: "/assets/images/house2-1.jpg"},
+      {fileId: 'img2', url: "/assets/images/house2-2.jpg"},
+      {fileId: 'img3', url: "/assets/images/house2-3.jpg"},
+      {fileId: 'img4', url: "/assets/images/house2-4.jpg"},
+    ],
   },
 
   specs: {
@@ -140,7 +146,9 @@ export const houseListings : HouseListing[] = [
   overview:
     "A beautiful and cozy apartment located in the heart of downtown with easy access to all amenities.",
 
-  ownerSnapshot: {
+  landlordId: "user_123",
+  landlord:{
+    id: "user_123",
     name: "John Doe",
     phone: "123-456-7890",
     email: "example@example.com",

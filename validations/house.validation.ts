@@ -7,10 +7,14 @@ export const nearbySchema = z.object({
   distanceKm: z.number().min(0, "Distance must be a non-negative number"),
 });
 
+const imageAssetSchema = z.object({
+  url: z.string().url("URL must be a valid URL"),
+  fileId: z.string().nonempty("File ID is required"),
+});
 export const houseSchama = z.object({
   name: z.string().min(3, "Name must be at least 3 characters long"),
   meta: z.object({
-    status: z.enum(["active", "inactive"]),
+    status: z.enum(["active", "inactive"]).default("inactive"),
   }),
   location: z.object({
     line1: z.string().nonempty("Address Line 1 is required").min(5, "Address Line 1 must be at least 5 characters long"),
@@ -18,6 +22,10 @@ export const houseSchama = z.object({
     city: z.string().nonempty("City is required").min(2, "City must be at least 2 characters long"),
     state: z.string().nonempty("State is required").min(2, "State must be at least 2 characters long"),
     country: z.string().nonempty("Country is required").min(2, "Country must be at least 2 characters long"),
+    pinCode: z
+  .string()
+  .regex(/^[1-9][0-9]{5}$/, "Invalid Indian PIN code"),
+
     coordinates: z.object({
       lat: z.number({ error:"Not a valid latitude" }).min(-90).max(90),
       lng: z.number({ error: "Not a valid longitude" }).min(-180).max(180),
@@ -43,8 +51,8 @@ export const houseSchama = z.object({
   nearby: z.array(nearbySchema).optional(),
 
   media: z.object({
-    cover: z.string().url("Cover must be a valid URL"),
-    gallery: z.array(z.string().url("Gallery items must be valid URLs")).optional(),
+    cover: imageAssetSchema,
+    gallery: z.array(imageAssetSchema).optional(),
   }),
 
   rules: z.object({
@@ -75,6 +83,8 @@ export const houseSchama = z.object({
 
 
 
+
+
 export type HouseSchema = z.infer<typeof houseSchama>;
 
 export const basicInfoSchema = houseSchama.pick({
@@ -92,7 +102,5 @@ export const amenitiesRulesSchema = houseSchama.pick({
   amenities: true,
   rules: true,
 });
-export const mediaSchema = houseSchama.pick({
-  media: true,
-});
+export const mediaSchema = houseSchama.shape.media;
 export const availabilitySchema = houseSchama.shape.availability; 

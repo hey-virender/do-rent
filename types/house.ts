@@ -1,7 +1,9 @@
 import { amenitiesList } from "@/constants";
+import { ImageAsset, Ref } from "./type";
+import { User } from "./user";
 
 export interface HouseListing {
-  id: string;
+  id?: string;
   name: string;
 
   meta: {
@@ -15,6 +17,7 @@ export interface HouseListing {
     city: string;
     state: string;
     country: string;
+    pinCode?: string;
     coordinates: {
       lat: number;
       lng: number;
@@ -28,8 +31,8 @@ export interface HouseListing {
   };
 
   media: {
-    cover: string;
-    gallery?: string[];
+    cover: ImageAsset;
+    gallery?: ImageAsset[];
   };
 
   specs: {
@@ -42,12 +45,8 @@ export interface HouseListing {
   amenities: string[];
 
   overview: string;
-
-  ownerSnapshot: {
-    name: string;
-    phone: string;
-    email?: string;
-  };
+  landlordId?: string;
+  landlord?: Ref<Partial<User>>;
   nearby: Nearby[];
 
   rules:{

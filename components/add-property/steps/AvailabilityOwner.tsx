@@ -7,6 +7,7 @@ import { usePropertyDraftStore } from "@/store/propertyDraft.store";
 import { Textarea } from "@/components/ui/textarea";
 import { set } from "zod";
 import { availabilitySchema } from "@/validations/house.validation";
+import { Switch } from "@/components/ui/switch";
 
 const AvailabilityOwner = ({ onNext, onBack, isLast }: StepProps) => {
   const today = new Date();
@@ -62,8 +63,21 @@ const AvailabilityOwner = ({ onNext, onBack, isLast }: StepProps) => {
       conditions: "",
     }});
   }
+  const handleStatusChange = (checked: boolean) => {
+    console.log("Status changed to:", checked ? "active" : "inactive");
+    setDraft({
+      meta: {
+        status: checked ? "active" : "inactive",
+      }})
+  };
+
+  const status = draft?.meta?.status === "active";
   return (
     <section>
+      <div className="flex gap-4">
+        <Label>Status</Label>
+        <Switch checked={status} onCheckedChange={handleStatusChange} className="border border-1 border-black "/>
+      </div>
       <div>
         <Label>Availability</Label>
         <DatePicker date={ draft?.availability?.availableFrom ? new Date(draft.availability.availableFrom) : today} setDate={handleDateChange} />

@@ -8,20 +8,25 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
+import AmenitiesGrid from "@/components/house/details-panel/AmenitiesGrid";
+import AvailabilityGrid from "@/components/house/details-panel/AvailabilityGrid";
+import RulesGrid from "@/components/house/details-panel/RulesGrid";
+import SpecsGrid from "@/components/house/details-panel/SpecsGrid";
+import NearbyGrid from "@/components/house/details-panel/NearbyGrid";
 const ReviewSubmit = ({ onNext, onBack, isLast }: StepProps) => {
   const { draft } = usePropertyDraftStore();
   return (
-    <section>
+    <section className="grid grid-cols-3">
       <div>
-        <h2>Name</h2>
-        <p>{draft.name}</p>
+        <h2 className="font-semibold text-lg">Name</h2>
+        <p className="capitalize">{draft.name}</p>
       </div>
       <div>
-        <h2>Overview</h2>
-        <p>{draft.overview}</p>
+        <h2 className="font-semibold text-lg">Overview</h2>
+        <p className="capitalize">{draft.overview}</p>
       </div>
       <div>
-        <h2>Location</h2>
+        <h2 className="font-semibold text-lg">Location</h2>
         <p>{draft.location?.line1}</p>
         <p>{draft.location?.line2}</p>
         <p>
@@ -29,55 +34,53 @@ const ReviewSubmit = ({ onNext, onBack, isLast }: StepProps) => {
           {draft.location?.country}
         </p>
         <div>
-          <h3>Coordinates</h3>
+          <h3 className="font-semibold">Coordinates</h3>
           <p>Latitude: {draft.location?.coordinates?.lat}</p>
           <p>Longitude: {draft.location?.coordinates?.lng}</p>
         </div>
       </div>
       <div>
-        <h2>Pricing</h2>
-        <p>Monthly: {draft.pricing?.monthly}</p>
-        <p>Currency: {draft.pricing?.currency}</p>
-        <p>Deposit: {draft.pricing?.deposit}</p>
+        <h2 className="font-semibold text-lg">Pricing</h2>
+        <div>
+         
+          <p>Price per Month : {draft.pricing?.currency} {draft.pricing?.monthly}</p>
+          <p>Security : {draft.pricing?.currency} {draft.pricing?.deposit}</p>
+
+
+        </div>
+        
       </div>
-      <div>
-        <h2>Specifications</h2>
-        <p>Halls: {draft.specs?.halls}</p>
-        <p>Bedrooms: {draft.specs?.bedrooms}</p>
-        <p>Bathrooms: {draft.specs?.bathrooms}</p>
-        <p>Area (sqft): {draft.specs?.areaSqft}</p>
+      <div className="col-span-3">
+        <h2 className="font-semibold text-lg">Specifications</h2>
+        <SpecsGrid specs={draft.specs!} />
       </div>
-      <div>
-        <h2>Amenities</h2>
+      <div className="col-span-3">
+        <h2 className="font-semibold text-lg">Amenities</h2>
         {draft.amenities && draft?.amenities?.length > 0 ? (
-          <ul>
-            {draft?.amenities.map((amenity, index) => (
-              <li key={index}>{amenity}</li>
-            ))}
-          </ul>
+          <AmenitiesGrid amenities={draft.amenities} />
         ) : (
           <p>No amenities listed.</p>
         )}
       </div>
-      <div>
-        <h2>Photos</h2>
+      <div className="col-span-3 flex justify-between gap-8">
+  
         <div>
-          <h3>Cover:</h3>
+          <h3 className="font-semibold text-lg">Cover:</h3>
           <Image
-            src={draft.media?.cover || ""}
+            src={draft.media?.cover?.url || ""}
             alt="Cover Photo"
             width={300}
             height={200}
           />
         </div>
-        <div>
-          <h3>Gallery:</h3>
+        <div className="w-2/3">
+          <h3 className="font-semibold text-lg">Gallery:</h3>
           {draft.media?.gallery && draft.media.gallery.length > 0 && (
-            <Carousel>
+            <Carousel >
               <CarouselContent>
-                {draft.media.gallery.map((img, index) => (
+                {draft.media.gallery.map((asset, index) => (
                   <CarouselItem key={index}>
-                    <Image src={img || ""} alt={img} height={200} width={300} />
+                    <Image src={asset.url || ""} alt={asset.url} height={200} width={300} />
                   </CarouselItem>
                 ))}
               </CarouselContent>
@@ -85,18 +88,21 @@ const ReviewSubmit = ({ onNext, onBack, isLast }: StepProps) => {
           )}
         </div>
       </div>
-      <div>
-        <h3>Rules</h3>
-        {}
+      <div className="col-span-2">
+        <h3 className="font-semibold text-lg">Rules</h3>
+        <RulesGrid rules={draft.rules!} />
       </div>
       <div>
-        <h3>Availability</h3>
-        <p>Available From: {draft.availability?.availableFrom}</p>
-        <p>Lease Terms: {draft.availability?.leaseTerms}</p>
-        <p>Conditions: {draft.availability?.conditions}</p>
+        <AvailabilityGrid availability={draft.availability!} />
       </div>
-      <Button onClick={onBack}>Back</Button>
-      <Button onClick={onNext}>{isLast ? "Finish" : "Next"}</Button>
+      <div>
+        <h3 className="font-semibold text-lg">Nearby Places</h3>
+        <NearbyGrid nearby={draft.nearby || []} />  
+      </div>
+      <div className="col-span-3 flex gap-4">
+        <Button onClick={onBack}>Back</Button>
+        <Button onClick={onNext}>{isLast ? "Finish" : "Next"}</Button>
+      </div>
     </section>
   );
 };

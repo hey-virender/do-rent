@@ -1,22 +1,18 @@
 import PropertyGallery from "@/components/house/gallery/PropertyGallery";
 import HouseDetailsPanel from "@/components/house/details-panel/HouseDetailsPanel";
 import Map from "@/components/Map";
-import { houseListings } from "@/constants";
-import { HouseListing } from "@/types/house";
-import Image from "next/image";
 import PriceCard from "@/components/house/PriceCard";
 import { Separator } from "@/components/ui/separator";
+import { getPropertyById } from "@/actions/property.actions";
 
 const page = async ({ params }: { params: { id: string } }) => {
   const { id } = await params;
-  const property: HouseListing | undefined = houseListings.find(
-    (house) => house.id === id,
-  );
-  console.log(property);
+  const property = await getPropertyById(id);
+  console.log("property",property);
 
   const combinedImages = [
-    property?.media.cover,
-    ...(property?.media.gallery || []),
+    property?.media?.cover.url,
+    ...(property?.media.gallery.map(image => image.url) || []),
   ];
   return (
     <main className="grid grid-cols-3 gap-4 px-32">

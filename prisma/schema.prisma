@@ -133,15 +133,21 @@ type Pricing {
   deposit  Float
 }
 
+type ImageAsset {
+  url    String
+  fileId String
+}
+
 type Media {
-  cover   String
-  gallery String[]
+  cover   ImageAsset
+  gallery ImageAsset[]
 }
 
 type Specs {
+  halls     Int
   bedrooms  Int
   bathrooms Int
-  areaSqFt  Float
+  areaSqft  Float
 }
 
 type Nearby {
@@ -161,7 +167,6 @@ type Availability {
   availableFrom DateTime
   leaseTerms    String
   conditions    String
-  isAvailable   Boolean
 }
 
 type Coordinates {
@@ -175,7 +180,7 @@ type Location {
   city        String
   state       String
   country     String
-  zipCode     String
+  pinCode     String?
   coordinates Coordinates
 }
 
@@ -190,11 +195,11 @@ model Property {
   location     Location
   specs        Specs
   pricing      Pricing
-  landlordId   String       @db.ObjectId
+  landlordId   String?      @db.ObjectId
   nearby       Nearby[]
   rules        Rules
   availability Availability
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
-  landlord     User         @relation(fields: [landlordId], references: [id], onDelete: Cascade)
+  landlord     User?        @relation(fields: [landlordId], references: [id])
 }

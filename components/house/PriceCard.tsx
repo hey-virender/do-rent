@@ -9,7 +9,7 @@ import { HouseListing } from "@/types/house";
 
 const PriceCard = ({ listing }: { listing: HouseListing }) => {
   const { pricing, meta, availability } = listing;
-  const active = meta.status === "active";
+ 
   return (
     <div className="flex flex-col gap-3 rounded-xl border bg-card p-6 text-card-foreground">
       <div className="flex items-baseline justify-between gap-4">
@@ -19,21 +19,19 @@ const PriceCard = ({ listing }: { listing: HouseListing }) => {
           </span>
           <span className="text-sm text-secondary"> / month</span>
         </div>
-        <Badge variant={active ? "default" : "secondary"}>
-          {meta.status.toUpperCase()}
-        </Badge>
+        
       </div>
       <div>
         <div className="flex items-center gap-2 mb-3">
           <Calendar className="h-5 w-5 text-secondary" />
           <span className="text-sm text-secondary">
-            Available From {availability.availableFrom}
+            Available From {new Date(availability.availableFrom).toLocaleDateString()}
           </span>
         </div>
         <div className="flex items-center gap-2 mb-3">
           <Clock className="h-5 w-5 text-secondary" />
           <span className="text-sm text-secondary">
-            Minimum Stay: {listing.rules.minimumStayDays} days
+            Minimum Stay: {listing.rules.minimumStayMonths} months
           </span>
         </div>
         <div className="flex items-center gap-2">
