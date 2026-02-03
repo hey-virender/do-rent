@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { HouseListing } from "@/types/house";
 import { ImageAsset } from "@/types/type";
 import { houseSchama } from "@/validations/house.validation";
+import { success } from "zod";
 
 
 export const createProperty = async (propertyData: HouseListing) => {
@@ -141,4 +142,64 @@ export const getPropertyById = async (propertyId: string) => {
 
 
   return property;
+}
+
+
+export const getPropertiesByLandlord = async () => {
+  const session = await auth();
+  if (!session?.user) {
+    return {
+      success: false,
+      error: "Not authenticated",
+    };
+  }
+  const properties = await prisma.property.findMany({
+    where: { landlordId: session.user.id },
+    include:{
+      landlord: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        }
+      }
+    }
+  });
+  return {
+    success: true,
+    properties,
+  };
+} 
+
+export const getMyPropertiesById = async(propertyId: string) => {
+  if(!propertyId){
+    return {
+      success: false,
+      error: "Property ID is required",
+    }
+  }
+  const session = await auth();
+  if (!session?.user || session.user.role !== "landlord" ) {
+    return {
+      success: false,
+      error: "Not authenticated",
+    };
+  }
+  const property = await prisma.property.findFirst({
+    where: {
+      id: propertyId,
+      landlordId: session.user.id,
+    },
+  });
+  if(!property){
+    return {
+      success: false,
+      error: "Property not found",
+    }
+  }
+  return {
+    success: true,
+    property,
+  };
+
 }

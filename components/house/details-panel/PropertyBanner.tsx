@@ -3,7 +3,7 @@ import Link from "next/link";
 import React from "react";
 
 interface PropertyBannerProps {
-  id: string | number;
+  id: string | number |undefined;
   name: string;
   location: {
     city: string;
@@ -17,6 +17,7 @@ interface PropertyBannerProps {
   price: number;
   currency: string;
   cover: string;
+  link?: string;
 }
 
 const PropertyBanner = ({
@@ -26,10 +27,12 @@ const PropertyBanner = ({
   price,
   currency,
   cover,
+  link
+  
 }: PropertyBannerProps) => {
   return (
     <div key={id} className="px-4">
-      <Link href={`/properties/${id}`}>
+      <Link href={link ? link : `/properties/${id}`}>
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold">{name}</h1>

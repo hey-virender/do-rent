@@ -58,7 +58,7 @@ export interface HouseListing {
     
   }
   availability:{
-    availableFrom: string;
+    availableFrom: Date;
     leaseTerms: string;
     conditions: string;
 
