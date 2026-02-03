@@ -1,9 +1,11 @@
 'use server'
 import { auth } from "@/auth";
+import { imagekit, updateImageMetaData } from "@/lib/imagekit";
 import { prisma } from "@/lib/prisma";
 import { HouseListing } from "@/types/house";
 import { ImageAsset } from "@/types/type";
 import { houseSchama } from "@/validations/house.validation";
+
 
 export const createProperty = async (propertyData: HouseListing) => {
   const session = await auth();
@@ -91,13 +93,19 @@ export const createProperty = async (propertyData: HouseListing) => {
     };
   }
 
-  
+  await updateImageMetaData(newProperty.media.cover, { status: "permanent"});
+  if(newProperty.media.gallery){
+    newProperty.media.gallery.forEach( async (image) => {
+      await updateImageMetaData(image, { status: "permanent"});
+    });
+  }
+ 
 
   return {
     success: true,
     property: newProperty,
   };
-  //Todo remove the status "temp" images from imagekit if property creation is successful
+ 
 
 }
 

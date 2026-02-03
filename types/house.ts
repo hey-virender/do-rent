@@ -72,4 +72,4 @@ export interface Nearby{
 }
 
 
-
+export type Amenity = "wifi" | "ac" | "gym" | "pool"|"parking"|"bus facility"|"none";

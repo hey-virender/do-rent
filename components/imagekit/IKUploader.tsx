@@ -22,6 +22,8 @@ import {
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Progress } from "../ui/progress";
+import { set } from "zod";
+import { se } from "date-fns/locale";
 
 type ImageKitUploadResult = {
   url: string;
@@ -52,6 +54,7 @@ const IKUploader = ({
   onSuccess,
   onError,
 }: Props) => {
+  const [open, setOpen] = useState(false);
   const [progress, setProgress] = useState(0);
   const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -120,6 +123,9 @@ const IKUploader = ({
         }));
 
         onSuccess?.(formatted);
+        setOpen(false);
+        setUploadedUrl(null);
+        setProgress(0);
         return;
       }
 
@@ -151,6 +157,7 @@ const IKUploader = ({
         height: uploadResponse.height,
         size: uploadResponse.size,
       });
+      setOpen(false);
     } catch (error) {
       console.error("Upload error:", error);
       toast.error("Failed to upload file(s)");
@@ -158,11 +165,17 @@ const IKUploader = ({
     }
   };
 
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    setProgress(0);
+    setUploadedUrl(null);
+  };
+
   return (
     <ImageKitProvider
       urlEndpoint={process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT!}
     >
-      <Dialog onOpenChange={() => setUploadedUrl("")}>
+      <Dialog open={open} onOpenChange={handleOpenChange} defaultOpen={false}>
         {customUI ? (
           <DialogTrigger>{customUI}</DialogTrigger>
         ) : (

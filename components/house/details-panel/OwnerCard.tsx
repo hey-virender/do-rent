@@ -1,13 +1,11 @@
+import { Ref } from "@/types/type";
+import { User as User2 } from "@/types/user";
 import { Phone, Mail, User } from "lucide-react";
 
-interface Owner {
-  name: string;
-  phone: string;
-  email?: string;
-}
+
 
 interface Props {
-  owner: Owner;
+  owner: Partial<User2>;
 }
 
 export default function OwnerCard({ owner }: Props) {

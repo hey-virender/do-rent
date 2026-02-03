@@ -111,12 +111,12 @@ const LeafletMap = ({ lat, lng, address, zoom }: Props) => {
             house.location.coordinates.lat,
             house.location.coordinates.lng,
           ]}
-          icon={houseMarkerIcon(house.media.cover)}
+          icon={houseMarkerIcon(house.media.cover.url)}
         >
           <Popup>
             <div className="w-48">
               <Image
-                src={house.media.cover}
+                src={house.media.cover.url}
                 alt={house.name}
                 width={200}
                 height={150}

@@ -1,11 +1,12 @@
 import type { ListingTabKey } from "@/config/listing-tabs.config";
-import type { HouseListing } from "@/types/house";
+import type { Amenity, HouseListing } from "@/types/house";
 import AmenitiesGrid from "./AmenitiesGrid";
 import SpecsGrid from "./SpecsGrid";
 import OwnerCard from "./OwnerCard";
 import RulesGrid from "./RulesGrid";
 import NearbyGrid from "./NearbyGrid";
 import AvailabilityGrid from "./AvailabilityGrid";
+import { User } from "@/types/user";
 
 interface Props {
   type: ListingTabKey;
@@ -22,13 +23,13 @@ export default function TabRenderer({ type, listing }: Props) {
       );
 
     case "amenities":
-      return <AmenitiesGrid amenities={listing.amenities} />;
+      return <AmenitiesGrid amenities={listing.amenities as Amenity[]} />;
 
     case "specs":
       return <SpecsGrid specs={listing.specs} />;
 
     case "owner":
-      return <OwnerCard owner={listing.ownerSnapshot} />;
+      return <OwnerCard owner={listing.landlord as Partial<User>} />;
 
     case "rules":
       return <RulesGrid rules={listing.rules} />;
@@ -37,7 +38,7 @@ export default function TabRenderer({ type, listing }: Props) {
       return <NearbyGrid nearby={listing.nearby} />;
     
     case "availability":
-      return <AvailabilityGrid availabilty={listing.availability} />;
+      return <AvailabilityGrid availability={listing.availability} />;
 
     default:
       return null;

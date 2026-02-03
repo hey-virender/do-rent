@@ -1,6 +1,7 @@
+import { Amenity } from "@/types/house";
 import { Wifi, Snowflake, Dumbbell, Waves,Car,Bus, CircleSlash2} from "lucide-react";
 
-type Amenity = "wifi" | "ac" | "gym" | "pool"|"parking"|"bus facility"|"none";
+
 
 const AMENITIES_MAP: Record<
   Amenity,
