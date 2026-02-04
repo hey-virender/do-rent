@@ -2,6 +2,7 @@
 import PropertyBanner from "@/components/house/details-panel/PropertyBanner";
 import Map from "@/components/Map";
 import { getProperties } from "@/actions/property.actions";
+import { HouseListing } from "@/types/house";
 
 const page = async () => {
   const properties = await getProperties();
@@ -23,7 +24,7 @@ const page = async () => {
         ))}
       </section>
       <section className="w-1/3 h-[800px]">
-        <Map />
+        <Map properties={properties as HouseListing[]} />
       </section>
     </div>
   );

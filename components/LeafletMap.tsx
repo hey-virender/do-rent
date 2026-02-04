@@ -2,17 +2,19 @@
 import { getCoordinates } from "@/constants";
 import { useEffect } from "react";
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
-import { houseListings } from "@/constants";
+
 
 type Props = {
   lat?: number;
   lng?: number;
   address?: string;
   zoom?: true | false;
+  properties?: HouseListing[];
 };
 
 import L from "leaflet";
 import Image from "next/image";
+import { HouseListing } from "@/types/house";
 
 export const houseMarkerIcon = (image: string) =>
   L.divIcon({
@@ -65,7 +67,7 @@ export function FlyToLocation({
 
 
 
-const LeafletMap = ({ lat, lng, address, zoom }: Props) => {
+const LeafletMap = ({ lat, lng, address, zoom, properties }: Props) => {
   let latitude = lat;
   let longitude = lng;
  
@@ -104,7 +106,7 @@ const LeafletMap = ({ lat, lng, address, zoom }: Props) => {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       {zoom && latitude && longitude && <FlyToLocation position={[latitude!, longitude!]} />}
-      {houseListings.map((house) => (
+      {properties && properties.length > 0 && properties.map((house) => (
         <Marker
           key={house.id}
           position={[
