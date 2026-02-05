@@ -5,14 +5,15 @@ import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/datepicker";
 import { usePropertyDraftStore } from "@/store/propertyDraft.store";
 import { Textarea } from "@/components/ui/textarea";
-import { set } from "zod";
 import { availabilitySchema } from "@/validations/house.validation";
 import { Switch } from "@/components/ui/switch";
 
-const AvailabilityOwner = ({ onNext, onBack, isLast }: StepProps) => {
+const AvailabilityOwner = ({ mode,onNext, onBack, isLast }: StepProps) => {
   const today = new Date();
-  const { draft, setDraft, errors, setErrors, clearErrors } =
+  const { draft,editDraft,setEditDraft, setDraft, errors, setErrors, clearErrors } =
     usePropertyDraftStore();
+  const source = mode === "create" ? draft : editDraft;
+  
   const handleDateChange = (date: Date | undefined) => {
     if (date) {
       if (date < today) {
@@ -26,17 +27,30 @@ const AvailabilityOwner = ({ onNext, onBack, isLast }: StepProps) => {
       }
       
       console.log("Selected available from date:", date);
+     if(mode === "create"){
       setDraft({
-        availability: { ...draft.availability, availableFrom: date.toISOString().split("T")[0] },
+        availability: {
+          ...draft.availability,
+          availableFrom: date.toISOString(),
+        },
       });
+     }
+      else{
+        setEditDraft({
+          availability: {
+            ...editDraft.availability,
+            availableFrom: date.toISOString(),
+          },
+        });
+      }
     }
   };
 
   const validateAndProceed =()=>{
     const parsed = availabilitySchema.safeParse({
-      availableFrom: draft.availability?.availableFrom,
-      leaseTerms: draft.availability?.leaseTerms,
-      conditions: draft.availability?.conditions,
+      availableFrom: source.availability?.availableFrom,
+      leaseTerms: source.availability?.leaseTerms,
+      conditions: source.availability?.conditions,
     });
     console.log("Validating availability", parsed);
     if(!parsed.success){
@@ -71,7 +85,29 @@ const AvailabilityOwner = ({ onNext, onBack, isLast }: StepProps) => {
       }})
   };
 
-  const status = draft?.meta?.status === "active";
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    if(mode === "create"){
+      setDraft({
+        availability: {
+          ...draft.availability,
+          [name]: value,
+        },
+      });
+    }
+    else{
+      setEditDraft({
+        availability: {
+          ...editDraft.availability,
+          [name]: value,
+        },
+      });
+    }
+  };
+
+
+  const status = source?.meta?.status === "active";
   return (
     <section>
       <div className="flex gap-4">
@@ -80,39 +116,28 @@ const AvailabilityOwner = ({ onNext, onBack, isLast }: StepProps) => {
       </div>
       <div>
         <Label>Availability</Label>
-        <DatePicker date={ draft?.availability?.availableFrom ? new Date(draft.availability.availableFrom) : today} setDate={handleDateChange} />
+        <DatePicker date={ source?.availability?.availableFrom ? new Date(source.availability.availableFrom) : today} setDate={handleDateChange} />
         {errors.availableFrom && (<p className="text-red-600">{errors.availableFrom}</p>)}
       </div>
       <div>
         <Label>Lease terms</Label>
         <Textarea
-          value={draft?.availability?.leaseTerms || ""}
-          onChange={(e) =>
-            setDraft({
-              availability: {
-                ...draft.availability,
-                leaseTerms: e.target.value,
-              },
-            })
-          }
+          name="leaseTerms"
+          value={source?.availability?.leaseTerms || ""}
+          onChange={(e) => handleInputChange(e)}
           placeholder="e.g., 12 months, 6 months"
-        />
+        />  
       {errors.leaseTerms && (<p className="text-red-600">{errors.leaseTerms}</p>)}
       </div>
       <div>
         <Label>Conditions</Label>
         <Textarea
-          value={draft?.availability?.conditions || ""}
-          onChange={(e) =>
-            setDraft({
-              availability: {
-                ...draft.availability,
-                conditions: e.target.value,
-              },
-            })
-          }
+          name="conditions"
+          value={source?.availability?.conditions || ""}
+          onChange={(e) => handleInputChange(e)}
           placeholder="Mention any specific conditions here"
-        />
+        />  
+        
       {errors.conditions && (<p className="text-red-600">{errors.conditions}</p>)}
       </div>
       <Button onClick={onBack}>Back</Button>

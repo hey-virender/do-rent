@@ -76,9 +76,12 @@ export const usePropertyDraftStore = create<PropertyDraft>()(persist((set) => ({
   mode: "create",
   draft: defaultDraft,
   editDraft: {},
-  setEditDraft: (data) => set(() => ({
+  setEditDraft: (data) => set((state) => ({
     mode: "edit",
-    editDraft:structuredClone(data)
+    editDraft: {
+      ...state.editDraft,
+      ...structuredClone(data),
+    },
   })),
   resetEditDraft: () => set(() => ({mode: "create", editDraft: {}})),
   errors: {},

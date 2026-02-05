@@ -32,9 +32,18 @@ const TYPE_OPTIONS = [
   "Custom",
 ];
 
-const NearbyInfo = ({ onNext, onBack, isLast }: StepProps) => {
-  const { draft, setDraft, errors, setErrors, clearErrors } =
-    usePropertyDraftStore();
+const NearbyInfo = ({ mode, onNext, onBack, isLast }: StepProps) => {
+  const {
+    draft,
+    editDraft,
+    setEditDraft,
+    setDraft,
+    errors,
+    setErrors,
+    clearErrors,
+  } = usePropertyDraftStore();
+
+  const source = mode === "create" ? draft : editDraft;
 
   const [nearby, setNearby] = useState<Nearby>({
     type: "",
@@ -47,8 +56,6 @@ const NearbyInfo = ({ onNext, onBack, isLast }: StepProps) => {
       ...prev,
       type: value,
     }));
-    console.log("Selected type:", value);
-    console.log("Updated nearby state:", nearby);
   };
 
   const handleAddNearby = () => {
@@ -67,9 +74,15 @@ const NearbyInfo = ({ onNext, onBack, isLast }: StepProps) => {
       return;
     }
     clearErrors();
-    setDraft({
-      nearby: [...(draft.nearby || []), nearby],
-    });
+    if (mode === "create") {
+      setDraft({
+        nearby: [...(draft.nearby || []), nearby],
+      });
+    } else {
+      setEditDraft({
+        nearby: [...(editDraft.nearby || []), nearby],
+      });
+    }
     // Reset local nearby state
     setNearby({
       type: "",
@@ -79,8 +92,17 @@ const NearbyInfo = ({ onNext, onBack, isLast }: StepProps) => {
   };
 
   const removeNearbyByName = (name: string) => {
-    const updatedNearby = draft.nearby?.filter((place) => place.name !== name);
-    setDraft({ nearby: updatedNearby });
+    if (mode === "create") {
+      const updatedNearby = draft.nearby?.filter(
+        (place) => place.name !== name,
+      );
+      setDraft({ nearby: updatedNearby });
+    } else {
+      const updatedNearby = editDraft.nearby?.filter(
+        (place) => place.name !== name,
+      );
+      setEditDraft({ nearby: updatedNearby });
+    }
   };
 
   return (
@@ -164,9 +186,9 @@ const NearbyInfo = ({ onNext, onBack, isLast }: StepProps) => {
       <div>
         <h3 className="mt-4 mb-2 text-lg font-medium">Added Nearby Places:</h3>
         <div className="flex gap-4 flex-wrap ">
-          {draft.nearby &&
-            draft.nearby.length > 0 &&
-            draft.nearby.map((place, index) => (
+          {source.nearby &&
+            source.nearby.length > 0 &&
+            source.nearby.map((place, index) => (
               <div
                 key={index}
                 className="relative mb-2 p-4 border rounded w-fit"

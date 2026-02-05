@@ -1,16 +1,8 @@
-import React from "react";
+import { HouseListing } from "@/types/house";
 
-interface Availability {
-  availableFrom: string;
-  leaseTerms: string;
-  conditions: string;
-}
-interface Props {
-  availability: Availability;
-}
 
-const AvailabilityGrid = ({ availability }: Props) => {
-  console.log(availability);
+const AvailabilityGrid = ({ availability }: { availability: HouseListing["availability"] }) => {
+  
   const formattedDate = new Date(availability.availableFrom).toLocaleDateString(undefined, {
     year: 'numeric',
     month: 'long',

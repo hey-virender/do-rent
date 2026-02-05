@@ -4,8 +4,8 @@ import { CalendarCheck2, Dog, Cigarette, CigaretteOff } from "lucide-react";
 const RulesGrid = ({ rules }: { rules: HouseListing["rules"] }) => {
   const RULES = [
     {
-      label: "Minimum Stay (Days)",
-      value: rules.minimumStayDays,
+      label: "Minimum Stay (Months)",
+      value: rules.minimumStayMonths,
       icon: CalendarCheck2,
     },
     {

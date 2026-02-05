@@ -15,6 +15,7 @@ interface Props {
 }
 
 export default function SpecsGrid({ specs }: Props) {
+  console.log("SpecsGrid specs:", specs);
   const ITEMS = [
     {
       label: "Bedrooms",

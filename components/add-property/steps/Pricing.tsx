@@ -20,16 +20,30 @@ import { currencyOptions } from "@/constants";
 import { usePropertyDraftStore } from "@/store/propertyDraft.store";
 import { pricingSchema } from "@/validations/house.validation";
 
-const Pricing = ({ onNext, onBack, isLast }: StepProps) => {
-  const { draft, setDraft, errors, setErrors, clearErrors } =
-    usePropertyDraftStore();
+const Pricing = ({ mode, onNext, onBack, isLast }: StepProps) => {
+  const {
+    draft,
+    editDraft,
+    setEditDraft,
+    setDraft,
+    errors,
+    setErrors,
+    clearErrors,
+  } = usePropertyDraftStore();
+  console.log("Pricing step render", { draft, editDraft });
   const validateAndProceed = () => {
-    clearErrors();
-    const parsed = pricingSchema.safeParse({
-      currency: draft.pricing?.currency,
-      monthly: draft.pricing?.monthly,
-      deposit: draft.pricing?.deposit,
-    });
+    const parsed =
+      mode == "create"
+        ? pricingSchema.safeParse({
+            currency: draft.pricing?.currency,
+            monthly: draft.pricing?.monthly,
+            deposit: draft.pricing?.deposit,
+          })
+        : pricingSchema.safeParse({
+            currency: editDraft.pricing?.currency,
+            monthly: editDraft.pricing?.monthly,
+            deposit: editDraft.pricing?.deposit,
+          });
     if (!parsed.success) {
       const fieldError: Record<string, string> = {};
       parsed.error.issues.forEach((err) => {
@@ -62,9 +76,17 @@ const Pricing = ({ onNext, onBack, isLast }: StepProps) => {
             <FieldLabel htmlFor="currency">Currency</FieldLabel>
             <Select
               onValueChange={(e) =>
-                setDraft({ pricing: { ...draft.pricing, currency: e } })
+                mode === "create"
+                  ? setDraft({ pricing: { ...draft.pricing, currency: e } })
+                  : setEditDraft({
+                      pricing: { ...editDraft.pricing, currency: e },
+                    })
               }
-              defaultValue={draft.pricing?.currency || ""}
+              defaultValue={
+                mode === "create"
+                  ? draft.pricing?.currency
+                  : editDraft.pricing?.currency
+              }
             >
               <SelectTrigger id="currency" className="w-12">
                 <SelectValue placeholder="Select a currency" />
@@ -94,15 +116,26 @@ const Pricing = ({ onNext, onBack, isLast }: StepProps) => {
               type="number"
               autoComplete="on"
               autoCapitalize="words"
-              value={draft.pricing?.monthly}
+              value={
+                mode === "create"
+                  ? draft.pricing?.monthly
+                  : editDraft.pricing?.monthly
+              }
               onChange={(e) => {
                 console.log("monthly price changed", e.target.value);
-                setDraft({
-                  pricing: {
-                    ...draft.pricing,
-                    monthly: Number(e.target.value),
-                  },
-                });
+                mode === "create"
+                  ? setDraft({
+                      pricing: {
+                        ...draft.pricing,
+                        monthly: Number(e.target.value),
+                      },
+                    })
+                  : setEditDraft({
+                      pricing: {
+                        ...editDraft.pricing,
+                        monthly: Number(e.target.value),
+                      },
+                    });
               }}
             />
             {errors?.monthly ? (
@@ -116,14 +149,25 @@ const Pricing = ({ onNext, onBack, isLast }: StepProps) => {
             <Input
               id="securityDeposit"
               type="number"
-              value={draft.pricing?.deposit}
+              value={
+                mode === "create"
+                  ? draft.pricing?.deposit
+                  : editDraft.pricing?.deposit
+              }
               onChange={(e) =>
-                setDraft({
-                  pricing: {
-                    ...draft.pricing,
-                    deposit: Number(e.target.value),
-                  },
-                })
+                mode === "create"
+                  ? setDraft({
+                      pricing: {
+                        ...draft.pricing,
+                        deposit: Number(e.target.value),
+                      },
+                    })
+                  : setEditDraft({
+                      pricing: {
+                        ...editDraft.pricing,
+                        deposit: Number(e.target.value),
+                      },
+                    })
               }
             />
             {errors?.deposit ? (
@@ -139,7 +183,11 @@ const Pricing = ({ onNext, onBack, isLast }: StepProps) => {
 
       <Button onClick={onBack}>Back</Button>
       <Button onClick={validateAndProceed}>{isLast ? "Finish" : "Next"}</Button>
-      <Button variant="outline" onClick={clearData}>Clear</Button>
+      {mode === "create" && (
+        <Button variant="outline" onClick={clearData}>
+          Clear
+        </Button>
+      )}
     </section>
   );
 };

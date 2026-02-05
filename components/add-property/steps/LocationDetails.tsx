@@ -16,34 +16,52 @@ import { locationSchema } from "@/validations/house.validation";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 
-const LocationDetails = ({ onNext, onBack, isLast }: StepProps) => {
+const LocationDetails = ({ mode, onNext, onBack, isLast }: StepProps) => {
   const [address, setAddress] = useState("");
-  const { draft, errors, setDraft, setErrors, clearErrors } =
-    usePropertyDraftStore();
+  const {
+    draft,
+    editDraft,
+    setEditDraft,
+    errors,
+    setDraft,
+    setErrors,
+    clearErrors,
+  } = usePropertyDraftStore();
+  console.log("LocationDetails render", { editDraft });
   const fetchCoordinates = async () => {
-    if (
-     !address
-    ) {
+    if (!address) {
       toast.error("Please fill address field to get coordinates");
       return;
     }
-    
+
     try {
       const coordinates = await getCoordinates(address);
       console.log("fetched coordinates", coordinates);
       if (coordinates && coordinates.lat && coordinates.lng) {
         console.log(coordinates);
-        setDraft({
-          location: {
-            ...draft.location,
-            coordinates: {
-              lat: coordinates.lat,
-              lng: coordinates.lng,
+        if (mode === "create") {
+          setDraft({
+            location: {
+              ...draft.location,
+              coordinates: {
+                lat: coordinates.lat,
+                lng: coordinates.lng,
+              },
             },
-          },
-        });
+          });
+        } else {
+          setEditDraft({
+            location: {
+              ...editDraft.location,
+              coordinates: {
+                lat: coordinates.lat,
+                lng: coordinates.lng,
+              },
+            },
+          });
+        }
         toast.success("Coordinates fetched successfully");
-      }else{
+      } else {
         toast.error("Failed to fetch coordinates");
       }
     } catch (error) {
@@ -52,20 +70,34 @@ const LocationDetails = ({ onNext, onBack, isLast }: StepProps) => {
   };
 
   const validateAndProceed = () => {
-    clearErrors();
-    console.log("draft location", draft.location);
-    const parsed = locationSchema.safeParse({
-      line1: draft.location?.line1,
-      line2: draft.location?.line2,
-      city: draft.location?.city,
-      state: draft.location?.state,
-      country: draft.location?.country,
-      pinCode: draft.location?.pinCode,
-      coordinates: {
-        lat: draft.location?.coordinates?.lat,
-        lng: draft.location?.coordinates?.lng,
-      },
-    });
+    let parsed;
+    if (mode === "create") {
+      parsed = locationSchema.safeParse({
+        line1: draft.location?.line1,
+        line2: draft.location?.line2,
+        city: draft.location?.city,
+        state: draft.location?.state,
+        country: draft.location?.country,
+        pinCode: draft.location?.pinCode,
+        coordinates: {
+          lat: draft.location?.coordinates?.lat,
+          lng: draft.location?.coordinates?.lng,
+        },
+      });
+    } else {
+      parsed = locationSchema.partial().safeParse({
+        line1: editDraft.location?.line1,
+        line2: editDraft?.location?.line2,
+        city: editDraft.location?.city,
+        state: editDraft.location?.state,
+        country: editDraft.location?.country,
+        pinCode: editDraft.location?.pinCode,
+        coordinates: {
+          lat: editDraft.location?.coordinates?.lat,
+          lng: editDraft.location?.coordinates?.lng,
+        },
+      });
+    }
     console.log("parsed location", parsed);
     if (!parsed.success) {
       const fieldErrors: Record<string, string> = {};
@@ -109,15 +141,28 @@ const LocationDetails = ({ onNext, onBack, isLast }: StepProps) => {
               type="text"
               autoComplete="on"
               autoCapitalize="words"
-              value={draft.location?.line1}
-              onChange={(e) =>
-                setDraft({
-                  location: {
-                    ...draft.location,
-                    line1: e.target.value,
-                  },
-                })
+              value={
+                mode === "create"
+                  ? draft.location?.line1 || ""
+                  : editDraft.location?.line1 || ""
               }
+              onChange={(e) => {
+                if (mode === "create") {
+                  setDraft({
+                    location: {
+                      ...draft.location,
+                      line1: e.target.value,
+                    },
+                  });
+                } else {
+                  setEditDraft({
+                    location: {
+                      ...editDraft.location,
+                      line1: e.target.value,
+                    },
+                  });
+                }
+              }}
             />
             {errors?.line1 ? (
               <p className="text-red-500">{errors.line1}</p>
@@ -134,15 +179,28 @@ const LocationDetails = ({ onNext, onBack, isLast }: StepProps) => {
               type="text"
               autoComplete="on"
               autoCapitalize="words"
-              value={draft.location?.line2}
-              onChange={(e) =>
-                setDraft({
-                  location: {
-                    ...draft.location,
-                    line2: e.target.value,
-                  },
-                })
+              value={
+                mode === "create"
+                  ? draft.location?.line2 || ""
+                  : editDraft.location?.line2 || ""
               }
+              onChange={(e) => {
+                if (mode === "create") {
+                  setDraft({
+                    location: {
+                      ...draft.location,
+                      line2: e.target.value,
+                    },
+                  });
+                } else {
+                  setEditDraft({
+                    location: {
+                      ...editDraft.location,
+                      line2: e.target.value,
+                    },
+                  });
+                }
+              }}
             />
             {errors?.line2 ? (
               <p className="text-red-500">{errors.line2}</p>
@@ -159,15 +217,28 @@ const LocationDetails = ({ onNext, onBack, isLast }: StepProps) => {
               type="text"
               autoComplete="on"
               autoCapitalize="words"
-              value={draft.location?.city}
-              onChange={(e) =>
-                setDraft({
-                  location: {
-                    ...draft.location,
-                    city: e.target.value,
-                  },
-                })
+              value={
+                mode === "create"
+                  ? draft.location?.city || ""
+                  : editDraft.location?.city || ""
               }
+              onChange={(e) => {
+                if (mode === "create") {
+                  setDraft({
+                    location: {
+                      ...draft.location,
+                      city: e.target.value,
+                    },
+                  });
+                } else {
+                  setEditDraft({
+                    location: {
+                      ...editDraft.location,
+                      city: e.target.value,
+                    },
+                  });
+                }
+              }}
             />
             {errors?.city ? (
               <p className="text-red-500">{errors.city}</p>
@@ -184,15 +255,28 @@ const LocationDetails = ({ onNext, onBack, isLast }: StepProps) => {
               type="text"
               autoComplete="on"
               autoCapitalize="words"
-              value={draft.location?.state}
-              onChange={(e) =>
-                setDraft({
-                  location: {
-                    ...draft.location,
-                    state: e.target.value,
-                  },
-                })
+              value={
+                mode === "create"
+                  ? draft.location?.state || ""
+                  : editDraft.location?.state || ""
               }
+              onChange={(e) => {
+                if (mode === "create") {
+                  setDraft({
+                    location: {
+                      ...draft.location,
+                      state: e.target.value,
+                    },
+                  });
+                } else {
+                  setEditDraft({
+                    location: {
+                      ...editDraft.location,
+                      state: e.target.value,
+                    },
+                  });
+                }
+              }}
             />
             {errors?.state ? (
               <p className="text-red-500">{errors.state}</p>
@@ -209,15 +293,28 @@ const LocationDetails = ({ onNext, onBack, isLast }: StepProps) => {
               type="text"
               autoComplete="on"
               autoCapitalize="words"
-              value={draft.location?.country}
-              onChange={(e) =>
-                setDraft({
-                  location: {
-                    ...draft.location,
-                    country: e.target.value,
-                  },
-                })
+              value={
+                mode === "create"
+                  ? draft.location?.country || ""
+                  : editDraft.location?.country || ""
               }
+              onChange={(e) => {
+                if (mode === "create") {
+                  setDraft({
+                    location: {
+                      ...draft.location,
+                      country: e.target.value,
+                    },
+                  });
+                } else {
+                  setEditDraft({
+                    location: {
+                      ...editDraft.location,
+                      country: e.target.value,
+                    },
+                  });
+                }
+              }}
             />
             {errors?.country ? (
               <p className="text-red-500">{errors.country}</p>
@@ -236,15 +333,28 @@ const LocationDetails = ({ onNext, onBack, isLast }: StepProps) => {
               pattern="[1-9][0-9]{5}"
               maxLength={6}
               autoComplete="postal-code"
-              value={draft.location?.pinCode}
-              onChange={(e) =>
-                setDraft({
-                  location: {
-                    ...draft.location,
-                    pinCode: e.target.value,
-                  },
-                })
+              value={
+                mode === "create"
+                  ? draft.location?.pinCode || ""
+                  : editDraft.location?.pinCode || ""
               }
+              onChange={(e) => {
+                if (mode === "create") {
+                  setDraft({
+                    location: {
+                      ...draft.location,
+                      pinCode: e.target.value,
+                    },
+                  });
+                } else {
+                  setEditDraft({
+                    location: {
+                      ...editDraft.location,
+                      pinCode: e.target.value,
+                    },
+                  });
+                }
+              }}
             />
             {errors?.pinCode ? (
               <p className="text-red-500">{errors.pinCode}</p>
@@ -262,18 +372,34 @@ const LocationDetails = ({ onNext, onBack, isLast }: StepProps) => {
                 type="number"
                 autoComplete="on"
                 autoCapitalize="words"
-                value={draft?.location?.coordinates?.lat}
-                onChange={(e) =>
-                  setDraft({
-                    location: {
-                      ...draft.location,
-                      coordinates: {
-                        ...draft.location?.coordinates,
-                        lat: Number(e.target.value),
-                      },
-                    },
-                  })
+                value={
+                  mode === "create"
+                    ? draft?.location?.coordinates?.lat
+                    : editDraft?.location?.coordinates?.lat
                 }
+                onChange={(e) => {
+                  if (mode === "create") {
+                    setDraft({
+                      location: {
+                        ...draft.location,
+                        coordinates: {
+                          ...draft.location?.coordinates,
+                          lat: Number(e.target.value),
+                        },
+                      },
+                    });
+                  } else {
+                    setEditDraft({
+                      location: {
+                        ...editDraft.location,
+                        coordinates: {
+                          ...editDraft.location?.coordinates,
+                          lat: Number(e.target.value),
+                        },
+                      },
+                    });
+                  }
+                }}
               />
               {errors?.coordinates ? (
                 <p className="text-red-500">{errors.coordinates}</p>
@@ -290,18 +416,34 @@ const LocationDetails = ({ onNext, onBack, isLast }: StepProps) => {
                 type="text"
                 autoComplete="on"
                 autoCapitalize="words"
-                value={draft.location?.coordinates?.lng}
-                onChange={(e) =>
-                  setDraft({
-                    location: {
-                      ...draft.location,
-                      coordinates: {
-                        ...draft.location?.coordinates,
-                        lng: Number(e.target.value),
-                      },
-                    },
-                  })
+                value={
+                  mode === "create"
+                    ? draft?.location?.coordinates?.lng
+                    : editDraft?.location?.coordinates?.lng
                 }
+                onChange={(e) => {
+                  if (mode === "create") {
+                    setDraft({
+                      location: {
+                        ...draft.location,
+                        coordinates: {
+                          ...draft.location?.coordinates,
+                          lng: Number(e.target.value),
+                        },
+                      },
+                    });
+                  } else {
+                    setEditDraft({
+                      location: {
+                        ...editDraft.location,
+                        coordinates: {
+                          ...editDraft.location?.coordinates,
+                          lng: Number(e.target.value),
+                        },
+                      },
+                    });
+                  }
+                }}
               />
               {errors?.coordinates ? (
                 <p className="text-red-500">{errors.coordinates}</p>
@@ -311,11 +453,16 @@ const LocationDetails = ({ onNext, onBack, isLast }: StepProps) => {
                 </FieldDescription>
               )}
             </Field>
-           <FieldGroup>
-            <FieldLabel>Address to get coordinates</FieldLabel>
-            <Input type="text" placeholder="Enter Address to get coordinates" value={address} onChange={(e) => setAddress(e.target.value)} />
-             <Button onClick={fetchCoordinates}> Get Coordinates</Button>
-            <Label>Address must be valid to get coordinates</Label>
+            <FieldGroup>
+              <FieldLabel>Address to get coordinates</FieldLabel>
+              <Input
+                type="text"
+                placeholder="Enter Address to get coordinates"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+              />
+              <Button onClick={fetchCoordinates}> Get Coordinates</Button>
+              <Label>Address must be valid to get coordinates</Label>
             </FieldGroup>
           </FieldGroup>
         </FieldGroup>
@@ -323,9 +470,12 @@ const LocationDetails = ({ onNext, onBack, isLast }: StepProps) => {
 
       <Button onClick={onBack}>Back</Button>
       <Button onClick={validateAndProceed}>{isLast ? "Finish" : "Next"}</Button>
-      <Button variant="outline" onClick={clearData}>
+      {mode === "create" && (
+        <Button variant="outline" onClick={clearData}>
+
         Clear
       </Button>
+      )}
     </section>
   );
 };

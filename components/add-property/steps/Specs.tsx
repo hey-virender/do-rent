@@ -17,19 +17,27 @@ import {
 } from "@/components/ui/select";
 import { usePropertyDraftStore } from "@/store/propertyDraft.store";
 import { specsSchema } from "@/validations/house.validation";
-import { log } from "console";
 import { Input } from "@/components/ui/input";
-const Specs = ({ onNext, onBack, isLast }: StepProps) => {
-  const {draft,setDraft,errors,setErrors,clearErrors} = usePropertyDraftStore();  
-  console.log("Current draft:", draft);
+const Specs = ({ mode,onNext, onBack, isLast }: StepProps) => {
+  const {draft,editDraft,setEditDraft,setDraft,errors,setErrors,clearErrors} = usePropertyDraftStore();  
   const validateAndProceed = () => {
     clearErrors();
-    const parsed = specsSchema.safeParse({
+    let parsed;
+    if(mode === "create"){
+       parsed = specsSchema.safeParse({
       halls: draft.specs?.halls,
       bedrooms: draft.specs?.bedrooms,
       bathrooms: draft.specs?.bathrooms,
       areaSqft: draft.specs?.areaSqft,
     });
+    }else{
+      parsed = specsSchema.safeParse({
+        halls: editDraft.specs?.halls,
+        bedrooms: editDraft.specs?.bedrooms,
+        bathrooms: editDraft.specs?.bathrooms,
+        areaSqft: editDraft.specs?.areaSqft,
+      });
+    }
     if (!parsed.success) {
       const fieldError: Record<string,string> = {};
       parsed.error.issues.forEach((err)=>{
@@ -59,7 +67,7 @@ const Specs = ({ onNext, onBack, isLast }: StepProps) => {
         <FieldGroup>
           <Field>
             <FieldLabel htmlFor="hall">Number of Halls</FieldLabel>
-            <Select value={draft?.specs?.halls?.toString() || ""} onValueChange={(e)=>setDraft({specs:{...draft.specs, halls:Number(e)}})}>
+            <Select value={mode === "create" ? draft?.specs?.halls?.toString() || "" : editDraft?.specs?.halls?.toString() || ""} onValueChange={(e)=> mode === "create" ? setDraft({specs:{...draft.specs, halls:Number(e)}}) : setEditDraft({specs:{...editDraft.specs, halls:Number(e)}})}>
               <SelectTrigger >
                 <SelectValue id="hall" placeholder="Select halls" />
               </SelectTrigger>
@@ -76,7 +84,7 @@ const Specs = ({ onNext, onBack, isLast }: StepProps) => {
           </Field>
           <Field>
             <FieldLabel htmlFor="bedrooms">Number of Bedrooms</FieldLabel>
-            <Select value={draft?.specs?.bedrooms?.toString() || ""} onValueChange={(e)=>setDraft({specs:{...draft.specs, bedrooms:Number(e)}})}>
+            <Select value={mode === "create" ? draft?.specs?.bedrooms?.toString() || "" : editDraft?.specs?.bedrooms?.toString() || ""} onValueChange={(e)=> mode === "create" ? setDraft({specs:{...draft.specs, bedrooms:Number(e)}}) : setEditDraft({specs:{...editDraft.specs, bedrooms:Number(e)}})}>
               <SelectTrigger>   
                 <SelectValue id="bedrooms" placeholder="Select bedrooms" />
               </SelectTrigger>
@@ -93,7 +101,7 @@ const Specs = ({ onNext, onBack, isLast }: StepProps) => {
           </Field>
           <Field>
             <FieldLabel htmlFor="bathrooms">Number of Bathrooms</FieldLabel>  
-            <Select value={draft?.specs?.bathrooms?.toString() || ""} onValueChange={(e)=>setDraft({specs:{...draft.specs, bathrooms:Number(e)}})}>
+            <Select value={mode === "create" ? draft?.specs?.bathrooms?.toString() || "" : editDraft?.specs?.bathrooms?.toString() || ""} onValueChange={(e)=> mode === "create" ? setDraft({specs:{...draft.specs, bathrooms:Number(e)}}) : setEditDraft({specs:{...editDraft.specs, bathrooms:Number(e)}})}>
               <SelectTrigger>
                 <SelectValue id="bathrooms" placeholder="Select bathrooms" />
               </SelectTrigger>
@@ -113,8 +121,8 @@ const Specs = ({ onNext, onBack, isLast }: StepProps) => {
             <Input
               id="areaSqft"
               type="number"
-              value={draft.specs?.areaSqft || ""}
-              onChange={(e) => setDraft({ specs: { ...draft.specs, areaSqft: Number(e.target.value) } })}
+              value={mode === "create" ? draft.specs?.areaSqft || "" : editDraft.specs?.areaSqft || ""}
+              onChange={(e) => mode === "create" ? setDraft({ specs: { ...draft.specs, areaSqft: Number(e.target.value) } }) : setEditDraft({ specs: { ...editDraft.specs, areaSqft: Number(e.target.value) } })}
             />
             {errors?.areaSqft ? (
               <p className="text-red-500">{errors.areaSqft}</p>

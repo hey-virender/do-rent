@@ -18,4 +18,19 @@ export const imagekit = new ImageKit({
    }
   }
 
+  export const deleteImage = async(fileId:string) => {
+    try {
+      await imagekit.files.delete(fileId);
+      
+      return {
+        success: true,
+      }
+    }catch(error){
+      console.log(`Failed to delete image ${fileId}:`, error);
+      return{
+        success: false,
+      }
+    }
+  }
+
 

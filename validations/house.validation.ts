@@ -18,7 +18,7 @@ export const houseSchama = z.object({
   }),
   location: z.object({
     line1: z.string().nonempty("Address Line 1 is required").min(5, "Address Line 1 must be at least 5 characters long"),
-    line2: z.string().optional(),
+    line2: z.string().optional().nullable().default(""),
     city: z.string().nonempty("City is required").min(2, "City must be at least 2 characters long"),
     state: z.string().nonempty("State is required").min(2, "State must be at least 2 characters long"),
     country: z.string().nonempty("Country is required").min(2, "Country must be at least 2 characters long"),
@@ -62,20 +62,14 @@ export const houseSchama = z.object({
     partiesAllowed: z.boolean(),
   }),
   availability: z.object({
-    availableFrom:  z
-    .string().default(() => {
-      const today = new Date();
-      return today.toISOString().split("T")[0];
-    })
-    .refine((value) => {
+    availableFrom: z.date({ error: "Invalid date format" }).refine((value) => {
       const input = new Date(value);
       input.setHours(0, 0, 0, 0);
-
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-
       return input >= today;
-    }, "Date cannot be earlier than today"),
+    }
+    , "Available from date cannot be in the past"),
     leaseTerms: z.string().min(5, "Lease terms must be at least 5 characters long"),
     conditions: z.string().min(5, "Conditions must be at least 5 characters long"),
   }),

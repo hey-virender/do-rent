@@ -1,17 +1,15 @@
 import { getMyPropertiesById } from "@/actions/property.actions";
-import { usePropertyDraftStore } from "@/store/propertyDraft.store";
+import EditPropertyClient from "@/components/edit/EditPropertyClient";
 import { HouseListing } from "@/types/house";
 
-const page = async ({params}:{params:{id:string}}) => {
-  const id = await params.id;
-  const {editDraft,setEditDraft} = usePropertyDraftStore();
-  const property = await getMyPropertiesById(id);
-  if(property.success && property.property){
-    setEditDraft(property.property as HouseListing);
-  }
-  return (
-    <main>page</main>
-  )
-}
+export default async function Page({ params }: { params: { id: string } }) {
+  const { id } = await params;
+  const res = await getMyPropertiesById(id);
+  console.log("Fetched property:", res);
 
-export default page
+  if (!res.success || !res.property) {
+    return <p className="text-center mt-10">Not found</p>;
+  }
+
+  return <EditPropertyClient property={res.property as HouseListing} />;
+}

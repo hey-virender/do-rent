@@ -1,6 +1,6 @@
 'use server'
 import { auth } from "@/auth";
-import { imagekit, updateImageMetaData } from "@/lib/imagekit";
+import { deleteImage, imagekit, updateImageMetaData } from "@/lib/imagekit";
 import { prisma } from "@/lib/prisma";
 import { HouseListing } from "@/types/house";
 import { ImageAsset } from "@/types/type";
@@ -203,3 +203,170 @@ export const getMyPropertiesById = async(propertyId: string) => {
   };
 
 }
+
+export const updateProperty = async (propertyId: string, propertyData: HouseListing) => {
+  const session = await auth();
+  if (!session?.user) {
+    return {
+      success: false,
+      error: "Not authenticated",
+    };
+  }
+  const property = await prisma.property.findUnique({
+    where: { id: propertyId },
+  });
+  if (!property) {
+    return {
+      success: false,
+      error: "Property not found",
+    };
+  }
+  if (property.landlordId !== session.user.id) {
+    return {
+      success: false,
+      error: "Unauthorized",
+    };
+  }
+  const parsed = houseSchama.safeParse(propertyData);
+  if (!parsed.success) {
+    return {
+      success: false,
+      errors: parsed.error.flatten().fieldErrors,
+    };
+  }
+  const {name,media,location,overview,pricing,specs,amenities,nearby,rules,availability,meta} = propertyData;
+  if(media.cover.fileId !== property.media.cover.fileId){
+    await updateImageMetaData(media.cover, { status: "permanent"});
+    await deleteImage(property.media.cover.fileId);
+  }
+  const updatedProperty = await prisma.property.update({
+    where: { id: propertyId },
+     data: {
+      name,
+      overview,
+      meta:{
+        status: meta.status,
+      },
+      location:{
+        line1: location.line1,
+        line2: location.line2,
+        city: location.city,
+        state: location.state,
+        country: location.country,
+        pinCode: location.pinCode,
+        coordinates: {
+          lat: location.coordinates.lat,
+          lng: location.coordinates.lng,
+        }
+      },
+      pricing:{
+        monthly: pricing.monthly,
+        currency: pricing.currency,
+        deposit: pricing.deposit,
+      },
+      specs:{
+        halls: specs.halls,
+        bedrooms: specs.bedrooms,
+        bathrooms: specs.bathrooms,
+        areaSqft: specs.areaSqft,},
+      amenities,
+      media :{
+        cover: media.cover as ImageAsset,
+        gallery: media.gallery as ImageAsset[],
+      },
+      nearby,
+      rules:{
+        minimumStayMonths: rules.minimumStayMonths,
+        petsAllowed: rules.petsAllowed,
+        smokingAllowed: rules.smokingAllowed,
+        partiesAllowed: rules.partiesAllowed,
+      },
+      availability:{
+        availableFrom: new Date(availability.availableFrom),
+        leaseTerms: availability.leaseTerms,
+        conditions: availability.conditions,
+      },
+      
+    },
+  });
+  return {
+    success: true,
+    property: updatedProperty,
+  };
+}
+
+export const deletePropertyImages = async (propertyId: string,fileId:string,imageType:"cover" | "gallery") => {
+  const session = await auth();
+  if (!session?.user) {
+    return {
+      success: false,
+      error: "Not authenticated",
+    };
+  }
+  const property = await prisma.property.findUnique({
+    where: { id: propertyId },
+
+  });
+  if (!property) {
+    return {
+      success: false,
+      error: "Property not found",
+    };
+
+  }
+  if (property.landlordId !== session.user.id) {
+    return {
+      success: false,
+      error: "Unauthorized",
+    };
+  }
+  if(imageType === "cover"){
+    if(property.media.cover.fileId === fileId){
+      const result = await deleteImage(fileId);
+      if(result.success){
+        await prisma.property.update({
+        where: { id: propertyId },
+        data: { 
+          media: {
+            ...property.media,
+            cover: { url: '', fileId: '' },
+          },
+         },
+      });
+      }
+      return {
+        success: result.success,
+        message: result.success ? "Cover image deleted successfully" : "Failed to delete cover image",
+      };
+    }
+  }else{
+    const updatedGallery = property.media.gallery.filter(image => image.fileId !== fileId);
+    const result = await deleteImage(fileId);
+    if(result.success){
+      await prisma.property.update({
+        where: { id: propertyId },
+        data: { 
+          media: {
+            ...property.media,
+            gallery: updatedGallery,
+          },
+         },
+      });
+    }
+    return {
+      success: result.success,
+      message: result.success ? "Image deleted successfully" : "Failed to delete image",
+    }
+  }
+  return {
+    success: false,
+    error: "Image not found in property",
+  }
+  
+}
+
+export const deleteImageByFileId = async (fileId: string) => {
+ const result =  await deleteImage(fileId);
+  return result;
+}
+

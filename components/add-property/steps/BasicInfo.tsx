@@ -13,15 +13,33 @@ import { Textarea } from "@/components/ui/textarea";
 import { usePropertyDraftStore } from "@/store/propertyDraft.store";
 import { basicInfoSchema } from "@/validations/house.validation";
 
-const BasicInfo = ({ onNext, onBack, isLast }: StepProps) => {
-  const { setDraft, draft, errors, setErrors, clearErrors } =
-    usePropertyDraftStore();
+const BasicInfo = ({ mode, onNext, onBack, isLast,isFirst }: StepProps) => {
+  const {
+    setDraft,
+    editDraft,
+    setEditDraft,
+    draft,
+    errors,
+    setErrors,
+    clearErrors,
+  } = usePropertyDraftStore();
+
+  console.log("Basic infor",editDraft)
+
 
   const validateAndProceed = () => {
-    const parsed = basicInfoSchema.safeParse({
+    let parsed;
+    if (mode === "create") {
+      parsed = basicInfoSchema.safeParse({
       name: draft.name,
       overview: draft.overview,
     });
+    }else{
+      parsed = basicInfoSchema.safeParse({
+        name: editDraft.name,
+        overview: editDraft.overview,
+      });
+    }
     if (!parsed.success) {
       const fieldErrors: Record<string, string> = {};
       parsed.error.issues.forEach((err) => {
@@ -50,8 +68,14 @@ const BasicInfo = ({ onNext, onBack, isLast }: StepProps) => {
               type="text"
               autoComplete="on"
               autoCapitalize="words"
-              value={draft.name || ""}
-              onChange={(e) => setDraft({ name: e.target.value })}
+              value={mode === "create" ? draft.name || "" : editDraft.name || ""}
+              onChange={(e) => {
+                if (mode === "create") {
+                  setDraft({ name: e.target.value });
+                } else {
+                  setEditDraft({ name: e.target.value });
+                }
+              }}
             />
             {errors?.name ? (
               <p className="text-red-500">{errors.name}</p>
@@ -66,8 +90,14 @@ const BasicInfo = ({ onNext, onBack, isLast }: StepProps) => {
             <Textarea
               id="overview"
               rows={5}
-              value={draft.overview || ""}
-              onChange={(e) => setDraft({ overview: e.target.value })}
+              value={mode === "create" ? draft.overview || "" : editDraft.overview || ""}
+              onChange={(e) => {
+                if (mode === "create") {
+                  setDraft({ overview: e.target.value });
+                } else {
+                  setEditDraft({ overview: e.target.value });
+                }
+              }}
             />
             {errors?.overview ? (
               <p className="text-red-500">{errors.overview}</p>
@@ -80,11 +110,15 @@ const BasicInfo = ({ onNext, onBack, isLast }: StepProps) => {
         </FieldGroup>
       </FieldSet>
       <div>
-        <Button onClick={onBack}>Back</Button>
+        <Button onClick={onBack}>{isFirst ? "Cancel" : "Back"}</Button>
         <Button onClick={validateAndProceed}>
           {isLast ? "Finish" : "Next"}
         </Button>
-        <Button variant="outline" onClick={clearData}>Clear</Button>
+        {mode === "create" && (
+          <Button variant="outline" onClick={clearData}>
+            Clear
+          </Button>
+        )}
       </div>
     </section>
   );

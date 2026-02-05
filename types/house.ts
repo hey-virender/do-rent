@@ -1,4 +1,4 @@
-import { amenitiesList } from "@/constants";
+
 import { ImageAsset, Ref } from "./type";
 import { User } from "./user";
 
@@ -58,7 +58,7 @@ export interface HouseListing {
     
   }
   availability:{
-    availableFrom: Date;
+    availableFrom: Date | string;
     leaseTerms: string;
     conditions: string;
 

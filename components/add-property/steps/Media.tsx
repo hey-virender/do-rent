@@ -11,56 +11,119 @@ import {
 } from "@/components/ui/carousel";
 import { toast } from "sonner";
 import { mediaSchema } from "@/validations/house.validation";
-const Media = ({ onNext, onBack, isLast }: StepProps) => {
-  const { draft, setDraft, errors, setErrors, clearErrors } =
+import {
+  deleteImageByFileId,
+  deletePropertyImages,
+} from "@/actions/property.actions";
+import { Trash } from "lucide-react";
+const Media = ({ mode, onNext, onBack, isLast }: StepProps) => {
+  const { draft, setDraft, errors, editDraft, setEditDraft, clearErrors } =
     usePropertyDraftStore();
+
+  const source = mode === "create" ? draft : editDraft;
   const handleCoverUpload = (result: any) => {
-    console.log("Cover uploaded:", result);
-    setDraft({ media: { ...draft.media, cover: { url: result.url, fileId: result.fileId } } });
+    if (mode === "create") {
+      setDraft({
+        media: {
+          ...draft.media,
+          cover: { url: result.url, fileId: result.fileId },
+        },
+      });
+    } else {
+      setEditDraft({
+        media: {
+          ...editDraft.media,
+          cover: { url: result.url, fileId: result.fileId },
+        },
+      });
+    }
   };
   const handleGalleryUpload = (result: any) => {
-    console.log("Gallery uploaded:", result);
-    const assets = Array.isArray(result) ?
-    result.map((item)=>({
-      url: item.url,
-      fileId: item.fileId
-    })) : [
-      { url: result.url, fileId: result.fileId }
-    ];
-    setDraft({ media: { ...draft.media, gallery: [...(draft?.media?.gallery || []), ...assets] } });
-   
+    const assets = Array.isArray(result)
+      ? result.map((item) => ({
+          url: item.url,
+          fileId: item.fileId,
+        }))
+      : [{ url: result.url, fileId: result.fileId }];
+    if (mode === "create") {
+      setDraft({
+        media: {
+          ...draft.media,
+          gallery: [...(draft?.media?.gallery || []), ...assets],
+        },
+      });
+    } else {
+      setEditDraft({
+        media: {
+          ...editDraft.media,
+          gallery: [...(editDraft?.media?.gallery || []), ...assets],
+        },
+      });
+    }
+  };
+  const deleteImageFromGallery = async (fileId: string) => {
+    if (mode === "create" && draft.media?.gallery) {
+      const result = await deleteImageByFileId(fileId);
+      if(result.success){
+        const updatedGallery = draft?.media?.gallery.filter(
+        (image) => image.fileId !== fileId,
+      );
+      setDraft({
+        media: {
+          ...draft.media,
+          gallery: updatedGallery,
+        },
+      });
+      }
+      toast.success("Image deleted successfully");
+    } else if (mode === "edit" && editDraft.media?.gallery) {
+      const result = await deletePropertyImages(editDraft.id!, fileId, "gallery");
+      if(result.success){
+        const updatedGallery = editDraft?.media?.gallery.filter(
+        (image) => image.fileId !== fileId,
+      );
+      setEditDraft({
+        media: {
+          ...editDraft.media,
+          gallery: updatedGallery,
+        },
+      });
+      }
+    }
+    toast.success("Image deleted successfully");
   };
   const validateAndProceed = () => {
-  const result = mediaSchema.safeParse(draft.media);
+    const result = mediaSchema.safeParse(
+      mode === "create" ? draft.media : editDraft.media,
+    );
 
-  if (!result.success) {
-    const fieldErrors = result.error.flatten().fieldErrors;
+    if (!result.success) {
+      const fieldErrors = result.error.flatten().fieldErrors;
 
-    if (fieldErrors.cover) {
-      toast.error("Please upload a cover image.");
+      if (fieldErrors.cover) {
+        toast.error("Please upload a cover image.");
+      }
+      if (fieldErrors.gallery) {
+        toast.error("Please upload at least one gallery image.");
+      }
+
+      return;
     }
-    if (fieldErrors.gallery) {
-      toast.error("Please upload at least one gallery image.");
-    }
 
-    return;
-  }
-
-  clearErrors();
-  onNext();
-};
-
+    clearErrors();
+    onNext();
+  };
 
   const clearData = () => {
-    setDraft({ media: { cover: { url: '', fileId: '' }, gallery: [] } });
+    setDraft({ media: { cover: { url: "", fileId: "" }, gallery: [] } });
   };
   return (
     <section>
       <div>
         <h2>Upload Cover</h2>
-        {draft?.media?.cover?.url && (
+        {source?.media?.cover?.url && (
           <Image
-            src={draft.media.cover.url}
+            src={source.media.cover.url}
             alt="Cover Image"
             width={300}
             height={200}
@@ -78,14 +141,23 @@ const Media = ({ onNext, onBack, isLast }: StepProps) => {
       </div>
       <div>
         <h2>Upload Gallery Images</h2>
-        {draft?.media?.gallery && (
+        {source?.media?.gallery && (
           <Carousel className="w-1/2">
             <CarouselContent className="gap-4">
-              {draft.media.gallery.map((asset, index) => (
+              {source.media.gallery.map((asset, index) => (
                 <CarouselItem
-                  className="basis-1/3 border-2 border-primary rounded-lg p-1 aspect-video"
+                  className="relative basis-1/3 border-2 border-primary rounded-lg p-1 aspect-video"
                   key={index}
                 >
+                  {/* todo add delete button for pictures */}
+                  <Button
+                    variant="destructive"
+                    size="icon"
+                    className="absolute bg-red-500 top-2 right-2 z-10"
+                    onClick={() => deleteImageFromGallery(asset.fileId)}
+                  >
+                    <Trash size={16} />
+                  </Button>
                   <Image
                     className="aspect-video"
                     key={index}
@@ -114,7 +186,11 @@ const Media = ({ onNext, onBack, isLast }: StepProps) => {
       </div>
       <Button onClick={onBack}>Back</Button>
       <Button onClick={validateAndProceed}>{isLast ? "Finish" : "Next"}</Button>
-      <Button variant="outline" onClick={clearData}>Clear</Button>
+      {mode === "create" && (
+        <Button variant="outline" onClick={clearData}>
+          Clear
+        </Button>
+      )}
     </section>
   );
 };
