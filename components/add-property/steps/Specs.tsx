@@ -64,8 +64,8 @@ const Specs = ({ mode,onNext, onBack, isLast }: StepProps) => {
   return (
     <section>
       <FieldSet>
-        <FieldGroup>
-          <Field>
+        <FieldGroup className="grid grid-cols-4">
+          <Field className="w-fit">
             <FieldLabel htmlFor="hall">Number of Halls</FieldLabel>
             <Select value={mode === "create" ? draft?.specs?.halls?.toString() || "" : editDraft?.specs?.halls?.toString() || ""} onValueChange={(e)=> mode === "create" ? setDraft({specs:{...draft.specs, halls:Number(e)}}) : setEditDraft({specs:{...editDraft.specs, halls:Number(e)}})}>
               <SelectTrigger >
@@ -82,7 +82,7 @@ const Specs = ({ mode,onNext, onBack, isLast }: StepProps) => {
             {errors?.halls? <p className="text-red-500">{errors.halls}</p> :
             <FieldDescription>Select the number of halls in the property</FieldDescription>}
           </Field>
-          <Field>
+          <Field className="w-fit">
             <FieldLabel htmlFor="bedrooms">Number of Bedrooms</FieldLabel>
             <Select value={mode === "create" ? draft?.specs?.bedrooms?.toString() || "" : editDraft?.specs?.bedrooms?.toString() || ""} onValueChange={(e)=> mode === "create" ? setDraft({specs:{...draft.specs, bedrooms:Number(e)}}) : setEditDraft({specs:{...editDraft.specs, bedrooms:Number(e)}})}>
               <SelectTrigger>   
@@ -99,7 +99,7 @@ const Specs = ({ mode,onNext, onBack, isLast }: StepProps) => {
             {errors?.bedrooms? <p className="text-red-500">{errors.bedrooms}</p> :
             <FieldDescription>Select the number of bedrooms in the property</FieldDescription>}
           </Field>
-          <Field>
+          <Field className="w-fit">
             <FieldLabel htmlFor="bathrooms">Number of Bathrooms</FieldLabel>  
             <Select value={mode === "create" ? draft?.specs?.bathrooms?.toString() || "" : editDraft?.specs?.bathrooms?.toString() || ""} onValueChange={(e)=> mode === "create" ? setDraft({specs:{...draft.specs, bathrooms:Number(e)}}) : setEditDraft({specs:{...editDraft.specs, bathrooms:Number(e)}})}>
               <SelectTrigger>
@@ -116,7 +116,7 @@ const Specs = ({ mode,onNext, onBack, isLast }: StepProps) => {
             {errors?.bathrooms? <p className="text-red-500">{errors.bathrooms}</p> :  
             <FieldDescription>Select the number of bathrooms in the property</FieldDescription>}
           </Field>
-          <Field>
+          <Field className="w-fit">
             <FieldLabel htmlFor="areaSqft">Area (in sqft)</FieldLabel>
             <Input
               id="areaSqft"
@@ -133,9 +133,16 @@ const Specs = ({ mode,onNext, onBack, isLast }: StepProps) => {
         </FieldGroup>
       </FieldSet>
 
-      <Button onClick={onBack}>Back</Button>
-      <Button onClick={validateAndProceed}>{isLast ? "Finish" : "Next"}</Button>
-      <Button variant="outline" onClick={clearData}>Clear</Button>
+      <div className="flex justify-start gap-2 mt-4">
+        <Button className="bg-accent text-black px-7" onClick={onBack}>Back</Button>
+      <Button className="px-7" onClick={validateAndProceed}>{isLast ? "Finish" : "Next"}</Button>
+      {mode === "create" && (
+        <Button className="px-7" onClick={clearData}>
+
+        Clear
+      </Button>
+      )}
+      </div>
     </section>
   );
 };

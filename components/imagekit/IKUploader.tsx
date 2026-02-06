@@ -179,8 +179,10 @@ const IKUploader = ({
         {customUI ? (
           <DialogTrigger>{customUI}</DialogTrigger>
         ) : (
-          <DialogTrigger className="w-30 cursor-pointer border-2 border-primary rounded-full p-2 flex items-center justify-center gap-3 text-primary font-semibold ">
-            <Upload /> Upload
+          <DialogTrigger className="">
+            <Button>
+              <Upload /> Upload
+            </Button>
           </DialogTrigger>
         )}
         <DialogContent>

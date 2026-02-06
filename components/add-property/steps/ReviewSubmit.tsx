@@ -80,15 +80,16 @@ const ReviewSubmit = ({ mode, onNext, onBack, isLast }: StepProps) => {
           <h3 className="font-semibold text-lg">Gallery:</h3>
           {currentData.media?.gallery &&
             currentData.media.gallery.length > 0 && (
-              <Carousel>
+              <Carousel className="w-full">
                 <CarouselContent>
                   {currentData.media.gallery.map((asset, index) => (
-                    <CarouselItem key={index}>
+                    <CarouselItem key={index} className="border-2 border-primary rounded-lg w-1/3">
                       <Image
                         src={asset.url || ""}
                         alt={asset.url}
                         height={200}
                         width={300}
+                        className="object-cover size-fit"
                       />
                     </CarouselItem>
                   ))}
@@ -102,15 +103,25 @@ const ReviewSubmit = ({ mode, onNext, onBack, isLast }: StepProps) => {
         <RulesGrid rules={currentData.rules as HouseListing["rules"]} />
       </div>
       <div>
-        <AvailabilityGrid availability={currentData.availability as HouseListing["availability"]} />
+        <AvailabilityGrid
+          availability={
+            currentData.availability as HouseListing["availability"]
+          }
+        />
       </div>
       <div>
         <h3 className="font-semibold text-lg">Nearby Places</h3>
-        <NearbyGrid nearby={currentData.nearby as HouseListing["nearby"] || []} />
+        <NearbyGrid
+          nearby={(currentData.nearby as HouseListing["nearby"]) || []}
+        />
       </div>
-      <div className="col-span-3 flex gap-4">
-        <Button onClick={onBack}>Back</Button>
-        <Button onClick={onNext}>{isLast ? "Finish" : "Next"}</Button>
+      <div className="col-span-3 flex justify-start gap-2 mt-4">
+        <Button className="bg-accent text-black px-7" onClick={onBack}>
+          Back
+        </Button>
+        <Button className="px-7" onClick={onNext}>
+          {isLast ? "Finish" : "Next"}
+        </Button>
       </div>
     </section>
   );

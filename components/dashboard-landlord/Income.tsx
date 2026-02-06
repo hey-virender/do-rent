@@ -2,7 +2,7 @@ import React from 'react'
 
 const Income = () => {
   return (
-    <div>Income</div>
+    <div className='flex justify-center items-center text-4xl font-bold mt-24'>Feature coming soon</div>
   )
 }
 

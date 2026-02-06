@@ -71,8 +71,8 @@ const Pricing = ({ mode, onNext, onBack, isLast }: StepProps) => {
   return (
     <section>
       <FieldSet>
-        <FieldGroup>
-          <Field className="w-24">
+        <FieldGroup className="w-2/3 grid lg:grid-cols-3">
+          <Field className="w-fit">
             <FieldLabel htmlFor="currency">Currency</FieldLabel>
             <Select
               onValueChange={(e) =>
@@ -109,7 +109,7 @@ const Pricing = ({ mode, onNext, onBack, isLast }: StepProps) => {
               <FieldDescription>Select the currency</FieldDescription>
             )}
           </Field>
-          <Field>
+          <Field className="w-fit">
             <FieldLabel htmlFor="price">Monthly Price</FieldLabel>
             <Input
               id="price"
@@ -144,7 +144,7 @@ const Pricing = ({ mode, onNext, onBack, isLast }: StepProps) => {
               <FieldDescription>Set the Monthly Price</FieldDescription>
             )}
           </Field>
-          <Field>
+          <Field className="w-fit">
             <FieldLabel htmlFor="securityDeposit">Security Deposit</FieldLabel>
             <Input
               id="securityDeposit"
@@ -181,13 +181,19 @@ const Pricing = ({ mode, onNext, onBack, isLast }: StepProps) => {
         </FieldGroup>
       </FieldSet>
 
-      <Button onClick={onBack}>Back</Button>
-      <Button onClick={validateAndProceed}>{isLast ? "Finish" : "Next"}</Button>
-      {mode === "create" && (
-        <Button variant="outline" onClick={clearData}>
-          Clear
+      <div className="flex justify-start gap-2 mt-4">
+        <Button className="bg-accent text-black px-7" onClick={onBack}>
+          Back
         </Button>
-      )}
+        <Button className="px-7" onClick={validateAndProceed}>
+          {isLast ? "Finish" : "Next"}
+        </Button>
+        {mode === "create" && (
+          <Button className="px-7" onClick={clearData}>
+            Clear
+          </Button>
+        )}
+      </div>
     </section>
   );
 };

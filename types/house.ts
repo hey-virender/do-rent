@@ -7,7 +7,7 @@ export interface HouseListing {
   name: string;
 
   meta: {
-    status: "active" | "inactive";
+    status: "active" | "inactive"|"occupied";
     
   };
 

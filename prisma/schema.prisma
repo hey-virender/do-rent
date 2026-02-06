@@ -121,6 +121,7 @@ model Profile {
 enum PropertyMetaStatus {
   active
   inactive
+  occupied
 }
 
 type PropertyMeta {

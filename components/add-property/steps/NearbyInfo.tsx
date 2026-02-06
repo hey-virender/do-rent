@@ -109,8 +109,8 @@ const NearbyInfo = ({ mode, onNext, onBack, isLast }: StepProps) => {
     <section>
       <FieldSet>
         <FieldLegend>Nearby Information</FieldLegend>
-        <FieldGroup>
-          <Field>
+        <FieldGroup className="grid grid-cols-3">
+          <Field className="col-span-1">
             <FieldLabel>Type of Place </FieldLabel>
             <Select
               value={nearby.type}
@@ -141,7 +141,7 @@ const NearbyInfo = ({ mode, onNext, onBack, isLast }: StepProps) => {
               <FieldDescription>Type of the nearby place</FieldDescription>
             )}
           </Field>
-          <Field>
+          <Field className="col-span-1">
             <FieldLabel>Name of Place </FieldLabel>
             <Input
               type="text"
@@ -158,7 +158,7 @@ const NearbyInfo = ({ mode, onNext, onBack, isLast }: StepProps) => {
               <FieldDescription>Name of the nearby place</FieldDescription>
             )}
           </Field>
-          <Field>
+          <Field className="col-span-1">
             <FieldLabel>Distance (in Km) </FieldLabel>
             <Input
               type="number"
@@ -181,7 +181,7 @@ const NearbyInfo = ({ mode, onNext, onBack, isLast }: StepProps) => {
             )}
           </Field>
         </FieldGroup>
-        <Button onClick={handleAddNearby}>Add Nearby Place</Button>
+        <Button className="w-fit px-5 mx-auto" onClick={handleAddNearby}>Add Nearby Place</Button>
       </FieldSet>
       <div>
         <h3 className="mt-4 mb-2 text-lg font-medium">Added Nearby Places:</h3>
@@ -212,8 +212,10 @@ const NearbyInfo = ({ mode, onNext, onBack, isLast }: StepProps) => {
             ))}
         </div>
       </div>
-      <Button onClick={onBack}>Back</Button>
-      <Button onClick={onNext}>{isLast ? "Finish" : "Next"}</Button>
+      <div className="flex justify-start gap-2 mt-4">
+        <Button className="bg-accent text-black px-7" onClick={onBack}>Back</Button>
+      <Button className="px-7" onClick={onNext}>{isLast ? "Finish" : "Next"}</Button>
+      </div>
     </section>
   );
 };

@@ -24,7 +24,7 @@ const BasicInfo = ({ mode, onNext, onBack, isLast,isFirst }: StepProps) => {
     clearErrors,
   } = usePropertyDraftStore();
 
-  console.log("Basic infor",editDraft)
+  
 
 
   const validateAndProceed = () => {
@@ -61,7 +61,7 @@ const BasicInfo = ({ mode, onNext, onBack, isLast,isFirst }: StepProps) => {
     <section>
       <FieldSet>
         <FieldGroup>
-          <Field>
+          <Field className="w-1/3">
             <FieldLabel htmlFor="name">Name</FieldLabel>
             <Input
               id="name"
@@ -89,7 +89,7 @@ const BasicInfo = ({ mode, onNext, onBack, isLast,isFirst }: StepProps) => {
             <FieldLabel htmlFor="overview">Overview</FieldLabel>
             <Textarea
               id="overview"
-              rows={5}
+              rows={12}
               value={mode === "create" ? draft.overview || "" : editDraft.overview || ""}
               onChange={(e) => {
                 if (mode === "create") {
@@ -110,8 +110,7 @@ const BasicInfo = ({ mode, onNext, onBack, isLast,isFirst }: StepProps) => {
         </FieldGroup>
       </FieldSet>
       <div>
-        <Button onClick={onBack}>{isFirst ? "Cancel" : "Back"}</Button>
-        <Button onClick={validateAndProceed}>
+        <Button className="px-5" onClick={validateAndProceed}>
           {isLast ? "Finish" : "Next"}
         </Button>
         {mode === "create" && (

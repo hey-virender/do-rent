@@ -16,6 +16,10 @@ type MakeDraft<T> = {
 type PropertyMode = "create" | "edit";
 
 type PropertyDraft = {
+  stepIndex: number;
+  setStepIndex: (index: number) => void;
+  nextStep: () => void;
+  prevStep: () => void;
   mode?: PropertyMode;
   draft:MakeDraft<HouseListing>;
   editDraft:MakeDraft<HouseListing>;
@@ -74,8 +78,19 @@ const defaultDraft: MakeDraft<HouseListing> = {
 
 export const usePropertyDraftStore = create<PropertyDraft>()(persist((set) => ({
   mode: "create",
+  stepIndex: 0,
   draft: defaultDraft,
   editDraft: {},
+  setStepIndex: (index) => set(() => ({ stepIndex: index })),
+   nextStep: () =>
+    set((state) => ({
+      stepIndex: state.stepIndex + 1,
+    })),
+
+  prevStep: () =>
+    set((state) => ({
+      stepIndex: Math.max(0, state.stepIndex - 1),
+    })),
   setEditDraft: (data) => set((state) => ({
     mode: "edit",
     editDraft: {

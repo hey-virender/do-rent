@@ -231,4 +231,5 @@ export function zodIssuesToFlatErrors(
 
 export const currencyOptions = ["USD", "INR", "EUR", "GBP", "JPY", "AUD", "CAD", "CHF", "CNY", "SEK", "NZD"];
 
+export const houseMetaStatusOptions = ["active", "inactive","occupied"] as const;
 export const amenitiesList = ["wifi", "ac", "gym", "pool","parking","bus facility"]

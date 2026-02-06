@@ -1,4 +1,4 @@
-import { ru } from 'date-fns/locale';
+
 import {z} from 'zod';
 
 export const nearbySchema = z.object({
@@ -14,7 +14,7 @@ const imageAssetSchema = z.object({
 export const houseSchama = z.object({
   name: z.string().min(3, "Name must be at least 3 characters long"),
   meta: z.object({
-    status: z.enum(["active", "inactive"]).default("inactive"),
+    status: z.enum(["active", "inactive","occupied"]).default("inactive"),
   }),
   location: z.object({
     line1: z.string().nonempty("Address Line 1 is required").min(5, "Address Line 1 must be at least 5 characters long"),

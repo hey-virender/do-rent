@@ -42,12 +42,19 @@ const rulesConfig = [
 ];
 
 const AmenitiesRules = ({ mode, onNext, onBack, isLast }: StepProps) => {
-  const { draft,editDraft,setEditDraft, setDraft, errors, setErrors, clearErrors } =
-    usePropertyDraftStore();
+  const {
+    draft,
+    editDraft,
+    setEditDraft,
+    setDraft,
+    errors,
+    setErrors,
+    clearErrors,
+  } = usePropertyDraftStore();
 
   const handleAmenityChange = (amenity: string, isChecked: boolean) => {
-    
-    let updatedAmenities = mode === "create" ? draft.amenities || [] : editDraft.amenities || [];
+    let updatedAmenities =
+      mode === "create" ? draft.amenities || [] : editDraft.amenities || [];
     if (isChecked) {
       updatedAmenities = [...updatedAmenities, amenity];
     } else {
@@ -61,7 +68,6 @@ const AmenitiesRules = ({ mode, onNext, onBack, isLast }: StepProps) => {
   };
 
   const handleRuleChange = (key: string, value: boolean | number) => {
-   
     if (mode === "create") {
       setDraft({
         rules: {
@@ -78,49 +84,54 @@ const AmenitiesRules = ({ mode, onNext, onBack, isLast }: StepProps) => {
       });
     }
   };
-      
 
   const validateAndProceed = () => {
-    const parsed = mode === "create" ? amenitiesRulesSchema.safeParse({
-      amenities: draft.amenities,
-      rules: draft.rules,
-    }) : amenitiesRulesSchema.safeParse({
-      amenities: editDraft.amenities,
-      rules: editDraft.rules,
-    });
+    const parsed =
+      mode === "create"
+        ? amenitiesRulesSchema.safeParse({
+            amenities: draft.amenities,
+            rules: draft.rules,
+          })
+        : amenitiesRulesSchema.safeParse({
+            amenities: editDraft.amenities,
+            rules: editDraft.rules,
+          });
 
     console.log("Validating amenities and rules", parsed);
-   
-    if(!parsed.success){
-        const fieldErrors: Record<string, string> = {};
-        parsed.error.issues.forEach((err) => {
-          const field = err.path[0];
-          if (typeof field === "string" || typeof field === "number") {
-            fieldErrors[field.toString()] = err.message;
-          }
-        })
-        setErrors(fieldErrors);
-        
-        return;
+
+    if (!parsed.success) {
+      const fieldErrors: Record<string, string> = {};
+      parsed.error.issues.forEach((err) => {
+        const field = err.path[0];
+        if (typeof field === "string" || typeof field === "number") {
+          fieldErrors[field.toString()] = err.message;
+        }
+      });
+      setErrors(fieldErrors);
+
+      return;
     }
     clearErrors();
     onNext();
-  }
+  };
   const clearData = () => {
-    setDraft({ amenities: [], rules: {
-      minimumStayMonths: 0,
-      petsAllowed: false,
-      smokingAllowed: false,
-      partiesAllowed: false,
-    } });
-  }
+    setDraft({
+      amenities: [],
+      rules: {
+        minimumStayMonths: 0,
+        petsAllowed: false,
+        smokingAllowed: false,
+        partiesAllowed: false,
+      },
+    });
+  };
 
   return (
     <section className="">
       <FieldSet>
-        <FieldGroup>
+        <FieldGroup className="grid grid-cols-3">
+          <FieldGroup className="flex col-span-1">
           <FieldLabel htmlFor="amenities">Amenities</FieldLabel>
-          <FieldGroup>
             {amenitiesList.map((amenity) => (
               <Field
                 key={amenity}
@@ -128,7 +139,11 @@ const AmenitiesRules = ({ mode, onNext, onBack, isLast }: StepProps) => {
               >
                 <Checkbox
                   className="col-span-1 h-4 w-4"
-                  checked={mode === "create" ? draft?.amenities?.includes(amenity) : editDraft?.amenities?.includes(amenity)}
+                  checked={
+                    mode === "create"
+                      ? draft?.amenities?.includes(amenity)
+                      : editDraft?.amenities?.includes(amenity)
+                  }
                   onCheckedChange={(checked) =>
                     handleAmenityChange(amenity, !!checked)
                   }
@@ -140,16 +155,20 @@ const AmenitiesRules = ({ mode, onNext, onBack, isLast }: StepProps) => {
             ))}
           </FieldGroup>
         </FieldGroup>
-        <FieldGroup>
+        <FieldGroup className="col-span-2 ">
+          <FieldGroup className="grid grid-cols-2 gap-4">
           <FieldLabel htmlFor="rules">Rules</FieldLabel>
-          <FieldGroup>
             {rulesConfig.map((rule) => (
               <Field key={rule.key}>
                 {rule.type === "checkbox" ? (
                   <div className="flex items-center space-x-2">
                     <Checkbox
                       id={rule.key}
-                      checked={mode === "create" ? (draft?.rules?.[rule.key] as boolean) || false : (editDraft?.rules?.[rule.key] as boolean) || false}
+                      checked={
+                        mode === "create"
+                          ? (draft?.rules?.[rule.key] as boolean) || false
+                          : (editDraft?.rules?.[rule.key] as boolean) || false
+                      }
                       onCheckedChange={(checked) =>
                         handleRuleChange(rule.key, checked as boolean)
                       }
@@ -164,7 +183,11 @@ const AmenitiesRules = ({ mode, onNext, onBack, isLast }: StepProps) => {
                     <Input
                       id={rule.key}
                       type={rule.type}
-                      value={mode === "create" ? (draft?.rules?.[rule.key] as number) || 0 : (editDraft?.rules?.[rule.key] as number) || 0}
+                      value={
+                        mode === "create"
+                          ? (draft?.rules?.[rule.key] as number) || 0
+                          : (editDraft?.rules?.[rule.key] as number) || 0
+                      }
                       onChange={(e) =>
                         handleRuleChange(rule.key, Number(e.target.value))
                       }
@@ -182,13 +205,19 @@ const AmenitiesRules = ({ mode, onNext, onBack, isLast }: StepProps) => {
           </FieldGroup>
         </FieldGroup>
       </FieldSet>
-      <Button onClick={onBack}>Back</Button>
-      <Button onClick={validateAndProceed}>{isLast ? "Finish" : "Next"}</Button>
-      {mode === "create" && (
-        <Button variant="destructive" onClick={clearData}>
-          Clear
+      <div className="flex justify-start gap-2 mt-4">
+        <Button className="bg-accent text-black px-7" onClick={onBack}>
+          Back
         </Button>
-      )}
+        <Button className="px-7" onClick={validateAndProceed}>
+          {isLast ? "Finish" : "Next"}
+        </Button>
+        {mode === "create" && (
+          <Button className="px-7" onClick={clearData}>
+            Clear
+          </Button>
+        )}
+      </div>
     </section>
   );
 };

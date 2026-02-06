@@ -133,7 +133,7 @@ const LocationDetails = ({ mode, onNext, onBack, isLast }: StepProps) => {
   return (
     <section>
       <FieldSet>
-        <FieldGroup>
+        <FieldGroup className="grid lg:grid-cols-3">
           <Field>
             <FieldLabel htmlFor="line1">Line 1</FieldLabel>
             <Input
@@ -364,7 +364,7 @@ const LocationDetails = ({ mode, onNext, onBack, isLast }: StepProps) => {
               </FieldDescription>
             )}
           </Field>
-          <FieldGroup>
+          <FieldGroup className="col-span-2 grid grid-cols-2 gap-4 border border-primary p-4 rounded">
             <Field>
               <FieldLabel htmlFor="lat">Latitude</FieldLabel>
               <Input
@@ -468,14 +468,16 @@ const LocationDetails = ({ mode, onNext, onBack, isLast }: StepProps) => {
         </FieldGroup>
       </FieldSet>
 
-      <Button onClick={onBack}>Back</Button>
-      <Button onClick={validateAndProceed}>{isLast ? "Finish" : "Next"}</Button>
+      <div className="flex justify-start gap-2 mt-4">
+        <Button className="bg-accent text-black px-7" onClick={onBack}>Back</Button>
+      <Button className="px-7" onClick={validateAndProceed}>{isLast ? "Finish" : "Next"}</Button>
       {mode === "create" && (
-        <Button variant="outline" onClick={clearData}>
+        <Button className="px-7" onClick={clearData}>
 
         Clear
       </Button>
       )}
+      </div>
     </section>
   );
 };

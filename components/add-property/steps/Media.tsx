@@ -16,6 +16,7 @@ import {
   deletePropertyImages,
 } from "@/actions/property.actions";
 import { Trash } from "lucide-react";
+import { Label } from "@/components/ui/label";
 const Media = ({ mode, onNext, onBack, isLast }: StepProps) => {
   const { draft, setDraft, errors, editDraft, setEditDraft, clearErrors } =
     usePropertyDraftStore();
@@ -120,13 +121,14 @@ const Media = ({ mode, onNext, onBack, isLast }: StepProps) => {
   return (
     <section>
       <div>
-        <h2>Upload Cover</h2>
+        <Label className="pb-4">Upload Cover Image</Label>
         {source?.media?.cover?.url && (
           <Image
             src={source.media.cover.url}
             alt="Cover Image"
             width={300}
             height={200}
+            className="mb-4 rounded-lg border-2 border-primary"
           />
         )}
         <IKUploader
@@ -140,10 +142,10 @@ const Media = ({ mode, onNext, onBack, isLast }: StepProps) => {
         )}
       </div>
       <div>
-        <h2>Upload Gallery Images</h2>
+        <Label className="pt-4">Upload Gallery Images</Label>
         {source?.media?.gallery && (
           <Carousel className="w-1/2">
-            <CarouselContent className="gap-4">
+            <CarouselContent className="gap-4 p-4">
               {source.media.gallery.map((asset, index) => (
                 <CarouselItem
                   className="relative basis-1/3 border-2 border-primary rounded-lg p-1 aspect-video"
@@ -184,13 +186,16 @@ const Media = ({ mode, onNext, onBack, isLast }: StepProps) => {
           <p className="text-red-500">{errors["media.gallery"]}</p>
         )}
       </div>
-      <Button onClick={onBack}>Back</Button>
-      <Button onClick={validateAndProceed}>{isLast ? "Finish" : "Next"}</Button>
+      <div className="flex justify-start gap-2 mt-4">
+        <Button className="bg-accent text-black px-7" onClick={onBack}>Back</Button>
+      <Button className="px-7" onClick={validateAndProceed}>{isLast ? "Finish" : "Next"}</Button>
       {mode === "create" && (
-        <Button variant="outline" onClick={clearData}>
-          Clear
-        </Button>
+        <Button className="px-7" onClick={clearData}>
+
+        Clear
+      </Button>
       )}
+      </div>
     </section>
   );
 };
