@@ -58,7 +58,7 @@ Built with scalability, clean UX, and real-world rental workflows in mind.
 ## 📂 Project Structure (High Level)
 
 ```text
-src/
+
 ├── actions/          # Server actions (create/update property)
 ├── components/       # Reusable UI components
 ├── store/            # Zustand stores (property drafts, edit mode)
