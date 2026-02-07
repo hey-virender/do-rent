@@ -3,12 +3,14 @@ import PropertyBanner from "@/components/house/details-panel/PropertyBanner";
 import Map from "@/components/Map";
 import { getProperties } from "@/actions/property.actions";
 import { HouseListing } from "@/types/house";
+import PropertyFilter from "@/components/house/PropertyFilter";
 
 const page = async () => {
   const properties = await getProperties();
 
-
   return (
+    <main>
+      <PropertyFilter />
     <div className="flex">
       <section className="grid grid-cols-2 py-6">
         {properties && properties.map((house) => (
@@ -27,6 +29,7 @@ const page = async () => {
         <Map properties={properties as HouseListing[]} />
       </section>
     </div>
+    </main>
   );
 };
 

@@ -24,3 +24,20 @@ export type LandlordOverview = {
     vacantProperties: number;
   };
 };
+
+export type PublicPropertyFilters = {
+  city?:string,
+  state?:string,
+  minRent?:number,
+  maxRent?:number,
+  bedroomsMin?:number,
+  bathroomsMin?:number,
+  hallsMin?:number,
+  areaMin?:number,
+
+  petsAllowed?:boolean,
+  smokingAllowed?:boolean,
+  partiesAllowed?:boolean,
+
+  amenities?:string[],
+}

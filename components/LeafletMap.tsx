@@ -70,6 +70,7 @@ export function FlyToLocation({
 const LeafletMap = ({ lat, lng, address, zoom, properties }: Props) => {
   let latitude = lat;
   let longitude = lng;
+
  
 
   useEffect(() => {
@@ -106,8 +107,10 @@ const LeafletMap = ({ lat, lng, address, zoom, properties }: Props) => {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       {zoom && latitude && longitude && <FlyToLocation position={[latitude!, longitude!]} />}
-      {properties && properties.length > 0 && properties.map((house) => (
-        <Marker
+      {properties && properties.length > 0 && properties.map((house) => {
+        console.log("house location",house.id, house.location.coordinates);
+        return(
+          <Marker
           key={house.id}
           position={[
             house.location.coordinates.lat,
@@ -116,13 +119,13 @@ const LeafletMap = ({ lat, lng, address, zoom, properties }: Props) => {
           icon={houseMarkerIcon(house.media.cover.url)}
         >
           <Popup>
-            <div className="w-48">
+            <div className="w-12">
               <Image
                 src={house.media.cover.url}
                 alt={house.name}
-                width={200}
-                height={150}
-                className="rounded-md mb-2"
+                width={120}
+                height={120}
+                className="rounded-md mb-2 w-12"
               />
               <h3 className="font-bold ">{house.name}</h3>
               <span>
@@ -132,7 +135,8 @@ const LeafletMap = ({ lat, lng, address, zoom, properties }: Props) => {
             </div>
           </Popup>
         </Marker>
-      ))}
+        )
+      })}
     </MapContainer>
   );
 };

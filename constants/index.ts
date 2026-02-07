@@ -1,5 +1,5 @@
-import { HouseListing } from "@/types/house";
-import { ZodError, ZodIssue } from "zod";
+import { HouseListing} from "@/types/house";
+import { ZodError } from "zod";
 
 export const houseListings : HouseListing[] = [
   {
@@ -233,3 +233,8 @@ export const currencyOptions = ["USD", "INR", "EUR", "GBP", "JPY", "AUD", "CAD",
 
 export const houseMetaStatusOptions = ["active", "inactive","occupied"] as const;
 export const amenitiesList = ["wifi", "ac", "gym", "pool","parking","bus facility"]
+
+export const rulesFilterList = [ "petsAllowed", "smokingAllowed", "partiesAllowed"]
+
+
+

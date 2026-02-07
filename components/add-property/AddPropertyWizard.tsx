@@ -1,5 +1,10 @@
 "use client";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbSeparator } from "../ui/breadcrumb";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from "../ui/breadcrumb";
 import { useState } from "react";
 import { ADD_PROPERTY_STEPS } from "./steps/steps.config";
 import { houseSchama } from "@/validations/house.validation";
@@ -13,10 +18,17 @@ import { ConfirmDialog } from "../ConfirmDialog";
 import { Button } from "../ui/button";
 const AddPropertyWizard = ({ mode }: { mode: "create" | "edit" }) => {
   const router = useRouter();
-  const { draft, editDraft,stepIndex,setStepIndex,nextStep,
-  prevStep, resetEditDraft, resetDraft } =
-    usePropertyDraftStore();
-  
+  const {
+    draft,
+    editDraft,
+    stepIndex,
+    setStepIndex,
+    nextStep,
+    prevStep,
+    resetEditDraft,
+    resetDraft,
+  } = usePropertyDraftStore();
+
   const step = ADD_PROPERTY_STEPS[stepIndex];
   const StepComponent = step.component;
   const isFirstStep = stepIndex === 0;
@@ -60,30 +72,25 @@ const AddPropertyWizard = ({ mode }: { mode: "create" | "edit" }) => {
   }));
 
   const handleCancel = () => {
-    if (confirm("Are you sure you want to cancel? All changes will be lost.")) {
-      resetDraft();
-      resetEditDraft();
-      setStepIndex(0);
-      router.push("/dashboard");
-    }
-  }
+    resetDraft();
+    resetEditDraft();
+    setStepIndex(0);
+    router.push("/dashboard");
+  };
 
   const CancelDialog = () => {
-    return(<ConfirmDialog
-  title="Discard draft?"
-  description="All unsaved changes will be lost. This action cannot be undone."
-  confirmText="Discard"
-  cancelText="Continue editing"
-  className="bg-red-500 hover:bg-red-700 focus:ring-red-500"
-  onConfirm={handleCancel}
-  trigger={
-    <Button className="bg-red-500 text-white">
-      Cancel
-    </Button>
-  }
-/>
-)
-  }
+    return (
+      <ConfirmDialog
+        title="Discard draft?"
+        description="All unsaved changes will be lost. This action cannot be undone."
+        confirmText="Discard"
+        cancelText="Continue editing"
+        className="bg-red-500 hover:bg-red-700 focus:ring-red-500"
+        onConfirm={handleCancel}
+        trigger={<Button className="bg-red-500 text-white">Cancel</Button>}
+      />
+    );
+  };
 
   return (
     <div className="max-w-7xl p-6 h-full border-2 border-primary mx-auto space-y-2">
@@ -104,7 +111,9 @@ const AddPropertyWizard = ({ mode }: { mode: "create" | "edit" }) => {
               >
                 {item.label}
               </BreadcrumbItem>
-              {item.index < breadcrumbItems.length - 1 && <BreadcrumbSeparator />}
+              {item.index < breadcrumbItems.length - 1 && (
+                <BreadcrumbSeparator />
+              )}
             </>
           ))}
         </BreadcrumbList>

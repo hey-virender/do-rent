@@ -1,6 +1,8 @@
 
+
 import { ImageAsset, Ref } from "./type";
 import { User } from "./user";
+
 
 export interface HouseListing {
   id?: string;
@@ -73,3 +75,4 @@ export interface Nearby{
 
 
 export type Amenity = "wifi" | "ac" | "gym" | "pool"|"parking"|"bus facility"|"none";
+

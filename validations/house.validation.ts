@@ -98,3 +98,5 @@ export const amenitiesRulesSchema = houseSchama.pick({
 });
 export const mediaSchema = houseSchama.shape.media;
 export const availabilitySchema = houseSchama.shape.availability; 
+
+
