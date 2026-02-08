@@ -20,7 +20,7 @@ const RulesGrid = ({ rules }: { rules: HouseListing["rules"] }) => {
     },
   ];
   return (
-    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+    <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
       {RULES.map(({ label, value, icon: Icon }) => (
         <div
           key={label}

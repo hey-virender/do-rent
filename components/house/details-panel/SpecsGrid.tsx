@@ -35,7 +35,7 @@ export default function SpecsGrid({ specs }: Props) {
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+    <div className="grid grid-cols-3 gap-4 lg:grid-cols-5">
       {ITEMS.map(({ label, value, icon: Icon }) => (
         <div
           key={label}

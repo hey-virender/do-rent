@@ -4,6 +4,7 @@ import Map from "@/components/Map";
 import PriceCard from "@/components/house/PriceCard";
 import { Separator } from "@/components/ui/separator";
 import { getPropertyById } from "@/actions/property.actions";
+import { HouseListing } from "@/types/house";
 
 const page = async ({ params }: { params: { id: string } }) => {
   const { id } = await params;
@@ -15,7 +16,7 @@ const page = async ({ params }: { params: { id: string } }) => {
     ...(property?.media.gallery.map(image => image.url) || []),
   ];
   return (
-    <main className="grid grid-cols-3 gap-4 px-32">
+    <main className="grid grid-cols-3 gap-4 px-6">
       <div className="col-span-2 py-8 pr-4 rounded-xl overflow-hidden">
         <PropertyGallery images={combinedImages as string[]} />
       </div>
@@ -44,10 +45,10 @@ const page = async ({ params }: { params: { id: string } }) => {
       </div>
       <Separator className="col-span-3 bg-primary" />
       <div className="col-span-2 mt-6 min-h-[300px]">
-        <HouseDetailsPanel listing={property!} />
+        <HouseDetailsPanel listing={property as HouseListing} />
       </div>
       <div className="col-span-1 mt-6">
-        <PriceCard listing={property!} />
+        <PriceCard listing={property as HouseListing} />
       </div>
     </main>
   );

@@ -15,7 +15,7 @@ export interface HouseListing {
 
   location: {
     line1: string;
-    line2?: string;
+    line2: string;
     city: string;
     state: string;
     country: string;

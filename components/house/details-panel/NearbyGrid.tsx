@@ -1,11 +1,5 @@
 import { Nearby } from "@/types/house";
-import {
-  Train,
-  Hospital,
-  School,
-  ShoppingBag,
-  MapPin,
-} from "lucide-react";
+import { Train, Hospital, School, ShoppingBag, MapPin } from "lucide-react";
 
 const ICON_MAP: Record<string, React.ElementType> = {
   metro: Train,
@@ -22,7 +16,8 @@ export default function NearbyGrid({ nearby }: Props) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       {nearby.map((item, index) => {
-        const Icon = ICON_MAP[item.type] ?? MapPin;
+        console.log("Nearby item:", item);
+        const Icon = ICON_MAP[item.type.toLowerCase()] ?? MapPin;
 
         return (
           <div
@@ -32,9 +27,7 @@ export default function NearbyGrid({ nearby }: Props) {
             <Icon className="h-10 w-10 text-primary" />
 
             <div className="flex flex-col">
-              <span className="font-medium text-xl">
-                {item.name}
-              </span>
+              <span className="font-medium text-xl">{item.name}</span>
               <span className="text-lg text-muted-foreground">
                 {item.distanceKm} km away
               </span>
