@@ -4,9 +4,31 @@ import Map from "@/components/Map";
 import { getProperties } from "@/actions/property.actions";
 import { HouseListing } from "@/types/house";
 import PropertyFilter from "@/components/house/PropertyFilter";
+import { PublicPropertyFilters } from "@/types/type";
 
-const page = async () => {
-  const properties = await getProperties();
+interface PageProps {
+  searchParams: Record<string, string | string[] | undefined>;
+}
+
+const page = async ({ searchParams }: PageProps) => {
+  const filters: PublicPropertyFilters = {
+  term: searchParams.term as string | undefined,
+  minRent: searchParams.minRent
+    ? Number(searchParams.minRent)
+    : undefined,
+  maxRent: searchParams.maxRent
+    ? Number(searchParams.maxRent)
+    : undefined,
+  bedrooms: searchParams.bedrooms
+    ? Number(searchParams.bedrooms)
+    : undefined,
+  amenities: Array.isArray(searchParams.amenities)
+    ? searchParams.amenities
+    : searchParams.amenities
+    ? [searchParams.amenities]
+    : undefined,
+};
+  const properties = await getProperties(filters);
 
   return (
     <main>

@@ -26,18 +26,12 @@ export type LandlordOverview = {
 };
 
 export type PublicPropertyFilters = {
-  city?:string,
-  state?:string,
+  term?:string,
   minRent?:number,
   maxRent?:number,
-  bedroomsMin?:number,
-  bathroomsMin?:number,
-  hallsMin?:number,
-  areaMin?:number,
-
-  petsAllowed?:boolean,
-  smokingAllowed?:boolean,
-  partiesAllowed?:boolean,
-
+  bedrooms?:number,
+  bathrooms?:number,
+  halls?:number,
+  areaSqft?:number,
   amenities?:string[],
 }

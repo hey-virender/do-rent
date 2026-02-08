@@ -188,9 +188,16 @@ type Location {
 model Property {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  name         String
-  meta         PropertyMeta
-  media        Media
+  name        String
+  meta        PropertyMeta
+  media       Media
+  // denormalized for easier search and filtering
+  bedrooms    Int
+  bathrooms   Int
+  halls       Int
+  areaSqft    Float
+  monthlyRent Float
+
   amenities    String[]
   overview     String
   location     Location
@@ -199,8 +206,16 @@ model Property {
   landlordId   String?      @db.ObjectId
   nearby       Nearby[]
   rules        Rules
+  searchText   String
   availability Availability
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
   landlord     User?        @relation(fields: [landlordId], references: [id])
+
+  @@index([searchText])
+  @@index([monthlyRent])
+  @@index([bedrooms])
+  @@index([bathrooms])
+  @@index([halls])
+  @@index([areaSqft])
 }

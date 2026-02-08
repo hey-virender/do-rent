@@ -24,6 +24,7 @@ const AvailabilityOwner = ({ mode, onNext, onBack, isLast }: StepProps) => {
   const source = mode === "create" ? draft : editDraft;
 
   const handleDateChange = (date: Date | undefined) => {
+    
     if (date) {
       if (date < today) {
         setErrors({
@@ -40,14 +41,14 @@ const AvailabilityOwner = ({ mode, onNext, onBack, isLast }: StepProps) => {
         setDraft({
           availability: {
             ...draft.availability,
-            availableFrom: date.toISOString(),
+            availableFrom: new Date(date),
           },
         });
       } else {
         setEditDraft({
           availability: {
             ...editDraft.availability,
-            availableFrom: date.toISOString(),
+            availableFrom: new Date(date),
           },
         });
       }

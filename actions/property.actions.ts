@@ -3,9 +3,9 @@ import { auth } from "@/auth";
 import { deleteImage, imagekit, updateImageMetaData } from "@/lib/imagekit";
 import { prisma } from "@/lib/prisma";
 import { HouseListing } from "@/types/house";
-import { ImageAsset } from "@/types/type";
+import { ImageAsset, PublicPropertyFilters } from "@/types/type";
 import { houseSchama } from "@/validations/house.validation";
-import { success } from "zod";
+
 
 
 export const createProperty = async (propertyData: HouseListing) => {
@@ -36,7 +36,7 @@ export const createProperty = async (propertyData: HouseListing) => {
  console.log("parsed data", parsed.data);
 
  const {name,media,location,overview,pricing,specs,amenities,nearby,rules,availability,meta} = propertyData;
-
+  const searchText = `${name} ${location.line1} ${location.line2 || ""} ${location.city} ${location.state} ${location.country}`.toLowerCase();
   const newProperty = await prisma.property.create({
     data: {
       name,
@@ -84,6 +84,13 @@ export const createProperty = async (propertyData: HouseListing) => {
         conditions: availability.conditions,
       },
       landlordId: session.user.id,
+      searchText,
+        
+        bedrooms: specs.bedrooms,
+        bathrooms: specs.bathrooms,
+        halls: specs.halls,
+        areaSqft: specs.areaSqft,
+        monthlyRent: pricing.monthly,
     },
   });
 
@@ -110,21 +117,73 @@ export const createProperty = async (propertyData: HouseListing) => {
 
 }
 
-export const getProperties = async () => {
-  return await prisma.property.findMany({
-  where: {
-    meta: { status: "active" },
-    availability: {
+export const getProperties = async (
+  filters: PublicPropertyFilters = {}
+) => {
+  const today = new Date();
+  today.setUTCHours(0, 0, 0, 0);
+
+  return prisma.property.findMany({
+    where: {
+      meta: {
+        status: "active",
+      },
+      
+      availability: {
       is: {
         availableFrom: {
-          gte: new Date(),
+          lte: today,
         },
       },
     },
-  },
-});
 
+     ...filters.term && {
+      searchText: {
+        contains: filters.term.toLowerCase(),
+      },
+    },
+
+      
+
+      // 💰 RENT
+      ...(filters.minRent || filters.maxRent
+        ? {
+            monthlyRent: {
+                ...(filters.minRent && { gte: filters.minRent }),
+                ...(filters.maxRent && { lte: filters.maxRent }),
+              },
+            
+          }
+        : {}),
+
+      // 🏠 ROOMS
+      ...(filters.bedrooms && {
+         bedrooms: { gte: filters.bedrooms } ,
+      }),
+
+      ...(filters.bathrooms && {
+        bathrooms: { gte: filters.bathrooms } ,
+      }),
+
+      ...(filters.halls && {
+        halls: { gte: filters.halls } ,
+      }),
+
+      ...(filters.areaSqft && {
+        areaSqft: { gte: filters.areaSqft } ,
+      }),
+
+      
+      // 🧩 AMENITIES
+      ...(filters.amenities?.length && {
+        amenities: {
+          hasEvery: filters.amenities,
+        },
+      }),
+    },
+  });
 };
+
 
 export const getPropertyById = async (propertyId: string) => {
   const property = await prisma.property.findUnique({
