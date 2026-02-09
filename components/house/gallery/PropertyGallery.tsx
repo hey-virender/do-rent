@@ -12,7 +12,7 @@ interface Props {
 const PropertyGallery = ({ images }: Props) => {
   const [mainApi, setMainApi] = useState<CarouselApi>()
   return (
-    <div className="w-full">
+    <div className="w-2/3">
       <GalleryMain images={images} api ={mainApi} setApi={setMainApi} />
       <GalleryThumbs images={images} mainApi={mainApi} />
     </div>

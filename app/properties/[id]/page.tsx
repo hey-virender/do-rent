@@ -17,7 +17,7 @@ const page = async ({ params }: { params: { id: string } }) => {
   ];
   return (
     <main className="grid grid-cols-3 gap-4 px-6">
-      <div className="col-span-2 py-8 pr-4 rounded-xl overflow-hidden">
+      <div className="col-span-2 py-8 pr-4 rounded-xl flex justify-center items-center overflow-hidden">
         <PropertyGallery images={combinedImages as string[]} />
       </div>
 
@@ -35,7 +35,7 @@ const page = async ({ params }: { params: { id: string } }) => {
             <span> Per month</span>
           </p>
         </div>
-        <div className="h-[500px] rounded-lg overflow-hidden">
+        <div className="h-[400px] rounded-lg overflow-hidden">
           <Map
             lat={property?.location.coordinates.lat}
             lng={property?.location.coordinates.lng}
