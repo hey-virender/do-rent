@@ -219,3 +219,35 @@ model Property {
   @@index([halls])
   @@index([areaSqft])
 }
+
+model ChatRoom {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  //Business context
+  propertyId String @db.ObjectId
+  tenantId   String @db.ObjectId
+  landlordId String @db.ObjectId
+
+  //metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  messages Message[]
+
+  @@index([propertyId])
+  @@index([tenantId, landlordId])
+}
+
+model Message {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  chatRoomId String   @db.ObjectId
+  senderId   String   @db.ObjectId
+  text       String
+  seen       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  chatRoom ChatRoom @relation(fields: [chatRoomId], references: [id], onDelete: Cascade)
+
+  @@index([chatRoomId, createdAt])
+}
