@@ -1,10 +1,9 @@
 "use client";
-import { useUIStore } from "@/store/ui.store";
 import Link from "next/link";
-import { House } from "lucide-react";
+import { House,MessageCircle } from "lucide-react";
 import { Button } from "./ui/button";
 import { useSession } from "next-auth/react";
-import { ro } from "date-fns/locale";
+
 
 const Header = () => {
   const { data: session } = useSession();
@@ -22,11 +21,17 @@ const Header = () => {
       </Link>
 
       <div className="flex gap-4">
-        {role === "landlord" && name ? (
+        {role === "landlord" && name && (
           <Link href="/dashboard">
             <Button className="mr-4 text-lg capitalize ">Dashboard</Button>
           </Link>
-        ) : null}
+        )}
+        {role === "tenant" && (
+          <Link href="/chats" className="flex items-center gap-2 mr-4 text-lg capitalize text-primary font-bold py-1 px-3 border-2 border-accent rounded-md">
+            <MessageCircle/>
+            Chats
+          </Link>
+        )}
 
         {name ? (
           <Link href="/profile">
