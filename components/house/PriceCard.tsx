@@ -15,17 +15,19 @@ import {
   Clock,
   IndianRupee,
   Facebook,
-  Copy
-  
+  Copy,
 } from "lucide-react";
 
 import { HouseListing } from "@/types/house";
+import { useSession } from "next-auth/react";
 
 const PriceCard = ({ listing }: { listing: HouseListing }) => {
+  const { data: session } = useSession();
+
   const { pricing, meta, availability } = listing;
-  const shareList  = [
+  const shareList = [
     { name: "Facebook", icon: Facebook },
-    {name: "Copy Link", icon: Copy}
+    { name: "Copy Link", icon: Copy },
   ];
 
   return (
@@ -66,11 +68,15 @@ const PriceCard = ({ listing }: { listing: HouseListing }) => {
         </div>
       </div>
       <div>
-        <Button className="w-full mb-2">Contact Owner</Button>
-        <Button variant="outline" className="w-full mb-2">
-          <Heart className="h-6 w-6" />
-          Save
-        </Button>
+        {session && session.user?.role === "tenant" && (
+          <>
+            <Button className="w-full mb-2">Contact Owner</Button>
+            <Button variant="outline" className="w-full mb-2">
+              <Heart className="h-6 w-6" />
+              Save
+            </Button>
+          </>
+        )}
 
         <Popover>
           <PopoverTrigger className="flex w-full items-center border-2 border-secondary/20 px-4 py-2 rounded-md text-sm hover:bg-secondary/10 justify-center gap-2">

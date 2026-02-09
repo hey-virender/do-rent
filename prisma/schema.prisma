@@ -234,8 +234,7 @@ model ChatRoom {
 
   messages Message[]
 
-  @@index([propertyId])
-  @@index([tenantId, landlordId])
+  @@index([propertyId, tenantId, landlordId])
 }
 
 model Message {

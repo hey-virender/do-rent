@@ -1,12 +1,26 @@
-import { Ref } from "@/types/type";
+'use client";';
 import { User as User2 } from "@/types/user";
 import { Phone, Mail, User } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 interface Props {
   owner: Partial<User2>;
 }
 
 export default function OwnerCard({ owner }: Props) {
+  const { data: session } = useSession();
+  if (!session || session.user?.role !== "tenant") {
+    return (
+      <div
+        className="
+          text-center"
+      >
+        <p className="text-lg text-muted-foreground">
+          Login as tenant to view owner details
+        </p>
+      </div>
+    );
+  }
   return (
     <div
       className="
