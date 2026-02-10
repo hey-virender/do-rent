@@ -20,15 +20,37 @@ import {
 
 import { HouseListing } from "@/types/house";
 import { useSession } from "next-auth/react";
+import { toast } from "sonner";
+import { getOrCreateChat } from "@/actions/chat.actions";
+import { useRouter } from "next/navigation";
 
 const PriceCard = ({ listing }: { listing: HouseListing }) => {
   const { data: session } = useSession();
+  const router = useRouter();
 
   const { pricing, meta, availability } = listing;
   const shareList = [
     { name: "Facebook", icon: Facebook },
     { name: "Copy Link", icon: Copy },
   ];
+
+  const handleContactOwner = async () => {
+    if (!session || session.user?.role !== "tenant") {
+      toast.error("Please login to contact the owner");
+      return;
+    }
+    if (!listing.id) {
+      return toast.error("Invalid property listing");
+    }
+    const result = await getOrCreateChat({ propertyId: listing.id });
+    if (result.success && result.chatRoom) {
+      {
+        router.push(`/chats/${result?.chatRoom.id}`);
+      }
+    } else {
+      toast.error(result.error || "Failed to initiate chat");
+    }
+  };
 
   return (
     <div className="flex flex-col gap-3 rounded-xl border bg-card p-6 text-card-foreground">
@@ -70,7 +92,7 @@ const PriceCard = ({ listing }: { listing: HouseListing }) => {
       <div>
         {session && session.user?.role === "tenant" && (
           <>
-            <Button className="w-full mb-2">Contact Owner</Button>
+            <Button className="w-full mb-2" onClick={handleContactOwner}>Contact Owner</Button>
             <Button variant="outline" className="w-full mb-2">
               <Heart className="h-6 w-6" />
               Save

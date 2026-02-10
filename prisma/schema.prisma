@@ -35,6 +35,8 @@ model User {
   updatedAt     DateTime        @updatedAt
   profile       Profile?
   properties    Property[]
+  landLordChatRooms ChatRoom[] @relation("LandlordChatRooms")
+  tenantChatRooms ChatRoom[] @relation("TenantChatRooms")
 }
 
 model Account {
@@ -90,6 +92,7 @@ model Authenticator {
   transports           String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
 
   @@unique([userId, credentialID])
 }
@@ -211,6 +214,7 @@ model Property {
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
   landlord     User?        @relation(fields: [landlordId], references: [id])
+  chatRooms     ChatRoom[] @relation("PropertyChatRooms")
 
   @@index([searchText])
   @@index([monthlyRent])
@@ -233,6 +237,9 @@ model ChatRoom {
   updatedAt DateTime @updatedAt
 
   messages Message[]
+  landlord User @relation("LandlordChatRooms",fields: [landlordId], references: [id], onDelete: Cascade)
+  tenant   User @relation("TenantChatRooms",fields: [tenantId], references: [id], onDelete: Cascade)
+  property Property @relation("PropertyChatRooms",fields: [propertyId], references: [id], onDelete: Cascade)
 
   @@index([propertyId, tenantId, landlordId])
 }
