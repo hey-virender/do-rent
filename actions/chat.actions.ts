@@ -128,3 +128,36 @@ export async function getChatById ({chatRoomId}:{chatRoomId: string}) {
   }
   return {success: true, chatRoom}
 } 
+
+export async function getMyChatRooms() {
+  const session = await auth()
+  if (!session || !session.user || !session.user.id) {
+    return {success: false, error: 'Unauthorized'}
+  }
+  const userId = session.user.id;
+  const chatRooms = await prisma.chatRoom.findMany({
+    where: {
+      OR: [
+        { tenantId: userId },
+        { landlordId: userId }
+      ]
+    },
+    include: {
+      messages: {
+        take: 1,
+        orderBy: {createdAt: 'desc'}
+      },
+      landlord:{
+        select: {name: true, id: true}
+      },
+      tenant:{
+        select: {name: true, id: true}
+      },
+      property:{
+        select: {name: true, id: true}
+      }
+    },
+    orderBy: {updatedAt: 'desc'}
+  })
+  return {success: true, chatRooms}
+}
