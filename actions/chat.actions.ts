@@ -153,10 +153,14 @@ export async function getMyChatRooms() {
         orderBy: {createdAt: 'desc'}
       },
       landlord:{
-        select: {name: true, id: true,}
+        select: {name: true, id: true,profile:{
+          select:{avatarUrl: true}
+        }}
       },
       tenant:{
-        select: {name: true, id: true}
+        select: {name: true, id: true ,profile:{
+          select:{avatarUrl: true}
+        }}
       },
       property:{
         select: {name: true, id: true}
@@ -164,7 +168,26 @@ export async function getMyChatRooms() {
     },
     orderBy: {updatedAt: 'desc'}
   })
-  return {success: true, chatRooms}
+
+  const normalizedChatRooms = chatRooms.map((room) => ({
+  ...room,
+  tenant: room.tenant
+    ? {
+        id: room.tenant.id,
+        name: room.tenant.name,
+        avatarUrl: room.tenant.profile?.avatarUrl ?? undefined,
+      }
+    : null,
+  landlord: room.landlord
+    ? {
+        id: room.landlord.id,
+        name: room.landlord.name,
+        avatarUrl: room.landlord.profile?.avatarUrl ?? undefined,
+      }
+    : null,
+}))
+
+  return {success: true, chatRooms: normalizedChatRooms}
 }
 
 

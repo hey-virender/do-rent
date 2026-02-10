@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { useChatStore } from "@/store/chat.store";
 import { ChatRoom } from "@/types/chat";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -11,6 +12,7 @@ function ChatListItem({
   chatId,
   receiverName,
   propertyName,
+  receiverAvatar,
   lastMessage,
   lastMessageAt,
   seen,
@@ -19,6 +21,7 @@ function ChatListItem({
   chatId: string;
   receiverName: string;
   propertyName: string;
+  receiverAvatar?: string;
   lastMessage?: string;
   lastMessageAt?: Date;
   seen?: boolean;
@@ -58,12 +61,23 @@ function ChatListItem({
     <button
       onClick={onClick}
       className={cn(
-        "flex w-full items-start gap-3 px-4 py-3  text-left hover:bg-muted transition",seen ? "bg-primary/20" : "bg-primary/50"
+        "flex w-full items-center gap-3 px-4 py-3  text-left hover:bg-muted transition",
+        seen ? "bg-primary/20" : "bg-primary/50",
       )}
     >
       {/* Avatar (placeholder) */}
-      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 text-sm font-medium">
-        {receiverName.charAt(0)}
+      <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gray-200 text-sm font-medium">
+        {receiverAvatar ? (
+          <Image
+            src={receiverAvatar}
+            alt={receiverName}
+            width={100}
+            height={100}
+            className="h-20 w-20 rounded-full object-cover"
+          />
+        ) : (
+          receiverName.charAt(0)
+        )}
       </div>
 
       {/* Content */}
@@ -82,7 +96,12 @@ function ChatListItem({
 
         <p className="text-xs text-muted-foreground truncate">{propertyName}</p>
 
-        <p className={cn("mt-0.5 truncate text-sm text-muted-foreground", seen ? "font-normal" : "font-bold")}>
+        <p
+          className={cn(
+            "mt-0.5 truncate text-sm text-muted-foreground",
+            seen ? "font-normal" : "font-bold",
+          )}
+        >
           {lastMessage ?? "No messages yet"}
         </p>
       </div>
@@ -125,6 +144,7 @@ export function ChatList({ chats }: { chats: ChatRoom[] }) {
               chatId={chat?.id!}
               receiverName={receiver?.name ?? "Unknown"}
               propertyName={chat?.property?.name ?? "Unknown"}
+              receiverAvatar={receiver?.avatarUrl!}
               lastMessage={lastMessage?.text}
               seen={lastMessage?.seen}
               lastMessageAt={lastMessage?.createdAt}
