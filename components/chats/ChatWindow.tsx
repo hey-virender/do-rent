@@ -4,30 +4,50 @@ import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 
 function ChatHeader({
+  avatarUrl,
   receiverName,
   propertyName,
 }: {
+  avatarUrl?: string;
   receiverName: string;
   propertyName: string;
 }) {
   return (
-    <div className="border-b  px-4 py-3 bg-accent">
-      <p className="font-medium text-xl">{receiverName}</p>
+    <div className="border-b  px-4 py-3 bg-accent flex items-center gap-3">
+      <div>
+        {avatarUrl ? (
+          <Image
+            src={avatarUrl}
+            alt={`${receiverName}'s avatar`}
+            className="h-16 w-16 rounded-full object-cover"
+            width={80}
+            height={80}
+          />
+        ) : (
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-200 text-sm font-medium">
+            {receiverName.charAt(0)}
+          </div>
+        )}
+      </div>
+      <div>
+        <p className="font-medium text-xl">{receiverName}</p>
       <p className="text-md text-gray-500">{propertyName}</p>
+      </div>
     </div>
   );
 }
 
 import { cn } from "@/lib/utils";
-import { ChatRoom } from "@/types/chat";
+
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
 import { sendMessage } from "@/actions/chat.actions";
-import { set } from "zod";
 import { useMarkSeen } from "@/hooks/useMarkSeen";
+import { ChatRoomDTO } from "@/types/chat.dto";
+import Image from "next/image";
 
 function MessageBubble({ message, isOwn }: { message: any; isOwn: boolean }) {
   return (
@@ -83,7 +103,7 @@ function ChatInput({
   );
 }
 
-export function ChatWindow({ chatRoom }: { chatRoom: ChatRoom }) {
+export function ChatWindow({ chatRoom }: { chatRoom: ChatRoomDTO }) {
   const [chat, setChat] = useState(chatRoom);
   useMarkSeen(chat.id);
   const router = useRouter();
@@ -143,7 +163,7 @@ export function ChatWindow({ chatRoom }: { chatRoom: ChatRoom }) {
   }
   const currentUserId = session?.user?.id;
 
-  const isLandlord = currentUserId === chat.landlord.id;
+  const isLandlord = currentUserId === chat?.landlord?.id;
   const receiver = isLandlord ? chat.tenant : chat.landlord;
 
   if (!receiver) {
@@ -191,6 +211,7 @@ export function ChatWindow({ chatRoom }: { chatRoom: ChatRoom }) {
     <div className="flex h-full flex-col bg-[#efeae2]">
       {/* Header */}
       <ChatHeader
+        avatarUrl={receiver.avatarUrl!}
         receiverName={receiver?.name!}
         propertyName={chat?.property?.name!}
       />

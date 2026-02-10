@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { useChatStore } from "@/store/chat.store";
-import { ChatRoom } from "@/types/chat";
+import { ChatRoomDTO } from "@/types/chat.dto";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -109,7 +109,7 @@ function ChatListItem({
   );
 }
 
-export function ChatList({ chats }: { chats: ChatRoom[] }) {
+export function ChatList({ chats }: { chats: ChatRoomDTO[] }) {
   const router = useRouter();
   const { chatRooms, setChatRooms } = useChatStore();
   const { data: session } = useSession();

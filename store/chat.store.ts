@@ -1,10 +1,11 @@
 import { ChatRoom } from "@/types/chat";
+import { ChatRoomDTO } from "@/types/chat.dto";
 import {create} from "zustand";
 
 interface ChatState {
-  chatRooms: ChatRoom[];
+  chatRooms: ChatRoomDTO[];
   
-  setChatRooms: (chatRooms: ChatRoom[]) => void;
+  setChatRooms: (chatRooms: ChatRoomDTO[]) => void;
 
   addMessageToChatRoom: (chatRoomId: string, message: ChatRoom['messages'][number]) => void;
 }

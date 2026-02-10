@@ -2,9 +2,10 @@ import React, { useEffect } from 'react'
 import { ChatList } from '../chats/ChatList'
 import { getMyChatRooms } from '@/actions/chat.actions';
 import { ChatRoom } from '@/types/chat';
+import { ChatRoomDTO } from '@/types/chat.dto';
 
 const Chat = () => {
-  const [chats, setChats] = React.useState<ChatRoom[]>([]);
+  const [chats, setChats] = React.useState<ChatRoomDTO[]>([]);
   useEffect(() => {
     const fetchChats = async () => {
       const result = await getMyChatRooms()

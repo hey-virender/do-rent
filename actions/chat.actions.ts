@@ -110,14 +110,19 @@ export async function getChatById ({chatRoomId}:{chatRoomId: string}) {
   const chatRoom = await prisma.chatRoom.findUnique({
     where: {id: chatRoomId},
     include: {
+      
       messages: {
         orderBy: {createdAt: 'asc'}
       },
       landlord:{
-        select: {name: true, id: true}
+        select: {name: true, id: true,profile:{
+          select:{avatarUrl: true}
+        }}
       },
       tenant:{
-        select: {name: true, id: true}
+        select: {name: true, id: true,profile:{
+          select:{avatarUrl: true}
+        }}
       },
       property:{
         select: {name: true, id: true}
@@ -131,7 +136,46 @@ export async function getChatById ({chatRoomId}:{chatRoomId: string}) {
   if(!isAuthorized) {
     return {success: false, error: 'You are not a participant of this chat room'}
   }
-  return {success: true, chatRoom}
+const normalizedChatRoom = {
+  id: chatRoom.id,
+  createdAt: chatRoom.createdAt,
+  updatedAt: chatRoom.updatedAt,
+
+  property: chatRoom.property
+    ? {
+        id: chatRoom.property.id,
+        name: chatRoom.property.name,
+      }
+    : null,
+
+  landlord: chatRoom.landlord
+    ? {
+        id: chatRoom.landlord.id,
+        name: chatRoom.landlord.name,
+        avatarUrl:
+          chatRoom.landlord.profile?.avatarUrl || undefined,
+      }
+    : null,
+
+  tenant: chatRoom.tenant
+    ? {
+        id: chatRoom.tenant.id,
+        name: chatRoom.tenant.name,
+        avatarUrl:
+          chatRoom.tenant.profile?.avatarUrl || undefined,
+      }
+    : null,
+
+  messages: chatRoom.messages.map((m) => ({
+    id: m.id,
+    text: m.text,
+    senderId: m.senderId,
+    seen: m.seen,
+    createdAt: m.createdAt,
+  })),
+}
+
+  return {success: true, chatRoom: normalizedChatRoom}
 } 
 
 export async function getMyChatRooms() {
@@ -175,14 +219,14 @@ export async function getMyChatRooms() {
     ? {
         id: room.tenant.id,
         name: room.tenant.name,
-        avatarUrl: room.tenant.profile?.avatarUrl ?? undefined,
+        avatarUrl: room.tenant.profile?.avatarUrl || undefined,
       }
     : null,
   landlord: room.landlord
     ? {
         id: room.landlord.id,
         name: room.landlord.name,
-        avatarUrl: room.landlord.profile?.avatarUrl ?? undefined,
+        avatarUrl: room.landlord.profile?.avatarUrl || undefined,
       }
     : null,
 }))

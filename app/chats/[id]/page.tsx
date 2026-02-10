@@ -2,8 +2,7 @@ import { getChatById } from "@/actions/chat.actions";
 import { auth } from "@/auth";
 import { ChatWindow } from "@/components/chats/ChatWindow";
 import { redirect } from "next/navigation";
-import React from "react";
-import { toast } from "sonner";
+
 
 const page = async ({ params }: { params: { id: string } }) => {
   const session = await auth();

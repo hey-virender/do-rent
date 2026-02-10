@@ -2,6 +2,7 @@ import { getMyChatRooms } from "@/actions/chat.actions";
 import { auth } from "@/auth";
 import { ChatList } from "@/components/chats/ChatList";
 import { ChatRoom } from "@/types/chat";
+import { ChatRoomDTO } from "@/types/chat.dto";
 import { redirect } from "next/navigation";
 
 const page = async () => {
@@ -28,7 +29,7 @@ const page = async () => {
 
 
     <main>
-      <ChatList chats={chatRooms as ChatRoom[]} />
+      <ChatList chats={chatRooms as ChatRoomDTO[]} />
     </main>
   );
 };
