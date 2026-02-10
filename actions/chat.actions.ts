@@ -3,6 +3,7 @@
 import {prisma} from '@/lib/prisma'
 import {auth} from '@/auth'
 import { HouseListing } from '@/types/house'
+import { chatEmitter } from '@/lib/chat-emitter'
 
 
 export async function getOrCreateChat({propertyId}: {propertyId: HouseListing['id']}) {
@@ -88,6 +89,10 @@ export async function sendMessage({chatRoomId,text}:{chatRoomId: string, text: s
     where: { id: chatRoomId },
     data: { updatedAt: new Date() },
   });
+  chatEmitter.emit("message",{
+  chatRoomId,
+  message,
+  })
   return {success: true, message}
 }
 
@@ -148,7 +153,7 @@ export async function getMyChatRooms() {
         orderBy: {createdAt: 'desc'}
       },
       landlord:{
-        select: {name: true, id: true}
+        select: {name: true, id: true,}
       },
       tenant:{
         select: {name: true, id: true}
@@ -160,4 +165,32 @@ export async function getMyChatRooms() {
     orderBy: {updatedAt: 'desc'}
   })
   return {success: true, chatRooms}
+}
+
+
+export async function markMessagesAsSeen({chatRoomId}:{chatRoomId: string}) {
+  const session = await auth()
+  if (!session || !session.user || !session.user.id) {
+    return {success: false, error: 'Unauthorized'}
+  }
+  const userId = session.user.id;
+
+  const chatRoom = await prisma.chatRoom.findUnique({
+    where: {id: chatRoomId},
+    select: {tenantId: true, landlordId: true}
+  })
+  if(!chatRoom || (chatRoom.tenantId !== userId && chatRoom.landlordId !== userId)) {
+    return {success: false, error: 'Chat Room not found or you are not a participant'}
+  }
+  await prisma.message.updateMany({
+    where:{
+      chatRoomId,
+      senderId: {not: userId},
+      seen: false
+    },
+    data:{
+      seen: true
+    }
+  })
+  return {success: true}
 }

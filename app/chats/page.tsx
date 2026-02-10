@@ -1,16 +1,36 @@
-import { auth } from '@/auth'
-import { redirect } from 'next/navigation'
-import { toast } from 'sonner'
+import { getMyChatRooms } from "@/actions/chat.actions";
+import { auth } from "@/auth";
+import { ChatList } from "@/components/chats/ChatList";
+import { ChatRoom } from "@/types/chat";
+import { redirect } from "next/navigation";
 
 const page = async () => {
-  const session = await auth()
-  if(!session||session.user.role !== 'tenant'){
-    toast.error('Unauthorized access')
-    redirect('/')
+  
+  
+  const session = await auth();
+  if (!session || session.user.role !== "tenant") {
+    redirect("/");
   }
-  return (
-    <div>page</div>
-  )
-}
+  const result = await getMyChatRooms();
+  if (!result.success) {
+   
+    return (  
+      <main className="flex h-full items-center justify-center">
+        <p className="text-sm text-muted-foreground">Failed to load chat rooms</p>
+      </main>
+    );
+  }
 
-export default page
+  const chatRooms = result.chatRooms;
+
+
+  return (
+
+
+    <main>
+      <ChatList chats={chatRooms as ChatRoom[]} />
+    </main>
+  );
+};
+
+export default page;

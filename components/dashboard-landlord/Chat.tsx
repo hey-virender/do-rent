@@ -1,8 +1,26 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { ChatList } from '../chats/ChatList'
+import { getMyChatRooms } from '@/actions/chat.actions';
+import { ChatRoom } from '@/types/chat';
 
 const Chat = () => {
+  const [chats, setChats] = React.useState<ChatRoom[]>([]);
+  useEffect(() => {
+    const fetchChats = async () => {
+      const result = await getMyChatRooms()
+      if(result.success && result.chatRooms) {
+        setChats(result?.chatRooms)
+      } else {
+        console.error("Failed to fetch chat rooms:", result.error);
+      }
+    }
+    fetchChats();
+  }, [])
   return (
-    <div className='flex justify-center items-center text-4xl font-bold mt-24'>Feature coming soon</div>
+    <main>
+      <h1>Chat</h1>
+      <ChatList chats={chats} />
+    </main>
   )
 }
 
