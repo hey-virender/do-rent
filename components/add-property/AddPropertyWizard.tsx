@@ -40,7 +40,7 @@ const AddPropertyWizard = ({ mode }: { mode: "create" | "edit" }) => {
         ? houseSchama.safeParse(draft)
         : houseSchama.partial().safeParse(editDraft);
     if (!parsed.success) {
-      console.log("Validation errors:", parsed.error.flatten().fieldErrors);
+      toast.error("Please fill all required fields correctly before submitting.");
       return;
     }
     // submit the property data
@@ -50,7 +50,7 @@ const AddPropertyWizard = ({ mode }: { mode: "create" | "edit" }) => {
     } else {
       response = await updateProperty(editDraft.id!, editDraft as HouseListing);
     }
-    console.log("Property creation response:", response);
+    
     if (response.success) {
       mode === "create" ? resetDraft() : resetEditDraft();
       setStepIndex(0);

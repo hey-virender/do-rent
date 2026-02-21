@@ -16,7 +16,7 @@ const page = async ({ params }: { params: { id: string } }) => {
   if (!chatRoom.success || !chatRoom.chatRoom) {
     redirect("/");
   }
-  console.log("Chat Room Data:", chatRoom.chatRoom);
+ 
 
   return (
     <div>

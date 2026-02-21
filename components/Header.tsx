@@ -9,7 +9,7 @@ const Header = () => {
   const { data: session } = useSession();
   const { name, role } =
     (session?.user as { name: string; role: string }) || {};
-  console.log(name, role);
+
 
   return (
     <header className="flex justify-between items-center px-4 py-6 border-b-2 border-primary ">

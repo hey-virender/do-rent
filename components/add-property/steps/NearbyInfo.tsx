@@ -60,7 +60,7 @@ const NearbyInfo = ({ mode, onNext, onBack, isLast }: StepProps) => {
 
   const handleAddNearby = () => {
     const parsed = nearbySchema.safeParse(nearby);
-    console.log("Parsed nearby:", parsed);
+    
     if (!parsed.success) {
       const fieldErrors: Record<string, string> = {};
       parsed.error.issues.forEach((err) => {
@@ -70,7 +70,7 @@ const NearbyInfo = ({ mode, onNext, onBack, isLast }: StepProps) => {
         }
       });
       setErrors(fieldErrors);
-      console.log("Validation errors:", fieldErrors);
+      
       return;
     }
     clearErrors();

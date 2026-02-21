@@ -30,7 +30,7 @@ const Pricing = ({ mode, onNext, onBack, isLast }: StepProps) => {
     setErrors,
     clearErrors,
   } = usePropertyDraftStore();
-  console.log("Pricing step render", { draft, editDraft });
+  
   const validateAndProceed = () => {
     const parsed =
       mode == "create"
@@ -53,7 +53,7 @@ const Pricing = ({ mode, onNext, onBack, isLast }: StepProps) => {
         }
       });
       setErrors(fieldError);
-      console.log("Pricing validation errors", fieldError);
+      
       return;
     }
     clearErrors();
@@ -122,7 +122,7 @@ const Pricing = ({ mode, onNext, onBack, isLast }: StepProps) => {
                   : editDraft.pricing?.monthly
               }
               onChange={(e) => {
-                console.log("monthly price changed", e.target.value);
+                
                 mode === "create"
                   ? setDraft({
                       pricing: {

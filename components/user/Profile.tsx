@@ -33,8 +33,6 @@ import { set } from "zod";
 
 /* ---------- Reusable field components ---------- */
 
-
-
 const Editable = ({
   label,
   value,
@@ -192,7 +190,7 @@ const Profile = ({
   };
 
   const handleAvatarUploadSuccess = async (result: any) => {
-    console.log("Avatar uploaded:", result);
+  
     const { url, fileId } = result;
     const response = await changeAvatar(url, fileId);
     if (response.success) {
@@ -204,7 +202,7 @@ const Profile = ({
 
   return (
     <main>
-      {/* 🔒 UPPER SECTION — UNCHANGED */}
+     
       <section className="relative h-56">
         <div className="bg-gray-300 h-1/2" />
         <div

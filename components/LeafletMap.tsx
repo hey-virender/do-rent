@@ -108,7 +108,7 @@ const LeafletMap = ({ lat, lng, address, zoom, properties }: Props) => {
       />
       {zoom && latitude && longitude && <FlyToLocation position={[latitude!, longitude!]} />}
       {properties && properties.length > 0 && properties.map((house) => {
-        console.log("house location",house.id, house.location.coordinates);
+       
         return(
           <Marker
           key={house.id}

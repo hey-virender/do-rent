@@ -1,8 +1,4 @@
-import {
-  BedDouble,
-  Bath,
-  Ruler,
-} from "lucide-react";
+import { BedDouble, Bath, Ruler } from "lucide-react";
 
 interface Specs {
   bedrooms: number;
@@ -15,7 +11,7 @@ interface Props {
 }
 
 export default function SpecsGrid({ specs }: Props) {
-  console.log("SpecsGrid specs:", specs);
+  ("SpecsGrid specs:", specs);
   const ITEMS = [
     {
       label: "Bedrooms",
@@ -47,12 +43,8 @@ export default function SpecsGrid({ specs }: Props) {
         >
           <Icon className="h-10 w-10 text-primary" />
           <div className="flex flex-col">
-            <span className="text-lg text-muted-foreground">
-              {label}
-            </span>
-            <span className="font-semibold text-xl">
-              {value}
-            </span>
+            <span className="text-lg text-muted-foreground">{label}</span>
+            <span className="font-semibold text-xl">{value}</span>
           </div>
         </div>
       ))}

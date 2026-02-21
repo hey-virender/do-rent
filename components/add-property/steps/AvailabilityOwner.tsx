@@ -36,7 +36,7 @@ const AvailabilityOwner = ({ mode, onNext, onBack, isLast }: StepProps) => {
         clearErrors();
       }
 
-      console.log("Selected available from date:", date);
+      
       if (mode === "create") {
         setDraft({
           availability: {
@@ -61,7 +61,7 @@ const AvailabilityOwner = ({ mode, onNext, onBack, isLast }: StepProps) => {
       leaseTerms: source.availability?.leaseTerms,
       conditions: source.availability?.conditions,
     });
-    console.log("Validating availability", parsed);
+    
     if (!parsed.success) {
       const fieldErrors: Record<string, string> = {};
       parsed.error.issues.forEach((err) => {
@@ -71,7 +71,7 @@ const AvailabilityOwner = ({ mode, onNext, onBack, isLast }: StepProps) => {
         }
       });
       setErrors(fieldErrors);
-      console.log("Validation errors:", fieldErrors);
+      
       return;
     }
     clearErrors();
@@ -90,7 +90,7 @@ const AvailabilityOwner = ({ mode, onNext, onBack, isLast }: StepProps) => {
   const handleStatusChange = (
     value: (typeof houseMetaStatusOptions)[number],
   ) => {
-    console.log("Status changed to:", value);
+    
     if (mode === "create") {
       setDraft({
         meta: {

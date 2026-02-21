@@ -97,7 +97,7 @@ const AmenitiesRules = ({ mode, onNext, onBack, isLast }: StepProps) => {
             rules: editDraft.rules,
           });
 
-    console.log("Validating amenities and rules", parsed);
+  
 
     if (!parsed.success) {
       const fieldErrors: Record<string, string> = {};

@@ -27,7 +27,7 @@ const LocationDetails = ({ mode, onNext, onBack, isLast }: StepProps) => {
     setErrors,
     clearErrors,
   } = usePropertyDraftStore();
-  console.log("LocationDetails render", { editDraft });
+  
   const fetchCoordinates = async () => {
     if (!address) {
       toast.error("Please fill address field to get coordinates");
@@ -36,9 +36,9 @@ const LocationDetails = ({ mode, onNext, onBack, isLast }: StepProps) => {
 
     try {
       const coordinates = await getCoordinates(address);
-      console.log("fetched coordinates", coordinates);
+      
       if (coordinates && coordinates.lat && coordinates.lng) {
-        console.log(coordinates);
+        
         if (mode === "create") {
           setDraft({
             location: {
@@ -98,7 +98,7 @@ const LocationDetails = ({ mode, onNext, onBack, isLast }: StepProps) => {
         },
       });
     }
-    console.log("parsed location", parsed);
+
     if (!parsed.success) {
       const fieldErrors: Record<string, string> = {};
       parsed.error.issues.forEach((err) => {
@@ -108,7 +108,7 @@ const LocationDetails = ({ mode, onNext, onBack, isLast }: StepProps) => {
         }
       });
       setErrors(fieldErrors);
-      console.log("location errors", fieldErrors);
+      
       return;
     }
     clearErrors();

@@ -9,7 +9,7 @@ import { HouseListing } from "@/types/house";
 const page = async ({ params }: { params: { id: string } }) => {
   const { id } = await params;
   const property = await getPropertyById(id);
-  console.log("property",property);
+ 
 
   const combinedImages = [
     property?.media?.cover.url,

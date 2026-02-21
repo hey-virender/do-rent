@@ -50,7 +50,7 @@ const Specs = ({ mode,onNext, onBack, isLast }: StepProps) => {
       return;
     };
     clearErrors();
-    console.log("Specs validated successfully");
+  
     onNext();
   }
   const clearData = () => {
