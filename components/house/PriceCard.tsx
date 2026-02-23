@@ -92,8 +92,8 @@ const PriceCard = ({ listing }: { listing: HouseListing }) => {
       <div>
         {session && session.user?.role === "tenant" && (
           <>
-            <Button className="w-full mb-2" onClick={handleContactOwner}>Contact Owner</Button>
-            <Button variant="outline" className="w-full mb-2">
+            <Button className="w-full mb-2" aria-label="contact owner" onClick={handleContactOwner}>Contact Owner</Button>
+            <Button variant="outline" aria-label="save property" className="w-full mb-2">
               <Heart className="h-6 w-6" />
               Save
             </Button>
@@ -107,7 +107,7 @@ const PriceCard = ({ listing }: { listing: HouseListing }) => {
           </PopoverTrigger>
           <PopoverContent className="bg-primary/90 w-full" align="start">
             {shareList.map(({ name, icon: Icon }) => (
-              <Button key={name} variant="outline" className="w-full mb-2">
+              <Button key={name} variant="outline" className="w-full mb-2" aria-label={`share on ${name}`}>
                 <Icon className="h-4 w-4" />
                 {name}
               </Button>

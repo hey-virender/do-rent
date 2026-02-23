@@ -153,6 +153,7 @@ const Media = ({ mode, onNext, onBack, isLast }: StepProps) => {
                 >
                   {/* todo add delete button for pictures */}
                   <Button
+                      aria-label={`delete gallery image ${index + 1}`}
                     variant="destructive"
                     size="icon"
                     className="absolute bg-red-500 top-2 right-2 z-10"
@@ -187,10 +188,10 @@ const Media = ({ mode, onNext, onBack, isLast }: StepProps) => {
         )}
       </div>
       <div className="flex justify-start gap-2 mt-4">
-        <Button className="bg-accent text-black px-7" onClick={onBack}>Back</Button>
-      <Button className="px-7" onClick={validateAndProceed}>{isLast ? "Finish" : "Next"}</Button>
+        <Button aria-label="previous step" className="bg-accent text-black px-7" onClick={onBack}>Back</Button>
+      <Button aria-label={isLast ? "finish adding property" : "next step"} className="px-7" onClick={validateAndProceed}>{isLast ? "Finish" : "Next"}</Button>
       {mode === "create" && (
-        <Button className="px-7" onClick={clearData}>
+        <Button aria-label="clear all data" className="px-7" onClick={clearData}>
 
         Clear
       </Button>

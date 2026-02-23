@@ -1,6 +1,5 @@
 "use client";
 import {
-  Menu,
   LayoutDashboard,
   ChartBarStacked,
   Wallet,
@@ -41,6 +40,7 @@ const Topbar = () => {
         const isActive = dashboardActiveItem === item.label;
         return (
           <Button
+              aria-label={item.label}
             key={index}
             size="sm"
             className={cn(

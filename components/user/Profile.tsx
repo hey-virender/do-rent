@@ -234,6 +234,7 @@ const Profile = ({
             {!isEditing ? (
               <>
                 <Button
+                aria-label="edit profile"
                   size="sm"
                   variant="outline"
                   onClick={() => setIsEditing(true)}
@@ -242,6 +243,7 @@ const Profile = ({
                   <span className="hidden md:block">Edit</span>
                 </Button>
                 <Button
+                aria-label="logout"
                   onClick={handleLogout}
                   size="sm"
                   className="bg-red-500 hover:bg-white/70 hover:text-red-500 hover:scale-105 transition-all text-white cursor-pointer"
@@ -252,11 +254,11 @@ const Profile = ({
               </>
             ) : (
               <>
-                <Button size="sm" onClick={handleSave}>
+                <Button size="sm" aria-label="save profile" onClick={handleSave}>
                   <Save className="mr-2 h-4 w-4" />
                   Save
                 </Button>
-                <Button size="sm" variant="outline" onClick={handleCancel}>
+                <Button aria-label="cancel profile edit" size="sm" variant="outline" onClick={handleCancel}>
                   <X className="mr-2 h-4 w-4" />
                   Cancel
                 </Button>

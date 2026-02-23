@@ -155,6 +155,7 @@ const Page = () => {
               <FieldDescription className="text-center mt-4 text-neutral-800 select-none">
                 Don't have an account?{" "}
                 <Link
+                aria-label="Go to registration page"
                   href="/register"
                   className="text-gray-200 hover:text-gray-400 hover:scale-105 hover:underline"
                 >

@@ -21,8 +21,8 @@ const Overview = () => {
   return (
     <section>
       <div className="flex justify-end items-center p-2">
-        <Link href="/properties/new">
-          <Button>+ New Property</Button>
+        <Link href="/properties/new" className="bg-primary text-white py-1 px-3 rounded-lg" aria-label="create new property">
+          + Add New Property
         </Link>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">

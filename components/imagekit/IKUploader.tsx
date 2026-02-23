@@ -176,10 +176,10 @@ const IKUploader = ({
     >
       <Dialog open={open} onOpenChange={handleOpenChange} defaultOpen={false}>
         {customUI ? (
-          <DialogTrigger>{customUI}</DialogTrigger>
+          <DialogTrigger aria-label="open image upload dialog">{customUI}</DialogTrigger>
         ) : (
-          <DialogTrigger className="">
-            <Button>
+          <DialogTrigger aria-label="open image upload dialog">
+            <Button  aria-label="upload image">
               <Upload /> Upload
             </Button>
           </DialogTrigger>
@@ -205,7 +205,7 @@ const IKUploader = ({
             multiple={!single}
           />
           {/* Button to trigger the upload process */}
-          <Button type="button" onClick={handleUpload}>
+          <Button type="button" aria-label="upload file" onClick={handleUpload}>
             <Upload />
             Upload file
           </Button>

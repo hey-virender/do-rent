@@ -212,11 +212,12 @@ const PropertyFilter = () => {
 
       {/* RIGHT SECTION */}
       <div className="lg:w-48 flex flex-col gap-1">
-        <Button className="w-full lg:w-1/2" onClick={applyFilters}>
+        <Button  aria-label="apply filters" className="w-full lg:w-1/2" onClick={applyFilters}>
           Apply Filters
         </Button>
 
         <Button
+        aria-label="clear filters"
           className="w-full lg:w-1/2 bg-accent text-black hover:bg-accent/80"
           onClick={clearFilters}
         >

@@ -206,14 +206,14 @@ const AmenitiesRules = ({ mode, onNext, onBack, isLast }: StepProps) => {
         </FieldGroup>
       </FieldSet>
       <div className="flex justify-start gap-2 mt-4">
-        <Button className="bg-accent text-black px-7" onClick={onBack}>
+        <Button aria-label="previous step" className="bg-accent text-black px-7" onClick={onBack}>
           Back
         </Button>
-        <Button className="px-7" onClick={validateAndProceed}>
+        <Button aria-label={isLast ? "finish adding property" : "next step"} className="px-7" onClick={validateAndProceed}>
           {isLast ? "Finish" : "Next"}
         </Button>
         {mode === "create" && (
-          <Button className="px-7" onClick={clearData}>
+          <Button aria-label="clear all data" className="px-7" onClick={clearData}>
             Clear
           </Button>
         )}

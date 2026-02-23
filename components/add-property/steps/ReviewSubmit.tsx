@@ -116,10 +116,10 @@ const ReviewSubmit = ({ mode, onNext, onBack, isLast }: StepProps) => {
         />
       </div>
       <div className="col-span-3 flex justify-start gap-2 mt-4">
-        <Button className="bg-accent text-black px-7" onClick={onBack}>
+        <Button aria-label="previous step" className="bg-accent text-black px-7" onClick={onBack}>
           Back
         </Button>
-        <Button className="px-7" onClick={onNext}>
+        <Button aria-label={isLast ? "finish adding property" : "next step"} className="px-7" onClick={onNext}>
           {isLast ? "Finish" : "Next"}
         </Button>
       </div>

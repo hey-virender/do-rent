@@ -15,10 +15,10 @@ export default function NotFound() {
           The page you are looking for might have been removed had its name
           changed or is temporarily unavailable.
         </p>
-        <Link href="/">
-          <Button variant="default" className="px-3 py-6 text-lg mt-8 text-lg flex items-center gap-2 mx-auto">
+        <Link href="/" aria-label="Return to Home" className="px-3 py-6 text-lg mt-8 text-lg flex items-center gap-2 mx-auto">
+          
           <Home className="inline mb-1 mr-2 size-7" /> Return to Home
-          </Button>
+          
         </Link>
       </div>
     </main>

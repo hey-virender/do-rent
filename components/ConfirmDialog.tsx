@@ -43,11 +43,12 @@ export function ConfirmDialog({
         </DialogHeader>
 
         <DialogFooter>
-          <Button variant="outline">
+          <Button variant="outline" aria-label="cancel confirmation">
             {cancelText}
           </Button>
 
           <Button
+          aria-label="confirmation"
             className={className}
             onClick={onConfirm}
           >

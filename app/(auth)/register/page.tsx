@@ -412,7 +412,7 @@ const Page = () => {
                   className=" text-neutral-200 leading-tight"
                 >
                   I agree to the{" "}
-                  <Link href="/terms" className="underline hover:text-white">
+                  <Link aria-label="terms" href="/terms" className="underline hover:text-white">
                     Terms and Conditions
                   </Link>
                 </label>
@@ -436,6 +436,7 @@ const Page = () => {
                 Already have an account?{" "}
                 <Link
                   href="/login"
+                  aria-label="Go to login page"
                   className="text-gray-200 ml-2 hover:text-gray-400 hover:scale-105 hover:underline"
                 >
                   Login

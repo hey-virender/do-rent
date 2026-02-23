@@ -53,7 +53,7 @@ const page = async ({ searchParams }: PageProps) => {
       <div className="lg:flex lg:items-start">
         <section className="md:grid md:grid-cols-2 py-6 lg:w-2/3">
           {properties &&
-            properties.map((house) => (
+            properties.map((house,index) => (
               <PropertyBanner
                 key={house.id}
                 id={house.id}
@@ -62,6 +62,7 @@ const page = async ({ searchParams }: PageProps) => {
                 price={house.pricing.monthly}
                 currency={house.pricing.currency}
                 cover={house.media.cover.url}
+                priority={index === 0}
               />
             ))}
         </section>

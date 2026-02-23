@@ -42,8 +42,10 @@ const UserAvatar = ({
           />
         )}
       </div>
-      <Avatar className={cn("size-full", className)}>
-        <AvatarImage className="z-0" src={src || "/assets/icons/avatar.png"} />
+      <Avatar className={cn("size-full aspect-[3/2]", className)}>
+        <AvatarImage  sizes="(max-width: 768px) 100vw,
+           (max-width: 1024px) 50vw,
+           33vw" alt="User Avatar" className="z-0" src={src || "/assets/icons/avatar.png"} />
       </Avatar>
     </div>
   );

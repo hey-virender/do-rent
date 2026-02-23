@@ -6,6 +6,22 @@ import "leaflet/dist/leaflet.css";
 import { Toaster } from "@/components/ui/sonner";
 import { Providers } from "./providers";
 
+import { DM_Serif_Display, Space_Grotesk } from "next/font/google";
+
+const dmSerif = DM_Serif_Display({
+  subsets: ["latin"],
+  weight: ["400"],
+  style: ["normal", "italic"],
+  variable: "--font-serif",
+  display: "swap",
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-sans",
+  display: "swap",
+});
 const wixFont = Wix_Madefor_Text({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -20,7 +36,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={wixFont.className}>
+      <body className={`${wixFont.className} ${dmSerif.variable} ${spaceGrotesk.variable}`}>
         <Providers>
           <Header />
           <Toaster position="top-right" />

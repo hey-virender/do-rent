@@ -94,6 +94,7 @@ function ChatInput({
         onChange={(e) => setText(e.target.value)}
       />
       <Button
+        aria-label="send message"
         onClick={handleSend}
         className="rounded-md bg-primary px-4 py-2 text-sm text-white"
       >

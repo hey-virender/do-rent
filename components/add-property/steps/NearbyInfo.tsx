@@ -194,6 +194,7 @@ const NearbyInfo = ({ mode, onNext, onBack, isLast }: StepProps) => {
                 className="relative mb-2 p-4 border rounded w-fit"
               >
                 <Button
+                  aria-label={`remove nearby place ${place.name}`}
                   className="absolute size-8 top-1 right-1 bg-red-500 text-white"
                   onClick={() => removeNearbyByName(place.name!)}
                 >
@@ -213,8 +214,8 @@ const NearbyInfo = ({ mode, onNext, onBack, isLast }: StepProps) => {
         </div>
       </div>
       <div className="flex justify-start gap-2 mt-4">
-        <Button className="bg-accent text-black px-7" onClick={onBack}>Back</Button>
-      <Button className="px-7" onClick={onNext}>{isLast ? "Finish" : "Next"}</Button>
+        <Button aria-label="previous step" className="bg-accent text-black px-7" onClick={onBack}>Back</Button>
+      <Button aria-label={isLast ? "finish adding property" : "next step"} className="px-7" onClick={onNext}>{isLast ? "Finish" : "Next"}</Button>
       </div>
     </section>
   );
