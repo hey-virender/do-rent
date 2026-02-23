@@ -10,6 +10,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
+import { Drawer, DrawerContent, DrawerTrigger } from "../ui/drawer";
+import { ListFilterPlus } from "lucide-react";
 
 const PropertyFilter = () => {
   const router = useRouter();
@@ -86,13 +88,17 @@ const PropertyFilter = () => {
     });
   };
 
-  return (
-    <div className="bg-primary/50 w-full p-4 flex items-center gap-1">
-      <div className="flex gap-4 w-1/3">
-        <Field className="w-">
+ const FilterUI = () => (
+  <div className="bg-primary/50 w-full px-4 py-6">
+    <div className="w-full mx-auto flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+      
+      {/* LEFT SECTION */}
+      <div className="w-full lg:flex-1 flex flex-col lg:flex-row gap-6">
+        
+        <Field className="lg:w-1/2">
           <FieldLabel htmlFor="term">Search</FieldLabel>
           <Input
-            className="bg-black/30 border-2 border-black/80 focus:border-purple-500 focus:ring-blue-500/20 text-white text-lg placeholder:text-white/60 placeholder:font-medium"
+            className="bg-black/30 border-2 border-black/80 focus:border-purple-500 focus:ring-blue-500/20 text-white md:text-lg placeholder:text-white/60 placeholder:font-medium w-full"
             type="text"
             id="term"
             name="term"
@@ -102,13 +108,18 @@ const PropertyFilter = () => {
           />
         </Field>
 
-        <div className="w-2/3">
-          <FieldLabel className="mb-3">Amenities</FieldLabel>
+        <div className="w-full lg:w-1/2">
+          <FieldLabel className="mb-3 block">Amenities</FieldLabel>
+
           <Popover>
-            <PopoverTrigger className="flex bg-primary px-5 py-2 text-white rounded-md text-sm cursor-pointer hover:bg-primary/80 ">
-              Select Amenities
+            <PopoverTrigger className="w-full bg-primary px-4 py-2 text-white rounded-md text-sm hover:bg-primary/80">
+              Amenities
             </PopoverTrigger>
-            <PopoverContent className="bg-accent" align="start">
+
+            <PopoverContent
+              className="bg-accent w-64 max-h-64 overflow-y-auto"
+              align="start"
+            >
               {amenitiesList.map((amenity) => (
                 <div
                   className="flex justify-between items-center py-1"
@@ -129,79 +140,109 @@ const PropertyFilter = () => {
         </div>
       </div>
 
-      <div className="w-2/3 flex justify-between items-center gap-12">
-        <Field className="w-1/3">
-          <div>
+      {/* CENTER SECTION */}
+      <div className="w-full lg:flex-2 flex flex-col lg:flex-row lg:justify-around gap-1">
+        
+        <Field className=" lg:w-1/3">
+          <div className="flex justify-between items-center">
             <FieldLabel>Rent</FieldLabel>
             <span>
               {rentRange[0]} - {rentRange[1]}
             </span>
           </div>
-          <Slider
-            step={100}
-            value={rentRange}
-            onValueChange={setRentRange}
-            max={20000}
-            min={500}
-          />
+
+          <div className="mt-3">
+            <Slider
+              step={100}
+              value={rentRange}
+              onValueChange={setRentRange}
+              max={20000}
+              min={500}
+            />
+          </div>
         </Field>
 
-        <Field className="w-1/3">
-          <FieldLabel htmlFor="bedrooms">Bedrooms</FieldLabel>
-          <Input
-            className="bg-black/30 border-2 border-black/80 focus:border-purple-500 focus:ring-blue-500/20 text-white text-lg placeholder:text-white/60 placeholder:font-medium"
-            type="number"
-            id="bedrooms"
-            min={1}
-            max={10}
-            value={filters.bedrooms}
-            onChange={(e) =>
-              setFilters((p) => ({ ...p, bedrooms: e.target.value }))
-            }
-          />
-        </Field>
+        <div className="lg:w-1/3 grid grid-cols-3 gap-5">
+          <Field>
+            <FieldLabel htmlFor="bedrooms">Bedrooms</FieldLabel>
+            <Input
+              className="bg-black/30 border-2 border-black/80 focus:border-purple-500 focus:ring-blue-500/20 text-white text-lg w-full"
+              type="number"
+              id="bedrooms"
+              min={1}
+              max={10}
+              value={filters.bedrooms}
+              onChange={(e) =>
+                setFilters((p) => ({ ...p, bedrooms: e.target.value }))
+              }
+            />
+          </Field>
 
-        <Field className="w-1/3">
-          <FieldLabel htmlFor="bathrooms">Bathrooms</FieldLabel>
-          <Input
-            className="bg-black/30 border-2 border-black/80 focus:border-purple-500 focus:ring-blue-500/20 text-white text-lg placeholder:text-white/60 placeholder:font-medium"
-            type="number"
-            id="bathrooms"
-            min={1}
-            max={10}
-            value={filters.bathrooms}
-            onChange={(e) =>
-              setFilters((p) => ({ ...p, bathrooms: e.target.value }))
-            }
-          />
-        </Field>
+          <Field>
+            <FieldLabel htmlFor="bathrooms">Bathrooms</FieldLabel>
+            <Input
+              className="bg-black/30 border-2 border-black/80 focus:border-purple-500 focus:ring-blue-500/20 text-white text-lg w-full"
+              type="number"
+              id="bathrooms"
+              min={1}
+              max={10}
+              value={filters.bathrooms}
+              onChange={(e) =>
+                setFilters((p) => ({ ...p, bathrooms: e.target.value }))
+              }
+            />
+          </Field>
 
-        <Field className="w-1/3">
-          <FieldLabel htmlFor="halls">Halls</FieldLabel>
-          <Input
-            className="bg-black/30 border-2 border-black/80 focus:border-purple-500 focus:ring-blue-500/20 text-white text-lg placeholder:text-white/60 placeholder:font-medium"
-            type="number"
-            id="halls"
-            min={0}
-            max={10}
-            value={filters.halls}
-            onChange={(e) =>
-              setFilters((p) => ({ ...p, halls: e.target.value }))
-            }
-          />
-        </Field>
+          <Field>
+            <FieldLabel htmlFor="halls">Halls</FieldLabel>
+            <Input
+              className="bg-black/30 border-2 border-black/80 focus:border-purple-500 focus:ring-blue-500/20 text-white text-lg w-full"
+              type="number"
+              id="halls"
+              min={0}
+              max={10}
+              value={filters.halls}
+              onChange={(e) =>
+                setFilters((p) => ({ ...p, halls: e.target.value }))
+              }
+            />
+          </Field>
+        </div>
       </div>
 
-      <div className="flex flex-col gap-2">
-        <Button onClick={applyFilters}>Apply Filters</Button>
+      {/* RIGHT SECTION */}
+      <div className="lg:w-48 flex flex-col gap-1">
+        <Button className="w-full lg:w-1/2" onClick={applyFilters}>
+          Apply Filters
+        </Button>
+
         <Button
-          className="bg-accent text-black hover:bg-accent/80"
+          className="w-full lg:w-1/2 bg-accent text-black hover:bg-accent/80"
           onClick={clearFilters}
         >
           Clear Filters
         </Button>
       </div>
     </div>
+  </div>
+);
+
+  return (
+    <>
+    <div className="hidden lg:block">
+      <FilterUI />
+    </div>
+    <div className="block lg:hidden">
+      <Drawer>
+        <DrawerTrigger className="p-4 border-b-2 text-lg"><ListFilterPlus className="size-6" />Filters</DrawerTrigger>
+        <DrawerContent>
+          <FilterUI />
+        </DrawerContent>
+
+      </Drawer>
+
+    </div>
+    </>
   );
 };
 

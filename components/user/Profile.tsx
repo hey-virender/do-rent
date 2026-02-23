@@ -203,11 +203,11 @@ const Profile = ({
   return (
     <main>
      
-      <section className="relative h-56">
+      <section className="relative h-36 sm:h-40 md:h-48 lg:h-56">
         <div className="bg-gray-300 h-1/2" />
         <div
           className="absolute top-1/2 -translate-y-1/2 left-8
-             size-36 border-primary border-2
+             size-24 sm:size-30 lg:size-36 border-primary border-2
              rounded-full p-2 bg-white"
         >
           <UserAvatar
@@ -217,16 +217,16 @@ const Profile = ({
           />
         </div>
 
-        <div className="h-1/2 bg-gray-100 pl-48 py-2">
+        <div className="h-1/2 bg-gray-100 pl-36 sm:pl-40 md:pl-48 py-2">
           <div className="w-fit">
             <Editable
               value={profileData.name!}
               isEditing={isEditing}
-              className="text-2xl font-semibold capitalize"
+              className="text-lg md:text-xl lg:text-2xl font-semibold capitalize"
               error={errors?.name}
               onChange={(v) => setProfileData({ name: v })}
             />
-            <p className="text-lg text-black/60 pl-2">{email}</p>
+            <p className="text-sm md:text-md lg:text-lg text-black/60 pl-2">{email}</p>
           </div>
         </div>
         {isOwnProfile && (
@@ -239,7 +239,7 @@ const Profile = ({
                   onClick={() => setIsEditing(true)}
                 >
                   <Pencil className="mr-2 h-4 w-4" />
-                  Edit
+                  <span className="hidden md:block">Edit</span>
                 </Button>
                 <Button
                   onClick={handleLogout}
@@ -247,7 +247,7 @@ const Profile = ({
                   className="bg-red-500 hover:bg-white/70 hover:text-red-500 hover:scale-105 transition-all text-white cursor-pointer"
                 >
                   <LogOut className="size-5" />
-                  Logout
+                  <span className="hidden md:block">Logout</span>
                 </Button>
               </>
             ) : (

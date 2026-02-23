@@ -17,7 +17,7 @@ export default function TabRenderer({ type, listing }: Props) {
   switch (type) {
     case "overview":
       return (
-        <p className="text-muted-foreground leading-relaxed text-lg">
+        <p className="text-muted-foreground leading-relaxed lg:text-lg">
           {listing.overview}
         </p>
       );

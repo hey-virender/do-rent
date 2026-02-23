@@ -6,7 +6,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-
+import { format } from "date-fns";
 import {
   Heart,
   Share2,
@@ -67,7 +67,7 @@ const PriceCard = ({ listing }: { listing: HouseListing }) => {
           <Calendar className="h-5 w-5 text-secondary" />
           <span className="text-sm text-secondary">
             Available From{" "}
-            {new Date(availability.availableFrom).toLocaleDateString()}
+            {format(new Date(availability.availableFrom), "dd/MM/yyyy")}
           </span>
         </div>
         <div className="flex items-center gap-2 mb-3">

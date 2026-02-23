@@ -18,8 +18,8 @@ export default function HouseDetailsPanel({ listing }: Props) {
   return (
     <Tabs defaultValue="overview" className="w-full h-full">
       <TabsList
-        className="
-          grid w-full grid-cols-7 bg-muted
+        className=" flex flex-wrap 
+          lg:grid w-full lg:grid-cols-7 bg-muted
           [&_[data-state=active]]:bg-accent
           [&_[data-state=active]]:text-accent-foreground
       
@@ -29,7 +29,7 @@ export default function HouseDetailsPanel({ listing }: Props) {
           <TabsTrigger
             key={key}
             value={key}
-            className="flex items-center gap-2 text-lg font-medium justify-center"
+            className="my-1 lg:my-0 flex items-center gap-2 lg:text-lg font-medium justify-center"
           >
             <Icon className="h-7 w-7" />
             {label}

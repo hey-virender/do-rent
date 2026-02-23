@@ -15,21 +15,26 @@ import { loginSchema } from "@/validations/auth.validation";
 import { Eye, EyeClosed } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 
 const Page = () => {
-  const {data:session} = useSession()
-    const router = useRouter();
-    if(session && session.user){
-      toast.error("You are already logged in");
-      router.push("/");
-    }
+   const { data: session } = useSession();
+  const router = useRouter();
+
   const [showPassword, setShowPassword] = useState(false);
   const { loginData, setLoginData, errors, setErrors, clearErrors } =
     useAuthStore();
+
+  useEffect(() => {
+    if (session?.user) {
+      router.replace("/");
+    }
+  }, [session, router]);
+
+  if (session?.user) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
    try {
@@ -60,9 +65,9 @@ const Page = () => {
   };
 
   return (
-    <main className="grid grid-cols-2 text-neutral-100 px-20">
+    <main className="md:grid md:grid-cols-2 text-neutral-100 px-5 lg:px-20">
       {/* Glass Card */}
-      <div className="relative w-full h-full  overflow-hidden rounded-tl-2xl rounded-bl-2xl bg-white/5 px-8 py-32 backdrop-blur-xl shadow-2xl">
+      <div className="relative w-full h-full  overflow-hidden rounded-lg md:rounded-none md:rounded-tl-2xl md:rounded-bl-2xl bg-white/5 px-8 py-32 backdrop-blur-xl shadow-2xl">
         <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/100 via-primary/80 to-primary/60" />
 
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_hsl(var(--primary))/_0.25,_transparent_30%)]" />
@@ -83,6 +88,7 @@ const Page = () => {
                     id="email"
                     placeholder="you@example.com"
                     type="email"
+                    autoComplete="email"
                     onChange={(e) => setLoginData({ email: e.target.value })}
                     className="bg-black/20 border-white/80 focus:border-purple-500 focus:ring-purple-500/20 text-white text-lg placeholder:text-white/60"
                   />
@@ -108,6 +114,7 @@ const Page = () => {
                       onChange={(e) =>
                         setLoginData({ password: e.target.value })
                       }
+                      autoComplete="current-password"
                       className="bg-black/20 border-white/80 pr-10 focus:border-purple-500 focus:ring-purple-500/20 text-white text-lg placeholder:text-white/60"
                     />
 
@@ -158,12 +165,13 @@ const Page = () => {
           </FieldGroup>
         </form>
       </div>
-      <div className="w-full h-full col-span-1 rounded-tr-2xl rounded-br-2xl overflow-hidden">
+      <div className="hidden md:block w-full h-full col-span-1 rounded-tr-2xl rounded-br-2xl overflow-hidden">
         <Image
           src="/assets/images/galaxy.jpg"
           alt="login image"
           width={800}
           height={800}
+          loading="eager"
           className=" object-cover w-full h-full"
         />
       </div>

@@ -15,7 +15,7 @@ interface Props {
 export default function NearbyGrid({ nearby }: Props) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      {nearby.map((item, index) => {
+      {nearby.map((item:Nearby, index) => {
         
         const Icon = ICON_MAP[item.type.toLowerCase()] ?? MapPin;
 

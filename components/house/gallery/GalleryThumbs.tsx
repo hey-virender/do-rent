@@ -45,6 +45,7 @@ const GalleryThumbs = ({ images, mainApi }: Props) => {
                 src={image}
                 alt={`Thumbnail Image ${index + 1}`}
                 fill
+                sizes="80px"
                 className="object-cover"
                 priority={index === 0}
               />

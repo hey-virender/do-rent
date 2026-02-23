@@ -35,17 +35,17 @@ const PropertyBanner = ({
       <Link href={link ? link : `/properties/${id}`}>
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold">{name}</h1>
-          <p className="text-primary text-lg font-medium tracking-wide">
+          <h1 className="text-xl lg:text-2xl font-bold">{name}</h1>
+          <p className="text-primary lg:text-lg font-medium tracking-tight lg:tracking-wide">
             {location.city}, {location.state}, {location.country}
           </p>
         </div>
-        <div className="flex flex-col text-lg font-semibold">
-          <span className="text-2xl">{currency}{price}</span>
+        <div className="flex flex-col lg:text-lg font-semibold">
+          <span className="text-xl lg:text-2xl">{currency}{price}</span>
           <span className="text-primary">Per month</span>
         </div>
       </div>
-      <div className="rounded-xl overflow-hidden h-[365px] mt-4">
+      <div className="rounded-xl overflow-hidden h-48 sm:h-64 md:h-[30rem] lg:h-[365px] mt-4">
         <Image
           className="w-full h-full"
           src={cover}

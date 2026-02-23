@@ -11,7 +11,7 @@ interface Props {
 }
 
 export default function SpecsGrid({ specs }: Props) {
-  ("SpecsGrid specs:", specs);
+  
   const ITEMS = [
     {
       label: "Bedrooms",
@@ -31,7 +31,7 @@ export default function SpecsGrid({ specs }: Props) {
   ];
 
   return (
-    <div className="grid grid-cols-3 gap-4 lg:grid-cols-5">
+    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 lg:grid-cols-5">
       {ITEMS.map(({ label, value, icon: Icon }) => (
         <div
           key={label}
@@ -41,10 +41,10 @@ export default function SpecsGrid({ specs }: Props) {
             bg-card text-card-foreground
           "
         >
-          <Icon className="h-10 w-10 text-primary" />
+          <Icon className="lg:h-10 lg:w-10 text-primary" />
           <div className="flex flex-col">
-            <span className="text-lg text-muted-foreground">{label}</span>
-            <span className="font-semibold text-xl">{value}</span>
+            <span className="lg:text-lg text-muted-foreground">{label}</span>
+            <span className="font-semibold text-lg lg:text-xl">{value}</span>
           </div>
         </div>
       ))}

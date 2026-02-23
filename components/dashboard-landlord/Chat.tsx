@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
 import { ChatList } from '../chats/ChatList'
 import { getMyChatRooms } from '@/actions/chat.actions';
-import { ChatRoom } from '@/types/chat';
 import { ChatRoomDTO } from '@/types/chat.dto';
+import { toast } from 'sonner';
 
 const Chat = () => {
   const [chats, setChats] = React.useState<ChatRoomDTO[]>([]);
@@ -12,14 +12,14 @@ const Chat = () => {
       if(result.success && result.chatRooms) {
         setChats(result?.chatRooms)
       } else {
-        console.error("Failed to fetch chat rooms:", result.error);
+        toast.error("Failed to fetch chat rooms")
       }
     }
     fetchChats();
   }, [])
   return (
     <main>
-      <h1>Chat</h1>
+      
       <ChatList chats={chats} />
     </main>
   )

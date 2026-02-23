@@ -32,6 +32,7 @@ const UserAvatar = ({
                 <Pencil className="size-4 text-white" />
               </div>
             }
+            single={true}
             folder="profile"
             purpose="profile"
             status="temp"

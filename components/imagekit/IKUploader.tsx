@@ -70,7 +70,6 @@ const IKUploader = ({
       const { signature, token, expire, publicKey } = data;
       return { signature, token, expire, publicKey };
     } catch (error) {
-      console.error("Error fetching upload auth params:", error);
       throw new Error("Failed to get upload authentication parameters");
     }
   };
@@ -159,7 +158,7 @@ const IKUploader = ({
       });
       setOpen(false);
     } catch (error) {
-      console.error("Upload error:", error);
+      
       toast.error("Failed to upload file(s)");
       onError?.(error as Error);
     }

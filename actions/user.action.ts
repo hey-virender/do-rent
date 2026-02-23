@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { prismaUpdateFilter } from "@/lib/utils";
 import { User } from "@/types/user";
 import { updateProfileSchema } from "@/validations/profile.validations";
-import { success } from "zod";
+
 export async function getMyProfile() {
 
   const session = await auth();

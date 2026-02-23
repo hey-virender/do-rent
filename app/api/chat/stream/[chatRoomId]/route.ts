@@ -3,7 +3,7 @@ import { auth } from "@/auth"
 
 export async function GET(
   req: Request,
-  { params }: { params: { chatRoomId: string } }
+  { params }: { params: Promise<{ chatRoomId: string }> }
 ) {
   const session = await auth()
   if (!session?.user?.id) {
@@ -12,7 +12,7 @@ export async function GET(
 
   const userId = session.user.id
   const { chatRoomId } = await params
-  console.log("Starting SSE for chatRoomId:", chatRoomId, "userId:", userId)
+ 
 
   if (!chatRoomId) {
     return new Response("Chat Room ID is required", { status: 400 })

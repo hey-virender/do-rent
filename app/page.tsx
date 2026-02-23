@@ -1,4 +1,4 @@
-import PropertyBanner from "@/components/house/details-panel/PropertyBanner";
+import PropertyBanner from "@/components/house/PropertyBanner";
 import Map from "@/components/Map";
 import { getProperties } from "@/actions/property.actions";
 import { HouseListing } from "@/types/house";
@@ -36,18 +36,22 @@ const page = async ({ searchParams }: PageProps) => {
     <main>
       <PropertyFilter />
       {properties.length === 0 && (
-          <Empty>
-            <EmptyHeader className="mt-24">
-              <EmptyMedia className="size-44" variant="icon">
-                <SearchX className="size-36" />
-              </EmptyMedia>
-              <EmptyTitle className="text-6xl font-dm-serif">No Properties</EmptyTitle>
-              <EmptyDescription className="text-2xl">Try adjusting your search criteria</EmptyDescription>
-            </EmptyHeader>
-          </Empty>
-        )}
-      <div className="flex">
-        <section className="grid grid-cols-2 py-6">
+        <Empty>
+          <EmptyHeader className="mt-24">
+            <EmptyMedia className="size-44" variant="icon">
+              <SearchX className="size-36" />
+            </EmptyMedia>
+            <EmptyTitle className="text-6xl font-dm-serif">
+              No Properties
+            </EmptyTitle>
+            <EmptyDescription className="text-2xl">
+              Try adjusting your search criteria
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
+      )}
+      <div className="lg:flex lg:items-start">
+        <section className="md:grid md:grid-cols-2 py-6 lg:w-2/3">
           {properties &&
             properties.map((house) => (
               <PropertyBanner
@@ -61,12 +65,13 @@ const page = async ({ searchParams }: PageProps) => {
               />
             ))}
         </section>
-        <section className="w-1/3 h-[800px]">
+        <section className="hidden lg:block lg:w-1/3">
           {properties.length > 0 && (
-            <Map properties={properties as HouseListing[]} />
+            <div className="sticky top-0 h-screen">
+              <Map properties={properties as HouseListing[]} />
+            </div>
           )}
         </section>
-        
       </div>
     </main>
   );

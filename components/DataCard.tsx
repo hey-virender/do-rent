@@ -8,16 +8,27 @@ type Props = {
   icon?: React.ReactNode;
   change?: string;
   description?: string;
+  trend?: "up" | "down" | "neutral";
 };
-const DataCard = ({ title, value, icon, change, description }: Props) => {
+const DataCard = ({
+  title,
+  value,
+  icon,
+  change,
+  trend,
+  description,
+}: Props) => {
   const changeColor = () => {
-    if (change?.includes("-")) {
+    if (trend === "down") {
       return "bg-red-500/30 text-red-700";
     }
-    if (change?.includes("+")) {
+    if (trend === "up") {
       return "bg-green-500/30 text-green-700";
     }
-    return "bg-gray-500/30 text-gray-700";
+    if(trend === "neutral") {
+      return "bg-gray-500/30 text-gray-700";
+    }
+    
   };
   return (
     <Card className="max-w-sm px-10 py-6">

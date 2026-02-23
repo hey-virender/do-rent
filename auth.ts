@@ -21,14 +21,14 @@ export const {handlers,signIn,signOut,auth}  = NextAuth({
         }
       })
       if(!user){
-        throw new Error("No user found with the given email")
+        return null;
       }
     
      const isValid = compare(credentials?.password as string,user.password!)
       if(!isValid){
         throw new Error("Incorrect password")
       }
-      console.log("Authenticated user:", user);
+      
       return {
         id: user.id,
         name: user.name,

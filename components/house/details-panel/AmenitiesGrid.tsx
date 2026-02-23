@@ -28,9 +28,9 @@ const AmenitiesGrid = ({ amenities }: Props) => {
         return (
           <li
             key={amenity}
-            className="flex flex-col items-center gap-3 rounded-lg border p-3 text-xl"
+            className="flex flex-col items-center gap-3 rounded-lg border p-3 lg:text-xl"
           >
-            <Icon className="text-accent w-10 h-10" />
+            <Icon className="text-accent w-5 h-5 lg:w-10 lg:h-10" />
             <span className="font-medium">{AMENITIES_MAP[amenity].label}</span>
           </li>
         );

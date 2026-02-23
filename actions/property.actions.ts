@@ -33,7 +33,7 @@ export const createProperty = async (propertyData: HouseListing) => {
 
  
  
- console.log("parsed data", parsed.data);
+ 
 
  const {name,media,location,overview,pricing,specs,amenities,nearby,rules,availability,meta} = propertyData;
   const searchText = `${name} ${location.line1} ${location.line2 || ""} ${location.city} ${location.state} ${location.country}`.toLowerCase();

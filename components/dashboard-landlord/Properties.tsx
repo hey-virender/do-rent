@@ -1,7 +1,8 @@
 import { getPropertiesByLandlord } from "@/actions/property.actions";
-import PropertyBanner from "../house/details-panel/PropertyBanner";
+import PropertyBanner from "../house/PropertyBanner";
 import { useEffect, useState } from "react";
 import { HouseListing } from "@/types/house";
+import { toast } from "sonner";
 
 const Properties = () => {
   const [myProperties, setMyProperties] = useState<HouseListing[]>([]);
@@ -15,14 +16,14 @@ const Properties = () => {
           setMyProperties(res.properties as HouseListing[]);
         }
       } catch (error) {
-        console.error("Failed to fetch properties:", error);
+        toast.error("Failed to fetch properties");
       }
     };
     fetchProperties();
   }, []);
 
   return (
-    <section className="grid grid-cols-2">
+    <section className="md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
       {myProperties &&
         myProperties.map((property) => (
           <PropertyBanner

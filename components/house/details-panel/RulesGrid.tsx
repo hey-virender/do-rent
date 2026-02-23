@@ -30,10 +30,10 @@ const RulesGrid = ({ rules }: { rules: HouseListing["rules"] }) => {
             bg-card text-card-foreground
           "
         >
-          <Icon className="h-10 w-10 text-primary" />
+          <Icon className="w-5 h-5 lg:h-10 lg:w-10 text-primary" />
           <div className="flex flex-col">
-            <span className="text-lg text-muted-foreground">{label}</span>
-            <span className="font-semibold text-xl">{value}</span>
+            <span className="text-sm lg:text-lg text-muted-foreground">{label}</span>
+            <span className="font-semibold text-lg lg:text-xl">{value}</span>
           </div>
         </div>
       ))}

@@ -60,7 +60,7 @@ export async function registerUser(input: unknown) {
 
     return { success: true };
   } catch (error) {
-    console.error("Registration error:", error);
+    
     return {
       success: false,
       errors: "An unexpected error occurred during registration",

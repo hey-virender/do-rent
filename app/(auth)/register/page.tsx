@@ -23,23 +23,27 @@ import { SelectValue } from "@radix-ui/react-select";
 import { Eye, EyeClosed } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { registerUser } from "@/actions/auth.actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 
 const Page = () => {
-  const {data:session} = useSession()
+  const { data: session } = useSession();
   const router = useRouter();
-  if(session && session.user){
-    toast.error("You are already logged in");
-    router.push("/");
-  }
-
+  const { registerData, setRegisterData, errors, setErrors, clearErrors } =
+    useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [dob, setDob] = useState<Date | undefined>(undefined);
+  useEffect(() => {
+    if (session?.user) {
+
+      router.replace("/");
+    }
+  }, [session, router]);
+
+  if (session?.user) return null;
 
   function handleDateChange(date: Date | undefined) {
     if (date) {
@@ -48,9 +52,6 @@ const Page = () => {
       setRegisterData({ dob: "" });
     }
   }
-
-  const { registerData, setRegisterData, errors, setErrors, clearErrors } =
-    useAuthStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     try {
@@ -78,7 +79,7 @@ const Page = () => {
         "Registration successful! Please check your email to verify your account.",
       );
 
-      router.push("/login");
+      router.replace("/login");
       setRegisterData({
         name: "",
         email: "",
@@ -97,18 +98,19 @@ const Page = () => {
   };
 
   return (
-    <main className="grid grid-cols-2 text-neutral-100 px-20 pb-10">
-      <div className="w-full h-full col-span-1 rounded-tl-2xl rounded-bl-2xl overflow-hidden">
+    <main className="md:grid md:grid-cols-2 text-neutral-100 px-5 lg:px-20">
+      <div className=" hidden md:block w-full h-full col-span-1 rounded-tl-2xl rounded-bl-2xl overflow-hidden">
         <Image
           src="/assets/images/galaxy.jpg"
           alt="login image"
           width={800}
           height={800}
+          loading="eager"
           className=" object-cover w-full h-full"
         />
       </div>
 
-      <div className="relative w-full h-full  overflow-hidden rounded-tr-2xl rounded-br-2xl bg-white/5 px-8 py-12 backdrop-blur-xl shadow-2xl">
+      <div className="relative w-full h-full  overflow-hidden rounded-lg md:rounded-none md:rounded-tr-2xl md:rounded-br-2xl   bg-white/5 px-8 py-12 backdrop-blur-xl shadow-2xl">
         <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/100 via-primary/80 to-primary/60" />
 
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_hsl(var(--primary))/_0.25,_transparent_30%)]" />
@@ -129,8 +131,9 @@ const Page = () => {
                     id="name"
                     placeholder="Your Name"
                     required
-                    className="bg-black/20 border-white/80 focus:border-purple-500 focus:ring-purple-500/20 text-white text-lg placeholder:text-white/60"
+                    className="bg-black/20 border-white/80 focus:border-purple-500 focus:ring-purple-500/20 text-white md:text-lg placeholder:text-white/60"
                     value={registerData.name}
+                    autoComplete="name"
                     onChange={(e) => setRegisterData({ name: e.target.value })}
                   />
                   {errors?.name ? (
@@ -150,8 +153,9 @@ const Page = () => {
                     id="adhaarNumber"
                     placeholder="Your Adhaar Number"
                     required
-                    className="bg-black/20 border-white/80 focus:border-purple-500 focus:ring-purple-500/20 text-white text-lg placeholder:text-white/60"
+                    className="bg-black/20 border-white/80 focus:border-purple-500 focus:ring-purple-500/20 text-white md:text-lg placeholder:text-white/60"
                     value={registerData.adhaarNumber}
+                    autoComplete="adhaar-number"
                     onChange={(e) =>
                       setRegisterData({ adhaarNumber: e.target.value })
                     }
@@ -174,8 +178,9 @@ const Page = () => {
                     id="email"
                     placeholder="you@example.com"
                     required
-                    className="bg-black/20 border-white/80 focus:border-purple-500 focus:ring-purple-500/20 text-white text-lg placeholder:text-white/60"
+                    className="bg-black/20 border-white/80 focus:border-purple-500 focus:ring-purple-500/20 text-white md:text-lg placeholder:text-white/60"
                     value={registerData.email}
+                    autoComplete="email"
                     onChange={(e) => setRegisterData({ email: e.target.value })}
                   />
                   {errors?.email ? (
@@ -195,8 +200,9 @@ const Page = () => {
                     id="phone"
                     placeholder="Your phone number"
                     required
-                    className="bg-black/20 border-white/80 focus:border-purple-500 focus:ring-purple-500/20 text-white text-lg placeholder:text-white/60"
+                    className="bg-black/20 border-white/80 focus:border-purple-500 focus:ring-purple-500/20 text-white md:text-lg placeholder:text-white/60"
                     value={registerData.phone}
+                    autoComplete="tel"
                     onChange={(e) => setRegisterData({ phone: e.target.value })}
                   />
                   {errors?.phone ? (
@@ -319,7 +325,8 @@ const Page = () => {
                       id="password"
                       placeholder="Choose your password"
                       type={showPassword ? "text" : "password"}
-                      className="bg-black/20 border-white/80 pr-10 focus:border-purple-500 focus:ring-purple-500/20 text-white text-lg placeholder:text-white/60"
+                      className="bg-black/20 border-white/80 pr-10 focus:border-purple-500 focus:ring-purple-500/20 text-white md:text-lg placeholder:text-white/60"
+                      autoComplete="new-password"
                       value={registerData.password}
                       onChange={(e) =>
                         setRegisterData({ password: e.target.value })
@@ -359,6 +366,7 @@ const Page = () => {
                       type={showConfirmPassword ? "text" : "password"}
                       className="bg-black/20 border-white/80 pr-10 focus:border-purple-500 focus:ring-purple-500/20 text-white text-lg placeholder:text-white/60"
                       value={registerData.confirmPassword}
+                      autoComplete="new-password"
                       onChange={(e) =>
                         setRegisterData({ confirmPassword: e.target.value })
                       }
