@@ -234,9 +234,9 @@ const PropertyFilter = () => {
       <div className="hidden lg:block">
         <FilterUI />
       </div>
-      <div className="block lg:hidden">
+      <div className="block p-2 lg:hidden">
         <Drawer>
-          <DrawerTrigger className="p-4 border-b-2 text-lg flex items-center gap-2 bg-primary text-white">
+          <DrawerTrigger className="p-4 border-b-2 text-lg flex items-center gap-2 bg-primary text-white rounded-lg hover:bg-primary/90">
             <ListFilterPlus className="size-6" />
             Filters
           </DrawerTrigger>
