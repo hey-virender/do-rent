@@ -99,17 +99,18 @@ const Page = () => {
 
   return (
     <main className="md:grid md:grid-cols-2 text-neutral-100 px-5 lg:px-20">
-      <div className=" hidden md:block w-full h-full col-span-1 rounded-tl-2xl rounded-bl-2xl overflow-hidden">
-        <Image
-          src="/assets/images/galaxy.jpg"
-          alt="login image"
-          width={800}
-          height={800}
-          loading="eager"
-          quality={60}
-          className=" object-cover w-full h-full"
-        />
-      </div>
+      <div className="hidden md:block relative col-span-1 rounded-tl-2xl rounded-bl-2xl overflow-hidden">
+  <Image
+    src="/assets/images/galaxy.jpg"
+    alt=""
+    fill
+    priority
+    quality={60}
+    sizes="(min-width: 768px) 50vw"
+    className="object-cover"
+    aria-hidden="true"
+  />
+</div>
 
       <div className="relative w-full h-full  overflow-hidden rounded-lg md:rounded-none md:rounded-tr-2xl md:rounded-br-2xl   bg-white/5 px-8 py-12 backdrop-blur-xl shadow-2xl">
         <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/100 via-primary/80 to-primary/60" />

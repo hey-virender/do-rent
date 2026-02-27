@@ -166,17 +166,18 @@ const Page = () => {
           </FieldGroup>
         </form>
       </div>
-      <div className="hidden md:block w-full h-full col-span-1 rounded-tr-2xl rounded-br-2xl overflow-hidden">
-        <Image
-          src="/assets/images/galaxy.jpg"
-          alt="login image"
-          width={800}
-          height={800}
-          loading="eager"
-          quality={60}
-          className=" object-cover w-full h-full"
-        />
-      </div>
+      <div className="hidden md:block relative col-span-1 rounded-tr-2xl rounded-br-2xl overflow-hidden">
+  <Image
+    src="/assets/images/galaxy.jpg"
+    alt=""
+    fill
+    priority
+    quality={60}
+    sizes="(min-width: 768px) 50vw"
+    className="object-cover"
+    aria-hidden="true"
+  />
+</div>
     </main>
   );
 };
