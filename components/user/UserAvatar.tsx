@@ -17,7 +17,6 @@ const UserAvatar = ({
   className,
   handleAvatarUploadSuccess,
 }: Props) => {
-  
   return (
     <div className="relative">
       <div className="absolute top-0 right-0 z-50">
@@ -42,10 +41,15 @@ const UserAvatar = ({
           />
         )}
       </div>
-      <Avatar className={cn("size-full aspect-[3/2]", className)}>
-        <AvatarImage  sizes="(max-width: 768px) 100vw,
+      <Avatar className={cn("size-full aspect-[1/1]", className)}>
+        <AvatarImage
+          sizes="(max-width: 768px) 100vw,
            (max-width: 1024px) 50vw,
-           33vw" alt="User Avatar" className="z-0" src={src || "/assets/icons/avatar.png"} />
+           33vw"
+          alt="User Avatar"
+          className="z-0"
+          src={src || "/assets/icons/avatar.png"}
+        />
       </Avatar>
     </div>
   );
