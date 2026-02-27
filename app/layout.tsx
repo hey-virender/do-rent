@@ -14,6 +14,7 @@ const dmSerif = DM_Serif_Display({
   style: ["normal", "italic"],
   variable: "--font-serif",
   display: "swap",
+  adjustFontFallback:true
 });
 
 const spaceGrotesk = Space_Grotesk({
@@ -21,8 +22,9 @@ const spaceGrotesk = Space_Grotesk({
   weight: ["300", "400", "500", "600", "700"],
   variable: "--font-sans",
   display: "swap",
+  adjustFontFallback:true
 });
-const wixFont = Wix_Madefor_Text({ subsets: ["latin"] });
+
 
 export const metadata: Metadata = {
   title: "Do Rent",
@@ -36,7 +38,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${wixFont.className} ${dmSerif.variable} ${spaceGrotesk.variable}`}>
+      <body className={` ${dmSerif.variable} ${spaceGrotesk.variable}`}>
         <Providers>
           <Header />
           <Toaster position="top-right" />

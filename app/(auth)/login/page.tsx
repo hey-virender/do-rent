@@ -173,6 +173,7 @@ const Page = () => {
           width={800}
           height={800}
           loading="eager"
+          quality={60}
           className=" object-cover w-full h-full"
         />
       </div>
