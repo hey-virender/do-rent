@@ -3,7 +3,6 @@ import { getCoordinates } from "@/constants";
 import { useEffect } from "react";
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 
-
 type Props = {
   lat?: number;
   lng?: number;
@@ -16,40 +15,25 @@ import L from "leaflet";
 import Image from "next/image";
 import { HouseListing } from "@/types/house";
 
-export const houseMarkerIcon = (image: string) =>
+export const houseMarkerIcon = (image: string, name: string) =>
   L.divIcon({
     html: `
-      <div class="
-        relative
-        w-14 h-14
-        rounded-full
-        bg-white
-    
-        shadow-xl
-        ring-2 ring-white
-        hover:scale-110
-        transition-transform
-        duration-200
-      ">
+      <div class="relative w-14 h-14 rounded-full bg-white shadow-xl ring-2 ring-white transition-transform duration-200">
         <img
           src="${image}"
-          class="
-            w-full h-full
-            object-cover
-            rounded-full
-          "
+          alt=""
+          class="w-full h-full object-cover rounded-full"
         />
       </div>
     `,
-    className: "bg-transparent", // disables leaflet defaults
+    className: "bg-transparent",
     iconSize: [56, 56],
     iconAnchor: [28, 56],
     popupAnchor: [0, -56],
   });
 
-
 export function FlyToLocation({
-  position:[lat, lng],
+  position: [lat, lng],
   zoom = 17,
 }: {
   position: [number, number];
@@ -64,14 +48,9 @@ export function FlyToLocation({
   return null;
 }
 
-
-
-
 const LeafletMap = ({ lat, lng, address, zoom, properties }: Props) => {
   let latitude = lat;
   let longitude = lng;
-
- 
 
   useEffect(() => {
     if (!lat || !lng) {
@@ -87,8 +66,6 @@ const LeafletMap = ({ lat, lng, address, zoom, properties }: Props) => {
       fetchCoordinates();
     }
   }, [lat, lng]);
-
-  
 
   const position = [latitude ?? 31.105, longitude ?? 77.164] as [
     number,
@@ -106,38 +83,57 @@ const LeafletMap = ({ lat, lng, address, zoom, properties }: Props) => {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {zoom && latitude && longitude && <FlyToLocation position={[latitude!, longitude!]} />}
-      {properties && properties.length > 0 && properties.map((house) => {
-       
-        return(
-          <Marker
-          key={house.id}
-          alt={house.name}
-          position={[
-            house.location.coordinates.lat,
-            house.location.coordinates.lng,
-          ]}
-          icon={houseMarkerIcon(house.media.cover.url)}
-        >
-          <Popup >
-            <div className="w-12">
-              <Image
-                src={house.media.cover.url}
-                alt={house.name}
-                width={120}
-                height={120}
-                className="rounded-md mb-2 w-12"
-              />
-              <h3 className="font-bold ">{house.name}</h3>
-              <span>
-                {house.location.city}, {house.location.state},{" "}
-                {house.location.country}
-              </span>
-            </div>
-          </Popup>
-        </Marker>
-        )
-      })}
+      {zoom && latitude && longitude && (
+        <FlyToLocation position={[latitude!, longitude!]} />
+      )}
+      {properties &&
+        properties.length > 0 &&
+        properties.map((house) => {
+          return (
+            <Marker
+              key={house.id}
+              position={[
+                house.location.coordinates.lat,
+                house.location.coordinates.lng,
+              ]}
+              icon={houseMarkerIcon(house.media.cover.url, house.name)}
+              eventHandlers={{
+                add: (e) => {
+                  const el = e.target.getElement();
+                  if (el) {
+                    el.setAttribute("role", "button");
+                    el.setAttribute(
+                      "aria-label",
+                      `View property ${house.name} in ${house.location.city}`,
+                    );
+                    el.setAttribute("tabindex", "0");
+                    
+                  }
+                  
+                },
+                
+                
+              }}
+            >
+              <Popup>
+                <div className="w-12">
+                  <Image
+                    src={house.media.cover.url}
+                    alt={house.name}
+                    width={120}
+                    height={120}
+                    className="rounded-md mb-2 w-12"
+                  />
+                  <h3 className="font-bold ">{house.name}</h3>
+                  <span>
+                    {house.location.city}, {house.location.state},{" "}
+                    {house.location.country}
+                  </span>
+                </div>
+              </Popup>
+            </Marker>
+          );
+        })}
     </MapContainer>
   );
 };
