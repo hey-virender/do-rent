@@ -37,9 +37,7 @@ return [
       },
     ];
   },
-  outputFileTracingIncludes: {
-    "/api/**/*": ["./generated/prisma/**/*"],
-  },
+  
 };
 
 export default nextConfig;
