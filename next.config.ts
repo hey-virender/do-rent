@@ -40,6 +40,7 @@ return [
    outputFileTracingIncludes: {
       '/api/*': ['./node_modules/.prisma/client/*.wasm']
     },
+  serverExternalPackages:['@prisma/client','prisma']
 };
 
 export default nextConfig;
