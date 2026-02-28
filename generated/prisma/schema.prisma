@@ -1,0 +1,259 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGODB_URI")
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../generated/prisma"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+  engineType    = "library"
+}
+
+enum Role {
+  tenant
+  landlord
+  admin
+}
+
+enum Gender {
+  male
+  female
+  other
+}
+
+model User {
+  id                String          @id @default(auto()) @map("_id") @db.ObjectId
+  name              String?
+  email             String?         @unique
+  emailVerified     DateTime?
+  accounts          Account[]
+  sessions          Session[]
+  role              Role            @default(tenant)
+  Authenticator     Authenticator[]
+  password          String?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  profile           Profile?
+  properties        Property[]
+  landLordChatRooms ChatRoom[]      @relation("LandlordChatRooms")
+  tenantChatRooms   ChatRoom[]      @relation("TenantChatRooms")
+}
+
+model Account {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String   @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?  @db.String
+  access_token      String?  @db.String
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?  @db.String
+  session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionToken String   @unique
+  userId       String   @db.ObjectId
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Optional for WebAuthn support
+model Authenticator {
+  credentialID         String  @id @map("_id")
+  userId               String  @db.ObjectId
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, credentialID])
+}
+
+enum Provider {
+  google
+  local
+  facebook
+}
+
+model Profile {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId       String    @unique @db.ObjectId
+  bio          String?
+  avatarUrl    String?
+  avatarFileId String?
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  gender       Gender?
+  provider     Provider?
+  adhaarNumber String?
+  dob          DateTime?
+  panNumber    String?
+  phone        String?
+  address      String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+enum PropertyMetaStatus {
+  active
+  inactive
+  occupied
+}
+
+type PropertyMeta {
+  status PropertyMetaStatus
+}
+
+type Pricing {
+  monthly  Float
+  currency String
+  deposit  Float
+}
+
+type ImageAsset {
+  url    String
+  fileId String
+}
+
+type Media {
+  cover   ImageAsset
+  gallery ImageAsset[]
+}
+
+type Specs {
+  halls     Int
+  bedrooms  Int
+  bathrooms Int
+  areaSqft  Float
+}
+
+type Nearby {
+  type       String
+  name       String
+  distanceKm Float
+}
+
+type Rules {
+  petsAllowed       Boolean
+  smokingAllowed    Boolean
+  minimumStayMonths Int
+  partiesAllowed    Boolean
+}
+
+type Availability {
+  availableFrom DateTime
+  leaseTerms    String
+  conditions    String
+}
+
+type Coordinates {
+  lat Float
+  lng Float
+}
+
+type Location {
+  line1       String
+  line2       String?
+  city        String
+  state       String
+  country     String
+  pinCode     String?
+  coordinates Coordinates
+}
+
+model Property {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  name        String
+  meta        PropertyMeta
+  media       Media
+  // denormalized for easier search and filtering
+  bedrooms    Int
+  bathrooms   Int
+  halls       Int
+  areaSqft    Float
+  monthlyRent Float
+
+  amenities    String[]
+  overview     String
+  location     Location
+  specs        Specs
+  pricing      Pricing
+  landlordId   String?      @db.ObjectId
+  nearby       Nearby[]
+  rules        Rules
+  searchText   String
+  availability Availability
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  landlord     User?        @relation(fields: [landlordId], references: [id])
+  chatRooms    ChatRoom[]   @relation("PropertyChatRooms")
+
+  @@index([searchText])
+  @@index([monthlyRent])
+  @@index([bedrooms])
+  @@index([bathrooms])
+  @@index([halls])
+  @@index([areaSqft])
+}
+
+model ChatRoom {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  //Business context
+  propertyId String @db.ObjectId
+  tenantId   String @db.ObjectId
+  landlordId String @db.ObjectId
+
+  //metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  messages Message[]
+  landlord User      @relation("LandlordChatRooms", fields: [landlordId], references: [id], onDelete: Cascade)
+  tenant   User      @relation("TenantChatRooms", fields: [tenantId], references: [id], onDelete: Cascade)
+  property Property  @relation("PropertyChatRooms", fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@index([propertyId, tenantId, landlordId])
+}
+
+model Message {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  chatRoomId String   @db.ObjectId
+  senderId   String   @db.ObjectId
+  text       String
+  seen       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  chatRoom ChatRoom @relation(fields: [chatRoomId], references: [id], onDelete: Cascade)
+
+  @@index([chatRoomId, createdAt])
+}
