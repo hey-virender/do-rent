@@ -5,8 +5,8 @@ datasource db {
 
 generator client {
   provider   = "prisma-client"
-  output     = "../generated/prisma"
-  engineType = "binary"
+  output     = "../app/generated/prisma"
+  binaryTargets = ["native", "linux-musl", "rhel-openssl-3.0.x"]
 }
 
 enum Role {
