@@ -1,7 +1,7 @@
 "use server";
 
 import { registerSchema } from "@/validations/auth.validation";
-import { prisma } from "@/lib/prisma";
+import prisma  from "@/lib/prisma";
 import { hash } from "bcryptjs";
 
 export async function registerUser(input: unknown) {

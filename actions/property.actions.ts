@@ -1,7 +1,7 @@
 'use server'
 import { auth } from "@/auth";
 import { deleteImage, imagekit, updateImageMetaData } from "@/lib/imagekit";
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 import { HouseListing } from "@/types/house";
 import { ImageAsset, PublicPropertyFilters } from "@/types/type";
 import { houseSchama } from "@/validations/house.validation";

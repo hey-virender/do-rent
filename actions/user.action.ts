@@ -1,6 +1,6 @@
 'use server'
 import {auth} from "@/auth";
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 import { prismaUpdateFilter } from "@/lib/utils";
 import { User } from "@/types/user";
 import { updateProfileSchema } from "@/validations/profile.validations";

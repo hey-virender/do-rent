@@ -1,6 +1,6 @@
 'use server'
 
-import {prisma} from '@/lib/prisma'
+import prisma from '@/lib/prisma'
 import {auth} from '@/auth'
 import { HouseListing } from '@/types/house'
 import { chatEmitter } from '@/lib/chat-emitter'
