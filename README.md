@@ -1,5 +1,7 @@
 # Rent Management Tool 🏠
 
+[![CI](https://github.com/hey-virender/do-rent/actions/workflows/ci.yml/badge.svg)](https://github.com/hey-virender/do-rent/actions/workflows/ci.yml)
+
 A modern, full-stack Rent & Property Management platform designed for landlords and property managers to manage listings, tenants, and property data efficiently — without messy spreadsheets or manual follow-ups.
 
 Built with scalability, clean UX, and real-world rental workflows in mind.
@@ -65,3 +67,50 @@ Built with scalability, clean UX, and real-world rental workflows in mind.
 ├── validations/      # Zod schemas
 ├── types/            # Core domain types (HouseListing, Rules, Media)
 ├── app/              # Next.js app router
+
+---
+
+## 🧪 Testing
+
+```bash
+npm test          # run once
+npm run test:watch
+```
+
+**35 tests** covering the logic most likely to cause silent data corruption:
+
+| Suite | What it protects |
+|---|---|
+| `tests/utils.test.ts` | `prismaUpdateFilter` — that partial updates never null out existing columns, while preserving legitimately falsy values like `0` halls and `petsAllowed: false` |
+| `tests/auth.validation.test.ts` | Password confirmation, terms acceptance, Aadhaar length, role enum, date parsing |
+| `tests/house.validation.test.ts` | Indian PIN code format, coordinate ranges, pricing floors, minimum area, and that `availableFrom` can be today but not yesterday |
+
+CI runs lint and the full suite on every push and pull request to `main`.
+
+---
+
+## 🧭 Design Decisions & Tradeoffs
+
+**Why filter `null` out of update payloads instead of passing them through?**
+Prisma treats an explicit `null` as "set this column to NULL". A partial edit form that sends untouched fields as `null` would therefore erase data the user never intended to change. `prismaUpdateFilter` strips `undefined`, `null` and whitespace-only strings — but deliberately keeps `0` and `false`, because "zero halls" and "pets not allowed" are real answers. That distinction is the reason the function has tests.
+
+**Why a multi-step wizard with draft persistence rather than one long form?**
+A property listing needs location, pricing, specs, amenities, media and availability. As a single form it's abandoned halfway. Splitting it across steps with drafts held in Zustand means a landlord can stop and resume, at the cost of more state-management complexity than a single submit would need.
+
+**Why validate with Zod schemas that are then sliced per step?**
+There's one source of truth — `houseSchama` — and each wizard step picks the slice it owns (`houseSchama.shape.pricing`, `.pick({ name, overview })`). A field's rules can't drift between the step that collects it and the submit that saves it, because they're literally the same schema.
+
+**Why Prisma and PostgreSQL over the MongoDB used elsewhere in my projects?**
+Listings are relational: properties own media, nearby places, rules and availability, and are queried by structured filters like city, price band and bedroom count. Those are joins and range scans, which Postgres does well and which document stores make awkward. The tradeoff is a migration step whenever the shape changes.
+
+**Why ImageKit rather than storing uploads directly?**
+Images are uploaded before a listing is submitted, so orphaned files accumulate from abandoned drafts. Tagging uploads with a temporary status and cleaning them up separately keeps that garbage out of the database, and transformations happen at the CDN rather than in the app.
+
+---
+
+## 🚧 Known Limitations
+
+- **No integration or end-to-end tests** — coverage is currently on pure logic and schemas only.
+- **`app/api/my-app/`** contains a stray nested Next.js scaffold that should be removed.
+- **No pagination** on property listings.
+- **Search relies on a generated `searchText` field** (`scripts/addSearchText.ts`) rather than full-text search.
