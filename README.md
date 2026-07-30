@@ -46,7 +46,7 @@ Built with scalability, clean UX, and real-world rental workflows in mind.
 **Backend**
 - Next.js Server Actions
 - Prisma ORM
-- PostgreSQL (or compatible SQL DB)
+- MongoDB (the Prisma datasource provider is `mongodb`)
 
 **State & Validation**
 - Zustand (draft & edit state)
@@ -103,8 +103,8 @@ A property listing needs location, pricing, specs, amenities, media and availabi
 **Why validate with Zod schemas that are then sliced per step?**
 There's one source of truth — `houseSchama` — and each wizard step picks the slice it owns (`houseSchama.shape.pricing`, `.pick({ name, overview })`). A field's rules can't drift between the step that collects it and the submit that saves it, because they're literally the same schema.
 
-**Why Prisma and PostgreSQL over the MongoDB used elsewhere in my projects?**
-Listings are relational: properties own media, nearby places, rules and availability, and are queried by structured filters like city, price band and bedroom count. Those are joins and range scans, which Postgres does well and which document stores make awkward. The tradeoff is a migration step whenever the shape changes.
+**Why Prisma on top of MongoDB rather than Mongoose?**
+A listing is naturally document-shaped — nested location, pricing, specs, rules and availability objects, plus arrays of media and nearby places — so a document store fits the data. What Mongoose doesn't give is a generated, fully typed client: with Prisma the schema is the single source of truth and every query is type-checked against it, which matters when the same `HouseListing` shape flows through a six-step wizard, a Zod schema and a server action. The tradeoff is that Prisma's MongoDB support has no joins, so anything relational has to be modelled as embedded documents or resolved in application code.
 
 **Why ImageKit rather than storing uploads directly?**
 Images are uploaded before a listing is submitted, so orphaned files accumulate from abandoned drafts. Tagging uploads with a temporary status and cleaning them up separately keeps that garbage out of the database, and transformations happen at the CDN rather than in the app.

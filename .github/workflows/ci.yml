@@ -22,7 +22,12 @@ jobs:
           cache: npm
 
       - name: Install dependencies
+        # postinstall runs `prisma generate`, and prisma.config.ts requires
+        # MONGODB_URI to be present. Code generation never connects, so a
+        # placeholder is enough - this is not a credential.
         run: npm ci
+        env:
+          MONGODB_URI: mongodb://placeholder:27017/ci
 
       # Advisory for now: there is a known backlog of ~20 lint errors in
       # application code, four of which need React refactors rather than
