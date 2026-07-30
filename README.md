@@ -2,6 +2,8 @@
 
 [![CI](https://github.com/hey-virender/do-rent/actions/workflows/ci.yml/badge.svg)](https://github.com/hey-virender/do-rent/actions/workflows/ci.yml)
 
+**🔗 Live Demo:** [do-rent.vercel.app](https://do-rent.vercel.app)
+
 A modern, full-stack Rent & Property Management platform designed for landlords and property managers to manage listings, tenants, and property data efficiently — without messy spreadsheets or manual follow-ups.
 
 Built with scalability, clean UX, and real-world rental workflows in mind.
