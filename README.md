@@ -85,7 +85,10 @@ npm run test:watch
 | `tests/auth.validation.test.ts` | Password confirmation, terms acceptance, Aadhaar length, role enum, date parsing |
 | `tests/house.validation.test.ts` | Indian PIN code format, coordinate ranges, pricing floors, minimum area, and that `availableFrom` can be today but not yesterday |
 
-CI runs lint and the full suite on every push and pull request to `main`.
+CI runs on every push and pull request to `main`. The test suite is the gate;
+lint runs alongside it as advisory while a backlog of ~20 pre-existing errors in
+application code is worked through (four need React refactors rather than
+one-line fixes). Prisma's generated client is excluded from linting.
 
 ---
 
@@ -111,6 +114,8 @@ Images are uploaded before a listing is submitted, so orphaned files accumulate 
 ## 🚧 Known Limitations
 
 - **No integration or end-to-end tests** — coverage is currently on pure logic and schemas only.
+- **~20 outstanding lint errors** in application code, so the lint step is advisory rather than blocking. Four require React refactors (`react-hooks/static-components`, `immutability`, `set-state-in-effect`).
+- **`generated/prisma/` is committed** and excluded from linting; it should be generated at install time instead.
 - **`app/api/my-app/`** contains a stray nested Next.js scaffold that should be removed.
 - **No pagination** on property listings.
 - **Search relies on a generated `searchText` field** (`scripts/addSearchText.ts`) rather than full-text search.
